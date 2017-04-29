@@ -68,6 +68,12 @@ void Entity::draw( ImVec2 offset, float scale ) {
     if( (stateFlags&ST_DRAG) == ST_DRAG ) {
         color = 0xaa00ff00;
     }
+    if( (stateFlags&ST_SRC) == ST_SRC ) {
+        color = 0xffc3c3c3;
+    }
+    if( (stateFlags&ST_TRGT) == ST_TRGT ) {
+        color = 0xffff0000;
+    }
     
     ImGui::GetWindowDrawList()->AddCircleFilled(position, mSize*0.5*scale, color, 64 );
 

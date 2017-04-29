@@ -37,6 +37,8 @@ private:
     EntityManager mEntityManager;
     
     bool mDragAEntityrea;
+    bool mKeyShift;
+
     
     ImVec2 mEntityAreaOffset;
     float mEntityAreaScale;

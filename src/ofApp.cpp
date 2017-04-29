@@ -166,17 +166,19 @@ void ofApp::GUI_entityArea() {
         EntityList* entities = mEntityManager.getEntities();
         
         
-        
+        const bool targetMode = (io.KeyShift && mEntityManager.draggingEntity != NULL);
+        mEntityManager.hotEntity = NULL;
+
         if (ImGui::IsWindowFocused() ) {
             
             // check if we hover an entity in reverse so
             // top entities are selected first
-            if( mEntityManager.draggingEntity == NULL && !mDragAEntityrea ) {
+            if( targetMode || (mEntityManager.draggingEntity == NULL && !mDragAEntityrea ) ) {
                 EntityList* list = mEntityManager.getEntities();
                 for (unsigned i = list->size(); i-- > 0; ) {
                     // hover
                     EntityRef eRef = list->at(i);
-                    eRef->stateFlags &= ~(Entity::ST_DOWN|Entity::ST_OVER);
+                    eRef->stateFlags &= ~(Entity::ST_DOWN|Entity::ST_OVER|Entity::ST_TRGT);
 
                     if( eRef->hitTest((relMousePosition.x - mEntityAreaOffset.x)/mEntityAreaScale,
                                       (relMousePosition.y - mEntityAreaOffset.y)/mEntityAreaScale) ) {
@@ -188,7 +190,10 @@ void ofApp::GUI_entityArea() {
                         if( io.MouseDown[0] && mEntityManager.hotEntity == eRef ) {
                             mEntityManager.activeEntity = eRef;
                             mEntityManager.activeEntity->stateFlags |= Entity::ST_DOWN;
-                        } else if( io.MouseReleased[0] && mEntityManager.activeEntity == eRef ) {
+                            if( targetMode && mEntityManager.activeEntity != mEntityManager.draggingEntity ) {
+                                mEntityManager.activeEntity->stateFlags |= Entity::ST_TRGT;
+                            }
+                        } else if( io.MouseReleased[0] && mEntityManager.activeEntity == eRef && !targetMode ) {
                             if( mEntityManager.selectedEntity != NULL &&
                                 mEntityManager.selectedEntity != eRef ) {
                                 mEntityManager.selectedEntity->stateFlags &= ~Entity::ST_SLCT;
@@ -202,22 +207,32 @@ void ofApp::GUI_entityArea() {
                 }
             }
 
-            mEntityManager.hotEntity = NULL;
 
-            if( io.MouseReleased[0] ) {
+            // reset drag mode when mouse is release or shift key is released
+            if( io.MouseReleased[0] || mKeyShift != io.KeyShift ) {
                 if( mEntityManager.draggingEntity != NULL ) {
-                    mEntityManager.draggingEntity->stateFlags &= ~Entity::ST_DRAG;
+                    mEntityManager.draggingEntity->stateFlags &= ~(Entity::ST_DRAG|Entity::ST_SRC);
                 }
                 if( mEntityManager.activeEntity != NULL ) {
-                    mEntityManager.activeEntity->stateFlags &= ~Entity::ST_DOWN;
+                    mEntityManager.activeEntity->stateFlags &= ~(Entity::ST_DOWN);
                 }
+                if( mEntityManager.hotEntity != NULL ) {
+                    mEntityManager.hotEntity->stateFlags &= ~(Entity::ST_TRGT);
+
+                }
+                
+                if( mEntityManager.draggingEntity != NULL && mEntityManager.hotEntity != NULL && io.KeyShift ) {
+                    // we have a connection
+                    ofLogVerbose(__FUNCTION__) << "connection from " << mEntityManager.draggingEntity << " to " << mEntityManager.hotEntity;
+                }
+                
                 mEntityManager.activeEntity = mEntityManager.draggingEntity = NULL;
                 mDragAEntityrea = false;
             }
             
             // scale view with mouse wheel
             if( ImGui::GetIO().MouseWheel != 0 ) {
-                mEntityAreaScale += ImGui::GetIO().MouseWheel*0.1;
+                mEntityAreaScale += ImGui::GetIO().MouseWheel*0.01;
                 if( mEntityAreaScale < 0.1 ) {
                     mEntityAreaScale = 0.1;
                 } else if( mEntityAreaScale > 4.0 ) {
@@ -228,12 +243,49 @@ void ofApp::GUI_entityArea() {
             if( ImGui::IsMouseDragging() ) {
                 if( mEntityManager.activeEntity != NULL && mEntityManager.draggingEntity == NULL ) {
                     mEntityManager.draggingEntity = mEntityManager.activeEntity;
-                    mEntityManager.draggingEntity->stateFlags |= Entity::ST_DRAG;
+                    mEntityManager.draggingEntity->stateFlags |= io.KeyShift?Entity::ST_SRC:Entity::ST_DRAG;
                 }
                 
                 if( mEntityManager.draggingEntity != NULL ) {
                     // drag entity around
-                    mEntityManager.draggingEntity->move( io.MouseDelta.x/mEntityAreaScale, io.MouseDelta.y/mEntityAreaScale );
+                    if( io.KeyShift ) {
+                        if( mEntityManager.draggingEntity != NULL ) {
+                            // we have a connection, draw a line ...
+                            if( mEntityManager.hotEntity != NULL ) {
+                                // ... to center of target
+                                const ImVec2 start = ImVec2(
+                                                            mEntityManager.draggingEntity->getPosition().x*
+                                                            mEntityAreaScale+relativeOffset.x,
+                                                            mEntityManager.draggingEntity->getPosition().y*
+                                                            mEntityAreaScale+relativeOffset.y
+                                                            );
+                                const ImVec2 end = ImVec2(
+                                                          mEntityManager.hotEntity->getPosition().x*
+                                                          mEntityAreaScale+relativeOffset.x,
+                                                          mEntityManager.hotEntity->getPosition().y*
+                                                          mEntityAreaScale+relativeOffset.y
+                                                          );
+                                ImGui::GetWindowDrawList()->AddLine(start, end, 0xff00ff00);
+                            } else {
+                                // ... to mouse pointer
+                                const ImVec2 start = ImVec2(
+                                                            mEntityManager.draggingEntity->getPosition().x*
+                                                            mEntityAreaScale+relativeOffset.x,
+                                                            mEntityManager.draggingEntity->getPosition().y*
+                                                            mEntityAreaScale+relativeOffset.y
+                                                            );
+                                ImGui::GetWindowDrawList()->AddLine(start, io.MousePos, 0xff00ffff);
+                            }
+                            
+                        }
+                    } else {
+                        mEntityManager.
+                            draggingEntity->move(
+                                io.MouseDelta.x/mEntityAreaScale,
+                                io.MouseDelta.y/mEntityAreaScale
+                            );
+                    }
+
                 } else {
                     // drag view around
                     mDragAEntityrea = true;
@@ -255,7 +307,7 @@ void ofApp::GUI_entityArea() {
         //mEntityManager.drawBoundingBox(relativeOffset, mEntityAreaScale);
         
         ImGui::EndChild();
-        
+        mKeyShift = io.KeyShift;
         
     }
     

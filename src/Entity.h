@@ -34,6 +34,8 @@ public:
     static const int ST_DOWN =  2;
     static const int ST_DRAG =  4;
     static const int ST_SLCT =  8;
+    static const int ST_SRC  = 16;
+    static const int ST_TRGT = 32;
 
     
     Entity( string id, ImVec2 position );
