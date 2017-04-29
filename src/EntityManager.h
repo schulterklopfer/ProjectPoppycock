@@ -38,7 +38,7 @@ public:
     EntityRef activeEntity;
     EntityRef draggingEntity;
     EntityRef selectedEntity;
-    
+        
 };
 
 

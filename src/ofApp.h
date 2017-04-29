@@ -39,8 +39,7 @@ private:
     bool mDragAEntityrea;
     bool mKeyShift;
 
-    
-    ImVec2 mEntityAreaOffset;
+    ofRectangle mEntityAreaViewRect;
     float mEntityAreaScale;
     
     ofxImGui::Gui mGui;

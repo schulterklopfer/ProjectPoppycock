@@ -154,22 +154,22 @@ void ofApp::GUI_entityArea() {
     if( ImGui::Begin("entities", NULL, window_flags) ) {
  
         ImGui::BeginChild("draw area");
-        
+        ImVec2 drawAreaSize = ImGui::GetWindowContentRegionMax();
+        mEntityAreaViewRect.setSize(drawAreaSize.x*mEntityAreaScale,
+                                    drawAreaSize.y*mEntityAreaScale);
         const ImVec2 cPos = ImGui::GetCursorScreenPos();
-        const ImVec2 relMousePosition = ImVec2( io.MousePos.x - cPos.x,
-                                                io.MousePos.y - cPos.y );
-        
-        const ImVec2 relativeOffset = ImVec2( mEntityAreaOffset.x + cPos.x,
-                                              mEntityAreaOffset.y + cPos.y );
+        ImVec2 relativeOffset = ImVec2( mEntityAreaViewRect.getX() + cPos.x,
+                                        mEntityAreaViewRect.getY() + cPos.y );
 
-        
         EntityList* entities = mEntityManager.getEntities();
-        
-        
-        const bool targetMode = (io.KeyShift && mEntityManager.draggingEntity != NULL);
+
         mEntityManager.hotEntity = NULL;
 
         if (ImGui::IsWindowFocused() ) {
+            const ImVec2 relMousePosition = ImVec2( io.MousePos.x - cPos.x,
+                                                   io.MousePos.y - cPos.y );
+            
+            const bool targetMode = (io.KeyShift && mEntityManager.draggingEntity != NULL);
             
             // check if we hover an entity in reverse so
             // top entities are selected first
@@ -180,8 +180,8 @@ void ofApp::GUI_entityArea() {
                     EntityRef eRef = list->at(i);
                     eRef->stateFlags &= ~(Entity::ST_DOWN|Entity::ST_OVER|Entity::ST_TRGT);
 
-                    if( eRef->hitTest((relMousePosition.x - mEntityAreaOffset.x)/mEntityAreaScale,
-                                      (relMousePosition.y - mEntityAreaOffset.y)/mEntityAreaScale) ) {
+                    if( eRef->hitTest((relMousePosition.x - mEntityAreaViewRect.getX())/mEntityAreaScale,
+                                      (relMousePosition.y - mEntityAreaViewRect.getY())/mEntityAreaScale) ) {
                         
                         if( mEntityManager.hotEntity == NULL ) {
                             mEntityManager.hotEntity = eRef;
@@ -228,16 +228,6 @@ void ofApp::GUI_entityArea() {
                 
                 mEntityManager.activeEntity = mEntityManager.draggingEntity = NULL;
                 mDragAEntityrea = false;
-            }
-            
-            // scale view with mouse wheel
-            if( ImGui::GetIO().MouseWheel != 0 ) {
-                mEntityAreaScale += ImGui::GetIO().MouseWheel*0.01;
-                if( mEntityAreaScale < 0.1 ) {
-                    mEntityAreaScale = 0.1;
-                } else if( mEntityAreaScale > 4.0 ) {
-                    mEntityAreaScale = 4.0;
-                }
             }
             
             if( ImGui::IsMouseDragging() ) {
@@ -289,13 +279,43 @@ void ofApp::GUI_entityArea() {
                 } else {
                     // drag view around
                     mDragAEntityrea = true;
-                    mEntityAreaOffset.x += io.MouseDelta.x;
-                    mEntityAreaOffset.y += io.MouseDelta.y;
+                    mEntityAreaViewRect.position.x += io.MouseDelta.x;
+                    mEntityAreaViewRect.position.y += io.MouseDelta.y;
                 }
                 
             }
-        }
+            
+            // scale view with mouse wheel around mouse pointer
+            if( io.MouseWheel != 0 ) {
+                
+                // view rect
+                ofRectangle rect = mEntityAreaViewRect;
+                
+                // this will act as an anchor when scaling is done
+                const ImVec2 viewAreaMouse = ImVec2((relMousePosition.x - rect.position.x)/mEntityAreaScale,
+                                                    (relMousePosition.y - rect.position.y)/mEntityAreaScale );
+                
+                mEntityAreaScale += io.MouseWheel*0.1;
+                if( mEntityAreaScale < 0.1 ) {
+                    mEntityAreaScale = 0.1;
+                } else if( mEntityAreaScale > 4.0 ) {
+                    mEntityAreaScale = 4.0;
+                }
+                
+                rect.position.set(relMousePosition.x - viewAreaMouse.x*mEntityAreaScale,
+                                  relMousePosition.y - viewAreaMouse.y*mEntityAreaScale);
+                
+                rect.setSize(drawAreaSize.x*mEntityAreaScale, drawAreaSize.y*mEntityAreaScale);
+                
+                mEntityAreaViewRect.set(rect);
+             
+                relativeOffset.x = mEntityAreaViewRect.getX() + cPos.x;
+                relativeOffset.y = mEntityAreaViewRect.getY() + cPos.y;
 
+            }
+        }
+        
+        
         // draw
         for( EntityListIterator iter = entities->begin(); iter != entities->end(); ++iter ) {
             (*iter)->draw( relativeOffset, mEntityAreaScale );
