@@ -169,6 +169,8 @@ void ofApp::GUI_entityArea() {
             const ImVec2 relMousePosition = ImVec2( io.MousePos.x - cPos.x,
                                                    io.MousePos.y - cPos.y );
             
+            // target mode is entered when entity is dragged and shit key is held down
+            // this is used to draw connections from draggingEntity to hotEntity
             const bool targetMode = (io.KeyShift && mEntityManager.draggingEntity != NULL);
             
             // check if we hover an entity in reverse so
@@ -183,17 +185,23 @@ void ofApp::GUI_entityArea() {
                     if( eRef->hitTest((relMousePosition.x - mEntityAreaViewRect.getX())/mEntityAreaScale,
                                       (relMousePosition.y - mEntityAreaViewRect.getY())/mEntityAreaScale) ) {
                         
+                        // mark entity under mouse as hot
                         if( mEntityManager.hotEntity == NULL ) {
                             mEntityManager.hotEntity = eRef;
                             mEntityManager.hotEntity->stateFlags |= Entity::ST_OVER;
                         }
+                        
+                        // mark entity under mouse when left button is down as active
                         if( io.MouseDown[0] && mEntityManager.hotEntity == eRef ) {
                             mEntityManager.activeEntity = eRef;
                             mEntityManager.activeEntity->stateFlags |= Entity::ST_DOWN;
                             if( targetMode && mEntityManager.activeEntity != mEntityManager.draggingEntity ) {
                                 mEntityManager.activeEntity->stateFlags |= Entity::ST_TRGT;
                             }
-                        } else if( io.MouseReleased[0] && mEntityManager.activeEntity == eRef && !targetMode ) {
+                        }
+                        // select entity under mouse when button was pressed and released over the same entity
+                        // but only when not in target mode
+                        else if( io.MouseReleased[0] && mEntityManager.activeEntity == eRef && !targetMode ) {
                             if( mEntityManager.selectedEntity != NULL &&
                                 mEntityManager.selectedEntity != eRef ) {
                                 mEntityManager.selectedEntity->stateFlags &= ~Entity::ST_SLCT;
@@ -201,8 +209,6 @@ void ofApp::GUI_entityArea() {
                             mEntityManager.selectedEntity = eRef;
                             mEntityManager.selectedEntity->stateFlags |= Entity::ST_SLCT;
                         }
-                        
-                        //break;
                     }
                 }
             }
@@ -222,7 +228,9 @@ void ofApp::GUI_entityArea() {
                 }
                 
                 if( mEntityManager.draggingEntity != NULL && mEntityManager.hotEntity != NULL && io.KeyShift ) {
-                    // we have a connection
+                    // we have a connection, add connection object to data structs
+                    // connections have a direction. there can be multiple connections out
+                    // but only one connection in.
                     ofLogVerbose(__FUNCTION__) << "connection from " << mEntityManager.draggingEntity << " to " << mEntityManager.hotEntity;
                 }
                 
@@ -237,7 +245,8 @@ void ofApp::GUI_entityArea() {
                 }
                 
                 if( mEntityManager.draggingEntity != NULL ) {
-                    // drag entity around
+                    
+                    // drag connection to another entity
                     if( io.KeyShift ) {
                         if( mEntityManager.draggingEntity != NULL ) {
                             // we have a connection, draw a line ...
@@ -268,7 +277,9 @@ void ofApp::GUI_entityArea() {
                             }
                             
                         }
-                    } else {
+                    }
+                    // drag entity around
+                    else {
                         mEntityManager.
                             draggingEntity->move(
                                 io.MouseDelta.x/mEntityAreaScale,
@@ -278,6 +289,7 @@ void ofApp::GUI_entityArea() {
 
                 } else {
                     // drag view around
+                    // TODO: Limit to bounds of EntityManager
                     mDragAEntityrea = true;
                     mEntityAreaViewRect.position.x += io.MouseDelta.x;
                     mEntityAreaViewRect.position.y += io.MouseDelta.y;
@@ -295,6 +307,7 @@ void ofApp::GUI_entityArea() {
                 const ImVec2 viewAreaMouse = ImVec2((relMousePosition.x - rect.position.x)/mEntityAreaScale,
                                                     (relMousePosition.y - rect.position.y)/mEntityAreaScale );
                 
+                // set scale factor
                 mEntityAreaScale += io.MouseWheel*0.1;
                 if( mEntityAreaScale < 0.1 ) {
                     mEntityAreaScale = 0.1;
@@ -302,6 +315,7 @@ void ofApp::GUI_entityArea() {
                     mEntityAreaScale = 4.0;
                 }
                 
+                // compute new view rect position based on mouse anchor and new scale factor
                 rect.position.set(relMousePosition.x - viewAreaMouse.x*mEntityAreaScale,
                                   relMousePosition.y - viewAreaMouse.y*mEntityAreaScale);
                 
