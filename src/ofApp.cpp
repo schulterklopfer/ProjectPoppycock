@@ -302,12 +302,14 @@ void ofApp::GUI_entityArea() {
                 
                 // view rect
                 ofRectangle rect = mEntityAreaViewRect;
-                
+
+                // compute the mouse position in the unscaled entity view based on the area view rect and
+                // scale factor
                 // this will act as an anchor when scaling is done
                 const ImVec2 viewAreaMouse = ImVec2((relMousePosition.x - rect.position.x)/mEntityAreaScale,
                                                     (relMousePosition.y - rect.position.y)/mEntityAreaScale );
                 
-                // set scale factor
+                // set new scale factor
                 mEntityAreaScale += io.MouseWheel*0.1;
                 if( mEntityAreaScale < 0.1 ) {
                     mEntityAreaScale = 0.1;
