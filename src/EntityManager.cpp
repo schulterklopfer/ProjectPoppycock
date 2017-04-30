@@ -35,6 +35,7 @@ bool EntityManager::connectorExists( EntityRef source, EntityRef target ) {
             return true;
         }
     }
+    return false;
 }
 
 bool EntityManager::connectorIsCircular( EntityRef source, EntityRef target ) {
