@@ -66,6 +66,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
+    
     //backgroundColor is stored as an ImVec4 type but is converted to ofColor automatically
     
     ofSetBackgroundColor(mBackgroundColor);
@@ -328,6 +329,20 @@ void ofApp::GUI_entityArea() {
 
 
             }
+            
+            // hit test on connectors
+            for( ConnectorListIterator iter = connectors->begin(); iter != connectors->end(); ++iter ) {
+                if( (*iter)->hitTest((relMousePosition.x - mEntityAreaViewRect.getX())/mEntityAreaScale,
+                                     (relMousePosition.y - mEntityAreaViewRect.getY())/mEntityAreaScale) ) {
+                    (*iter)->stateFlags |= Connector::State::OVER;
+                } else {
+                    (*iter)->stateFlags &= ~Connector::State::OVER;
+
+                }
+                
+                
+            }
+
         }
         
         GUI_entityArea_backgroundGrid();

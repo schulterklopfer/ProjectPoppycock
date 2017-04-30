@@ -15,10 +15,10 @@
 
 #include "ofxImGui.h"
 #include "ofRectangle.h"
-
+#include "Interactive.h"
 #include "Connector.h"
 
-class Entity {
+class Entity : public Interactive {
 
     
 protected:
@@ -37,27 +37,12 @@ protected:
     
 public:
 
-    typedef enum E_TYPE {
-        NONE,
-        EFFECT,
-        OBSERVER
-    } Type;
-    
-    typedef enum E_STATE {
-        OVER   =  1,
-        DOWN   =  2,
-        DRAG   =  4,
-        SELECT =  8,
-        SOURCE = 16,
-        TARGET = 32
-    } State;
-    
     Entity( string id, ImVec2 position );
 
     virtual void draw( ImVec2 offset, float scale );
     void drawBoundingBox( ImVec2 offset, float scale );
     virtual bool hitTest( float x, float y );
-    virtual Type getType();
+    virtual Interactive::Type getType();
     ImVec2 getPosition();
     ImVec2 getDrawPosition( ImVec2 offset, float scale );
     void setPosition( ImVec2 p);

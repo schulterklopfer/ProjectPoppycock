@@ -13,11 +13,12 @@
 #include <vector>
 #include "boost/shared_ptr.hpp"
 
+#include "Interactive.h"
 #include "ofxImGui.h"
 
 class Entity;
 
-class Connector {
+class Connector : public Interactive {
 
 protected:
     // cant use EntityRef since it's defined in Entity.h and including that would
@@ -26,6 +27,7 @@ protected:
     boost::shared_ptr<Entity> mTarget;
     
 public:
+    
     Connector(boost::shared_ptr<Entity> source,
               boost::shared_ptr<Entity> target ) : mSource(source), mTarget(target) {};
     
@@ -34,7 +36,10 @@ public:
     boost::shared_ptr<Entity> getSource();
     boost::shared_ptr<Entity> getTarget();
     
+    bool hitTest( float x, float y );
     
+    int stateFlags;
+
 };
 
 
