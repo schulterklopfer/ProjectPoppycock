@@ -27,9 +27,15 @@ private:
     bool mBoundsDirty;
     float mSize;
     
-    
 public:
 
+    typedef enum E_TYPE {
+        NONE,
+        EFFECT,
+        OBSERVER,
+        CONNECTOR
+    } Type;
+    
     typedef enum E_STATE {
         OVER   =  1,
         DOWN   =  2,
@@ -45,6 +51,7 @@ public:
     void drawBoundingBox( ImVec2 offset, float scale );
 
     virtual bool hitTest( float x, float y );
+    virtual Type getType();
     
     int stateFlags;
     

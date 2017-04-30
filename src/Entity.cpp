@@ -97,3 +97,7 @@ void Entity::recalcBounds() {
 bool Entity::hitTest( float x, float y ) {
     return mBounds.inside(x, y);
 }
+
+Entity::Type Entity::getType() {
+    return Entity::Type::NONE;
+}
