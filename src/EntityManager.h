@@ -29,6 +29,7 @@ private:
 public:
     
     void createEntity( string id, ofVec2f position );
+    void createEffect( string id, ofVec2f position );
     EntityList* getEntities();
     void drawBoundingBox( ImVec2 offset, float scale );
     ofRectangle* getBounds();

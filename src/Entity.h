@@ -17,9 +17,9 @@
 class Entity {
 
     
-private:
+protected:
     
-    void recalcBounds();
+    virtual void recalcBounds();
     
     string mId;
     ImVec2 mPosition;
@@ -57,6 +57,7 @@ public:
     
     
     ImVec2 getPosition();
+    ImVec2 getDrawPosition( ImVec2 offset, float scale );
     void setPosition( ImVec2 p);
     void move( float x, float y );
     bool getBoundsDirty();

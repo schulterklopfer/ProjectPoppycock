@@ -41,9 +41,9 @@ void ofApp::setup()
 
     ofLogVerbose() << "textureSourceID: " << textureSourceID;
     
-    mEntityManager.createEntity("test0", ofVec2f(20,20));
+    mEntityManager.createEffect("test0", ofVec2f(20,20));
     mEntityManager.createEntity("test1", ofVec2f(100.0f,100.0f));
-    mEntityManager.createEntity("test2", ofVec2f(100.0f,200.0f));
+    mEntityManager.createEffect("test2", ofVec2f(100.0f,200.0f));
     mEntityManager.createEntity("test3", ofVec2f(200.0f,100.0f));
     mEntityManager.createEntity("test4", ofVec2f(1030,1030));
 

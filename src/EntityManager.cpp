@@ -7,9 +7,15 @@
 //
 
 #include "EntityManager.h"
+#include "Effect.h"
 
 void EntityManager::createEntity(string id, ofVec2f position) {
     mEntities.push_back(EntityRef(new Entity(id, position)));
+    recalcBounds();
+};
+
+void EntityManager::createEffect(string id, ofVec2f position) {
+    mEntities.push_back(EntityRef(new Effect(id, position)));
     recalcBounds();
 };
 

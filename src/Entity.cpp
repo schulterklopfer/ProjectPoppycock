@@ -22,6 +22,12 @@ ImVec2 Entity::getPosition() {
     return mPosition;
 }
 
+ImVec2 Entity::getDrawPosition( ImVec2 offset, float scale ) {
+    return  ImVec2( mPosition.x*scale + offset.x,
+                    mPosition.y*scale + offset.y );
+}
+
+
 void Entity::setPosition( ImVec2 p) {
     mPosition.x = p.x;
     mPosition.y = p.y;
@@ -51,9 +57,6 @@ void Entity::setId( string id ) {
 }
 
 void Entity::draw( ImVec2 offset, float scale ) {
-    ImVec2 position = ImVec2( mPosition.x*scale + offset.x,
-                              mPosition.y*scale + offset.y );
-    
     int color = 0xffffffff;
     
     if( (stateFlags&State::OVER) == State::OVER ) {
@@ -75,7 +78,7 @@ void Entity::draw( ImVec2 offset, float scale ) {
         color = 0xffff0000;
     }
     
-    ImGui::GetWindowDrawList()->AddCircleFilled(position, mSize*0.5*scale, color, 64 );
+    ImGui::GetWindowDrawList()->AddCircleFilled(getDrawPosition(offset, scale), mSize*0.5*scale, color, 64 );
 
 }
 
