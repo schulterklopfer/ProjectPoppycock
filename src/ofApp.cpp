@@ -329,12 +329,16 @@ void ofApp::GUI_entityArea() {
              
                 relativeOffset.x = mEntityAreaViewRect.getX() + cPos.x;
                 relativeOffset.y = mEntityAreaViewRect.getY() + cPos.y;
+                
+                mEntityAreaViewRect.setSize(drawAreaSize.x/mEntityAreaScale,
+                                            drawAreaSize.y/mEntityAreaScale);
+
 
             }
         }
         
+        GUI_entityArea_backgroundGrid();
         
-        // draw
         // draw connectors
         for( ConnectorListIterator iter = connectors->begin(); iter != connectors->end(); ++iter ) {
             (*iter)->draw( relativeOffset, mEntityAreaScale );
@@ -342,12 +346,13 @@ void ofApp::GUI_entityArea() {
             
         }
 
+        // draw entities
         for( EntityListIterator iter = entities->begin(); iter != entities->end(); ++iter ) {
             (*iter)->draw( relativeOffset, mEntityAreaScale );
             //(*iter)->drawBoundingBox( relativeOffset, mEntityAreaScale );
 
         }
-        
+                
         mEntityManager.checkDirtyBounds();
         //mEntityManager.drawBoundingBox(relativeOffset, mEntityAreaScale);
         
@@ -358,6 +363,48 @@ void ofApp::GUI_entityArea() {
     
     ImGui::End();
 }
+
+void ofApp::GUI_entityArea_backgroundGrid() {
+    
+    
+    const ImVec2 cPos = ImGui::GetCursorScreenPos();
+    
+    const float minX = 0;
+    const float minY = 0;
+    const float maxX = mEntityAreaViewRect.getWidth();
+    const float maxY = mEntityAreaViewRect.getHeight();
+    
+    const int step = 20;
+
+    const ImVec2 gridOffset = ImVec2((int)(mEntityAreaViewRect.position.x/mEntityAreaScale)%step,
+                                     (int)(mEntityAreaViewRect.position.y/mEntityAreaScale)%step);
+
+    
+    ImVec2 tl;
+    ImVec2 br;
+    
+    const int color = 0x55ffffff;
+    
+    for( int y=minY; y<=maxY; y+=step ) {
+        for( int x=minX; x<=maxX; x+=step ) {
+            
+            tl.x = x + gridOffset.x;
+            tl.y = y + gridOffset.y;
+            
+            tl.x*=mEntityAreaScale;
+            tl.y*=mEntityAreaScale;
+
+            tl.x += cPos.x;
+            tl.y += cPos.y;
+            
+            br.x = tl.x+1;
+            br.y = tl.y+1;
+            
+            ImGui::GetWindowDrawList()->AddRectFilled(tl, br, color);
+        }
+    }
+}
+
 
 void ofApp::GUI_sidebar() {
     ImGuiWindowFlags window_flags = 0;

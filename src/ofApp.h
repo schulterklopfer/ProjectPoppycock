@@ -30,6 +30,7 @@ public:
     
 private:
     
+    void GUI_entityArea_backgroundGrid();
     void GUI_entityMenu();
     void GUI_entityArea();
     void GUI_sidebar();
