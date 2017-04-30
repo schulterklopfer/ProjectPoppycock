@@ -10,13 +10,12 @@
 #define EntityManager_h
 
 #include <stdio.h>
-#include "Entity.h"
-#include <vector>
 #include "ofRectangle.h"
+#include "ofxImGui.h"
 
-typedef std::vector<EntityRef> EntityList;
-typedef std::vector<EntityRef>::iterator EntityListIterator;
-typedef std::vector<EntityRef>::reverse_iterator EntityListReverseIterator;
+#include "Entity.h"
+#include "Effect.h"
+#include "Connector.h"
 
 class EntityManager {
 private:
@@ -24,13 +23,18 @@ private:
     void recalcBounds();
     
     EntityList mEntities;
+    ConnectorList mConnectors;
     ofRectangle mBounds;
     
 public:
     
     void createEntity( string id, ofVec2f position );
     void createEffect( string id, ofVec2f position );
+    void createConnector( EntityRef source, EntityRef target );
+    bool connectorExists( EntityRef source, EntityRef target );
+    bool connectorIsCircular( EntityRef source, EntityRef target );
     EntityList* getEntities();
+    ConnectorList* getConnectors();
     void drawBoundingBox( ImVec2 offset, float scale );
     ofRectangle* getBounds();
     void checkDirtyBounds();

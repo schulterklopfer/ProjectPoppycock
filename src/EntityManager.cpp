@@ -7,7 +7,6 @@
 //
 
 #include "EntityManager.h"
-#include "Effect.h"
 
 void EntityManager::createEntity(string id, ofVec2f position) {
     mEntities.push_back(EntityRef(new Entity(id, position)));
@@ -19,8 +18,39 @@ void EntityManager::createEffect(string id, ofVec2f position) {
     recalcBounds();
 };
 
-std::vector<EntityRef>* EntityManager::getEntities() {
+void EntityManager::createConnector( EntityRef source, EntityRef target ) {
+    // check if there is already a connector between source and target
+    if( source == target || connectorExists( source, target ) ) return;
+    ConnectorRef cRef = ConnectorRef( new Connector( source, target ) );
+    source->addOutput(cRef);
+    target->setInput(cRef);
+    mConnectors.push_back(cRef);
+    
+}
+
+bool EntityManager::connectorExists( EntityRef source, EntityRef target ) {
+    for( ConnectorListIterator iter = mConnectors.begin(); iter != mConnectors.end(); ++iter ) {
+        if(((*iter)->getSource() == source && (*iter)->getTarget() == target) ||
+           ((*iter)->getSource() == target && (*iter)->getTarget() == source)) {
+            return true;
+        }
+    }
+}
+
+bool EntityManager::connectorIsCircular( EntityRef source, EntityRef target ) {
+    // if nothing is connected to source, early out
+    if( source->getInput() == NULL ) return false;
+    
+    // TODO: implement
+    return false;
+}
+
+EntityList* EntityManager::getEntities() {
     return &mEntities;
+}
+
+ConnectorList* EntityManager::getConnectors() {
+    return &mConnectors;
 }
 
 void EntityManager::recalcBounds() {

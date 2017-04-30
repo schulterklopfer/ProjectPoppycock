@@ -10,9 +10,13 @@
 #define Entity_h
 
 #include <stdio.h>
+#include <vector>
 #include "boost/shared_ptr.hpp"
+
 #include "ofxImGui.h"
 #include "ofRectangle.h"
+
+#include "Connector.h"
 
 class Entity {
 
@@ -27,13 +31,16 @@ protected:
     bool mBoundsDirty;
     float mSize;
     
+    ConnectorRef mInput;
+    ConnectorList mOutputs;
+    
+    
 public:
 
     typedef enum E_TYPE {
         NONE,
         EFFECT,
-        OBSERVER,
-        CONNECTOR
+        OBSERVER
     } Type;
     
     typedef enum E_STATE {
@@ -49,28 +56,30 @@ public:
 
     virtual void draw( ImVec2 offset, float scale );
     void drawBoundingBox( ImVec2 offset, float scale );
-
     virtual bool hitTest( float x, float y );
     virtual Type getType();
-    
-    int stateFlags;
-    
-    
     ImVec2 getPosition();
     ImVec2 getDrawPosition( ImVec2 offset, float scale );
     void setPosition( ImVec2 p);
     void move( float x, float y );
     bool getBoundsDirty();
     void clearBoundsDirty();
-    
     string getId();
     void setId( string id );
-    
     ofRectangle* getBounds();
+    ConnectorRef getInput();
+    ConnectorList* getOutputs();
+    void setInput( ConnectorRef input );
+    void addOutput( ConnectorRef output );
+    bool outputExists( Entity* e );
+    
+    int stateFlags;
     
 };
 
 typedef boost::shared_ptr<Entity> EntityRef;
+typedef std::vector<EntityRef> EntityList;
+typedef EntityList::iterator EntityListIterator;
 
 
 #endif /* Entity_h */

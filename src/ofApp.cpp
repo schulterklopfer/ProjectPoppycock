@@ -162,6 +162,7 @@ void ofApp::GUI_entityArea() {
                                         mEntityAreaViewRect.getY() + cPos.y );
 
         EntityList* entities = mEntityManager.getEntities();
+        ConnectorList* connectors = mEntityManager.getConnectors();
 
         mEntityManager.hotEntity = NULL;
 
@@ -232,6 +233,7 @@ void ofApp::GUI_entityArea() {
                     // connections have a direction. there can be multiple connections out
                     // but only one connection in.
                     ofLogVerbose(__FUNCTION__) << "connection from " << mEntityManager.draggingEntity << " to " << mEntityManager.hotEntity;
+                    mEntityManager.createConnector(mEntityManager.draggingEntity, mEntityManager.hotEntity);
                 }
                 
                 mEntityManager.activeEntity = mEntityManager.draggingEntity = NULL;
@@ -333,6 +335,13 @@ void ofApp::GUI_entityArea() {
         
         
         // draw
+        // draw connectors
+        for( ConnectorListIterator iter = connectors->begin(); iter != connectors->end(); ++iter ) {
+            (*iter)->draw( relativeOffset, mEntityAreaScale );
+            //(*iter)->drawBoundingBox( relativeOffset, mEntityAreaScale );
+            
+        }
+
         for( EntityListIterator iter = entities->begin(); iter != entities->end(); ++iter ) {
             (*iter)->draw( relativeOffset, mEntityAreaScale );
             //(*iter)->drawBoundingBox( relativeOffset, mEntityAreaScale );

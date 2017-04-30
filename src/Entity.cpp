@@ -104,3 +104,43 @@ bool Entity::hitTest( float x, float y ) {
 Entity::Type Entity::getType() {
     return Entity::Type::NONE;
 }
+
+ConnectorRef Entity::getInput() {
+    return mInput;
+}
+
+ConnectorList* Entity::getOutputs() {
+    return &mOutputs;
+}
+
+void Entity::setInput( ConnectorRef input ) {
+    if( input == mInput ) return;
+    mInput = input;
+}
+
+void Entity::addOutput( ConnectorRef output ) {
+    
+    // connector doesn't have this object as source
+    if( output->getSource().get() != this ) {
+        ofLogVerbose(__FUNCTION__ ) << "connector has wrong source " << output->getSource()->getId();
+        return;
+    }
+    
+    if( outputExists( output->getTarget().get() ) ) {
+        return;
+    }
+    
+    mOutputs.push_back(output);
+    
+}
+
+bool Entity::outputExists( Entity* e ) {
+    // does a output with this object as source and e exist?
+    for( ConnectorListIterator iter = mOutputs.begin(); iter != mOutputs.end(); ++iter ) {
+        if( ((*iter)->getSource()).get() == this && ((*iter)->getTarget()).get() == e ) {
+            ofLogVerbose(__FUNCTION__ ) << "out out to " << e->getId() << " exists.";
+            return true;
+        }
+    }
+    return false;
+}

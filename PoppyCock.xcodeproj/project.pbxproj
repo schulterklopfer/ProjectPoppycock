@@ -24,6 +24,7 @@
 		A0F2BFB15B92B4C6EB9527DE /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C966A8F6085AAA2FED6F411 /* Helpers.cpp */; };
 		B44B5599ADC860A956B01646 /* Set.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D729ECA86453DE065311E034 /* Set.cpp */; };
 		C2162D921EB5E6EC00B5D2BF /* Effect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2162D901EB5E6EC00B5D2BF /* Effect.cpp */; };
+		C2162D951EB5F36300B5D2BF /* Connector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2162D931EB5F36200B5D2BF /* Connector.cpp */; };
 		C27C57BA1EB2775C0012AA66 /* EntityManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27C57B81EB2775C0012AA66 /* EntityManager.cpp */; };
 		C27C57BD1EB27B810012AA66 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27C57BB1EB27B810012AA66 /* Entity.cpp */; };
 		D57027F36B35F3FF654824D9 /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CED095FF14A0932EE69B7A8 /* Shader.cpp */; };
@@ -103,6 +104,8 @@
 		B462DABAC6A023A1D88702C7 /* BaseTheme.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = BaseTheme.h; path = ../../../addons/ofxImGui/src/BaseTheme.h; sourceTree = SOURCE_ROOT; };
 		C2162D901EB5E6EC00B5D2BF /* Effect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Effect.cpp; sourceTree = "<group>"; };
 		C2162D911EB5E6EC00B5D2BF /* Effect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Effect.h; sourceTree = "<group>"; };
+		C2162D931EB5F36200B5D2BF /* Connector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Connector.cpp; sourceTree = "<group>"; };
+		C2162D941EB5F36300B5D2BF /* Connector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connector.h; sourceTree = "<group>"; };
 		C27C57B81EB2775C0012AA66 /* EntityManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityManager.cpp; sourceTree = "<group>"; };
 		C27C57B91EB2775C0012AA66 /* EntityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
 		C27C57BB1EB27B810012AA66 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
@@ -300,6 +303,8 @@
 				C27C57BE1EB3A0860012AA66 /* imgui_user.h */,
 				C2162D901EB5E6EC00B5D2BF /* Effect.cpp */,
 				C2162D911EB5E6EC00B5D2BF /* Effect.h */,
+				C2162D931EB5F36200B5D2BF /* Connector.cpp */,
+				C2162D941EB5F36300B5D2BF /* Connector.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -423,6 +428,7 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
+				C2162D951EB5F36300B5D2BF /* Connector.cpp in Sources */,
 				977E32123A8A07E1DB9A0D85 /* BaseAsset.cpp in Sources */,
 				48AA27BB22351E4FA5861B1A /* Font.cpp in Sources */,
 				5982B12539F35D02AB49803E /* Image.cpp in Sources */,
