@@ -36,10 +36,8 @@ public:
     boost::shared_ptr<Entity> getSource();
     boost::shared_ptr<Entity> getTarget();
     
-    bool hitTest( float x, float y );
+    virtual bool hitTest( float x, float y );
     
-    int stateFlags;
-
 };
 
 

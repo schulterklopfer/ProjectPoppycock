@@ -171,10 +171,11 @@ void ofApp::GUI_entityArea() {
             // check if we hover an entity in reverse so
             // top entities are selected first
             if( targetMode || (mEntityManager.draggingInteractive == NULL && !mDragAEntityrea ) ) {
-                EntityList* list = mEntityManager.getEntities();
-                for (unsigned i = list->size(); i-- > 0; ) {
+                //EntityList* list = mEntityManager.getEntities();
+                InteractiveList list = mEntityManager.getInteractives();
+                for (unsigned i = list.size(); i-- > 0; ) {
                     // hover
-                    EntityRef eRef = list->at(i);
+                    InteractiveRef eRef = list.at(i);
                     eRef->stateFlags &= ~(Entity::State::DOWN|Entity::State::OVER|Entity::State::TARGET);
 
                     if( eRef->hitTest((relMousePosition.x - mEntityAreaViewRect.getX())/mEntityAreaScale,
@@ -245,13 +246,10 @@ void ofApp::GUI_entityArea() {
             }
             
             if( ImGui::IsMouseDragging() ) {
-                if( mEntityManager.activeInteractive != NULL && mEntityManager.draggingInteractive == NULL ) {
-                    mEntityManager.draggingInteractive = mEntityManager.activeInteractive;
-                    mEntityManager.draggingInteractive->stateFlags |= io.KeyShift?Entity::State::SOURCE:Entity::State::DRAG;
-                }
                 
                 EntityRef draggingEntity= NULL;
                 EntityRef hotEntity = NULL;
+                EntityRef activeEntity = NULL;
                 
                 if(mEntityManager.draggingInteractive != NULL &&
                    (mEntityManager.draggingInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
@@ -262,6 +260,18 @@ void ofApp::GUI_entityArea() {
                    (mEntityManager.hotInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
                     hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
                 }
+                
+                if(mEntityManager.activeInteractive != NULL &&
+                   (mEntityManager.activeInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
+                    activeEntity = boost::static_pointer_cast<Entity>(mEntityManager.activeInteractive);
+                }
+                
+                if( activeEntity != NULL && draggingEntity == NULL ) {
+                    draggingEntity = activeEntity;
+                    mEntityManager.draggingInteractive = mEntityManager.activeInteractive;
+                    draggingEntity->stateFlags |= io.KeyShift?Entity::State::SOURCE:Entity::State::DRAG;
+                }
+
                 
                 if( draggingEntity != NULL ) {
                     
@@ -352,6 +362,7 @@ void ofApp::GUI_entityArea() {
 
             }
             
+            /*
             // hit test on connectors
             for( ConnectorListIterator iter = connectors->begin(); iter != connectors->end(); ++iter ) {
                 if( (*iter)->hitTest((relMousePosition.x - mEntityAreaViewRect.getX())/mEntityAreaScale,
@@ -364,6 +375,7 @@ void ofApp::GUI_entityArea() {
                 
                 
             }
+             */
 
         }
         

@@ -35,6 +35,7 @@ public:
     bool connectorIsCircular( EntityRef &source, EntityRef &target );
     EntityList* getEntities();
     ConnectorList* getConnectors();
+    InteractiveList getInteractives();
     void drawBoundingBox( ImVec2 offset, float scale );
     ofRectangle* getBounds();
     void checkDirtyBounds();

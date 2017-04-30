@@ -68,6 +68,21 @@ ConnectorList* EntityManager::getConnectors() {
     return &mConnectors;
 }
 
+InteractiveList EntityManager::getInteractives() {
+    InteractiveList list;
+    for( ConnectorListIterator iter = mConnectors.begin(); iter != mConnectors.end(); ++iter ) {
+        list.push_back((*iter));
+    }
+
+    for( EntityListIterator iter = mEntities.begin(); iter != mEntities.end(); ++iter ) {
+        list.push_back((*iter));
+    }
+    
+    return list;
+    
+}
+
+
 void EntityManager::recalcBounds() {
     for( EntityListIterator iter = mEntities.begin(); iter != mEntities.end(); ++iter ) {
         if( iter == mEntities.begin() ) {
