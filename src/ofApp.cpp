@@ -361,21 +361,6 @@ void ofApp::GUI_entityArea() {
 
 
             }
-            
-            /*
-            // hit test on connectors
-            for( ConnectorListIterator iter = connectors->begin(); iter != connectors->end(); ++iter ) {
-                if( (*iter)->hitTest((relMousePosition.x - mEntityAreaViewRect.getX())/mEntityAreaScale,
-                                     (relMousePosition.y - mEntityAreaViewRect.getY())/mEntityAreaScale) ) {
-                    (*iter)->stateFlags |= Connector::State::OVER;
-                } else {
-                    (*iter)->stateFlags &= ~Connector::State::OVER;
-
-                }
-                
-                
-            }
-             */
 
         }
         
