@@ -28,7 +28,7 @@ void EntityManager::createConnector( EntityRef source, EntityRef target ) {
     
 }
 
-bool EntityManager::connectorExists( EntityRef source, EntityRef target ) {
+bool EntityManager::connectorExists( EntityRef &source, EntityRef &target ) {
     for( ConnectorListIterator iter = mConnectors.begin(); iter != mConnectors.end(); ++iter ) {
         if(((*iter)->getSource() == source && (*iter)->getTarget() == target) ||
            ((*iter)->getSource() == target && (*iter)->getTarget() == source)) {
@@ -38,7 +38,7 @@ bool EntityManager::connectorExists( EntityRef source, EntityRef target ) {
     return false;
 }
 
-bool EntityManager::connectorIsCircular( EntityRef source, EntityRef target ) {
+bool EntityManager::connectorIsCircular( EntityRef &source, EntityRef &target ) {
     // if nothing is connected to source, early out
     if( source->getInput() == NULL ) return false;
     

@@ -31,8 +31,8 @@ public:
     void createEntity( string id, ofVec2f position );
     void createEffect( string id, ofVec2f position );
     void createConnector( EntityRef source, EntityRef target );
-    bool connectorExists( EntityRef source, EntityRef target );
-    bool connectorIsCircular( EntityRef source, EntityRef target );
+    bool connectorExists( EntityRef &source, EntityRef &target );
+    bool connectorIsCircular( EntityRef &source, EntityRef &target );
     EntityList* getEntities();
     ConnectorList* getConnectors();
     void drawBoundingBox( ImVec2 offset, float scale );
