@@ -21,6 +21,7 @@ void EntityManager::createEffect(string id, ofVec2f position) {
 void EntityManager::createConnector( EntityRef source, EntityRef target ) {
     // check if there is already a connector between source and target
     if( source == target || connectorExists( source, target ) ) return;
+    if( target->getInput() != NULL ) return; // only one input allowed
     ConnectorRef cRef = ConnectorRef( new Connector( source, target ) );
     source->addOutput(cRef);
     target->setInput(cRef);
