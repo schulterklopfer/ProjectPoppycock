@@ -63,7 +63,6 @@ void ofApp::update(){
     
     
 }
-bool doThemeColorsWindow = false;
 //--------------------------------------------------------------
 void ofApp::draw(){
     
@@ -113,12 +112,6 @@ void ofApp::draw(){
     pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)pixelsButtonID, ImVec2(200, 200));
     pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)textureSourceID, ImVec2(200, 200));
     
-    
-    if(doThemeColorsWindow)
-    {
-        mGui.openThemeColorWindow();
-        
-    }
     
     GUI_entityArea();
     GUI_sidebar();
