@@ -155,8 +155,8 @@ void ofApp::GUI_entityArea() {
  
         ImGui::BeginChild("draw area");
         ImVec2 drawAreaSize = ImGui::GetWindowContentRegionMax();
-        mEntityAreaViewRect.setSize(drawAreaSize.x*mEntityAreaScale,
-                                    drawAreaSize.y*mEntityAreaScale);
+        mEntityAreaViewRect.setSize(drawAreaSize.x/mEntityAreaScale,
+                                    drawAreaSize.y/mEntityAreaScale);
         const ImVec2 cPos = ImGui::GetCursorScreenPos();
         ImVec2 relativeOffset = ImVec2( mEntityAreaViewRect.getX() + cPos.x,
                                         mEntityAreaViewRect.getY() + cPos.y );
