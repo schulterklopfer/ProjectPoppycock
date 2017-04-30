@@ -19,10 +19,11 @@ class Interactive {
 public:
     
     typedef enum Type {
-        NONE,
-        EFFECT,
-        OBSERVER,
-        CONNECTOR
+        NONE      = 0,
+        ENTITY    = 1,
+        CONNECTOR = 2,
+        EFFECT    = 4,
+        OBSERVER  = 8,
     } Type;
     
     typedef enum State {
@@ -34,8 +35,11 @@ public:
         TARGET = 32
     } State;
 
+    Interactive() : stateFlags(0) {};
+
+    
     virtual bool hitTest( float x, float y );
-    virtual Type getType();
+    virtual int getTypeFlags();
 
     int stateFlags;
     

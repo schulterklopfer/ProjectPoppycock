@@ -9,11 +9,11 @@
 #include "Entity.h"
 
 Entity::Entity( string id, ImVec2 position ) :
+    Interactive(),
     mId(id),
     mPosition(position),
     mSize(40),
-    mBoundsDirty(false),
-    stateFlags(0)
+    mBoundsDirty(false)
 {
     recalcBounds();
 }
@@ -101,8 +101,8 @@ bool Entity::hitTest( float x, float y ) {
     return mBounds.inside(x, y);
 }
 
-Entity::Type Entity::getType() {
-    return Entity::Type::NONE;
+int Entity::getTypeFlags() {
+    return Entity::Type::ENTITY;
 }
 
 ConnectorRef Entity::getInput() {

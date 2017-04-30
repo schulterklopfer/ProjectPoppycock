@@ -39,10 +39,10 @@ public:
     ofRectangle* getBounds();
     void checkDirtyBounds();
 
-    EntityRef hotEntity;
-    EntityRef activeEntity;
-    EntityRef draggingEntity;
-    EntityRef selectedEntity;
+    InteractiveRef hotInteractive;
+    InteractiveRef activeInteractive;
+    InteractiveRef draggingInteractive;
+    InteractiveRef selectedInteractive;
         
 };
 

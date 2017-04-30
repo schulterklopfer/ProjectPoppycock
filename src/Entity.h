@@ -42,7 +42,7 @@ public:
     virtual void draw( ImVec2 offset, float scale );
     void drawBoundingBox( ImVec2 offset, float scale );
     virtual bool hitTest( float x, float y );
-    virtual Interactive::Type getType();
+    virtual int getTypeFlags();
     ImVec2 getPosition();
     ImVec2 getDrawPosition( ImVec2 offset, float scale );
     void setPosition( ImVec2 p);
@@ -57,9 +57,7 @@ public:
     void setInput( ConnectorRef input );
     void addOutput( ConnectorRef output );
     bool outputExists( Entity* e );
-    
-    int stateFlags;
-    
+        
 };
 
 typedef boost::shared_ptr<Entity> EntityRef;

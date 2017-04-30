@@ -29,7 +29,7 @@ protected:
 public:
     
     Connector(boost::shared_ptr<Entity> source,
-              boost::shared_ptr<Entity> target ) : mSource(source), mTarget(target) {};
+              boost::shared_ptr<Entity> target ) : Interactive(), mSource(source), mTarget(target) {};
     
     virtual void draw( ImVec2 offset, float scale );
     

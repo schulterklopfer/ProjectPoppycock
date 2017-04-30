@@ -19,7 +19,7 @@ public:
     Effect( string id, ImVec2 position ) : Entity(id, position) {};
 
     virtual void draw( ImVec2 offset, float scale );
-    virtual Type getType();
+    virtual int getTypeFlags();
     
 };
 

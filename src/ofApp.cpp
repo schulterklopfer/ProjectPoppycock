@@ -158,7 +158,7 @@ void ofApp::GUI_entityArea() {
         EntityList* entities = mEntityManager.getEntities();
         ConnectorList* connectors = mEntityManager.getConnectors();
 
-        mEntityManager.hotEntity = NULL;
+        mEntityManager.hotInteractive = NULL;
 
         if (ImGui::IsWindowFocused() ) {
             const ImVec2 relMousePosition = ImVec2( io.MousePos.x - cPos.x,
@@ -166,11 +166,11 @@ void ofApp::GUI_entityArea() {
             
             // target mode is entered when entity is dragged and shit key is held down
             // this is used to draw connections from draggingEntity to hotEntity
-            const bool targetMode = (io.KeyShift && mEntityManager.draggingEntity != NULL);
+            const bool targetMode = (io.KeyShift && mEntityManager.draggingInteractive != NULL);
             
             // check if we hover an entity in reverse so
             // top entities are selected first
-            if( targetMode || (mEntityManager.draggingEntity == NULL && !mDragAEntityrea ) ) {
+            if( targetMode || (mEntityManager.draggingInteractive == NULL && !mDragAEntityrea ) ) {
                 EntityList* list = mEntityManager.getEntities();
                 for (unsigned i = list->size(); i-- > 0; ) {
                     // hover
@@ -181,28 +181,28 @@ void ofApp::GUI_entityArea() {
                                       (relMousePosition.y - mEntityAreaViewRect.getY())/mEntityAreaScale) ) {
                         
                         // mark entity under mouse as hot
-                        if( mEntityManager.hotEntity == NULL ) {
-                            mEntityManager.hotEntity = eRef;
-                            mEntityManager.hotEntity->stateFlags |= Entity::State::OVER;
+                        if( mEntityManager.hotInteractive == NULL ) {
+                            mEntityManager.hotInteractive = eRef;
+                            mEntityManager.hotInteractive->stateFlags |= Entity::State::OVER;
                         }
                         
                         // mark entity under mouse when left button is down as active
-                        if( io.MouseDown[0] && mEntityManager.hotEntity == eRef ) {
-                            mEntityManager.activeEntity = eRef;
-                            mEntityManager.activeEntity->stateFlags |= Entity::State::DOWN;
-                            if( targetMode && mEntityManager.activeEntity != mEntityManager.draggingEntity ) {
-                                mEntityManager.activeEntity->stateFlags |= Entity::State::TARGET;
+                        if( io.MouseDown[0] && mEntityManager.hotInteractive == eRef ) {
+                            mEntityManager.activeInteractive = eRef;
+                            mEntityManager.activeInteractive->stateFlags |= Entity::State::DOWN;
+                            if( targetMode && mEntityManager.activeInteractive != mEntityManager.draggingInteractive ) {
+                                mEntityManager.activeInteractive->stateFlags |= Entity::State::TARGET;
                             }
                         }
                         // select entity under mouse when button was pressed and released over the same entity
                         // but only when not in target mode
-                        else if( io.MouseReleased[0] && mEntityManager.activeEntity == eRef && !targetMode ) {
-                            if( mEntityManager.selectedEntity != NULL &&
-                                mEntityManager.selectedEntity != eRef ) {
-                                mEntityManager.selectedEntity->stateFlags &= ~Entity::State::SELECT;
+                        else if( io.MouseReleased[0] && mEntityManager.activeInteractive == eRef && !targetMode ) {
+                            if( mEntityManager.selectedInteractive != NULL &&
+                                mEntityManager.selectedInteractive != eRef ) {
+                                mEntityManager.selectedInteractive->stateFlags &= ~Entity::State::SELECT;
                             }
-                            mEntityManager.selectedEntity = eRef;
-                            mEntityManager.selectedEntity->stateFlags |= Entity::State::SELECT;
+                            mEntityManager.selectedInteractive = eRef;
+                            mEntityManager.selectedInteractive->stateFlags |= Entity::State::SELECT;
                         }
                     }
                 }
@@ -211,62 +211,85 @@ void ofApp::GUI_entityArea() {
 
             // reset drag mode when mouse is release or shift key is released
             if( io.MouseReleased[0] || mKeyShift != io.KeyShift ) {
-                if( mEntityManager.draggingEntity != NULL ) {
-                    mEntityManager.draggingEntity->stateFlags &= ~(Entity::State::DRAG|Entity::State::SOURCE);
+                if( mEntityManager.draggingInteractive != NULL ) {
+                    mEntityManager.draggingInteractive->stateFlags &= ~(Entity::State::DRAG|Entity::State::SOURCE);
                 }
-                if( mEntityManager.activeEntity != NULL ) {
-                    mEntityManager.activeEntity->stateFlags &= ~(Entity::State::DOWN);
+                if( mEntityManager.activeInteractive != NULL ) {
+                    mEntityManager.activeInteractive->stateFlags &= ~(Entity::State::DOWN);
                 }
-                if( mEntityManager.hotEntity != NULL ) {
-                    mEntityManager.hotEntity->stateFlags &= ~(Entity::State::TARGET);
+                if( mEntityManager.hotInteractive != NULL ) {
+                    mEntityManager.hotInteractive->stateFlags &= ~(Entity::State::TARGET);
 
                 }
                 
-                if( mEntityManager.draggingEntity != NULL && mEntityManager.hotEntity != NULL && io.KeyShift ) {
-                    // we have a connection, add connection object to data structs
-                    // connections have a direction. there can be multiple connections out
-                    // but only one connection in.
-                    ofLogVerbose(__FUNCTION__) << "connection from " << mEntityManager.draggingEntity << " to " << mEntityManager.hotEntity;
-                    mEntityManager.createConnector(mEntityManager.draggingEntity, mEntityManager.hotEntity);
+                if( mEntityManager.draggingInteractive != NULL && mEntityManager.hotInteractive != NULL && io.KeyShift ) {
+                    
+                    // check if hot and dragging interactive are Entities
+                    if((mEntityManager.draggingInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY &&
+                       (mEntityManager.hotInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
+                        EntityRef draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
+                        EntityRef hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
+                        
+                        // we have a connection, add connection object to data structs
+                        // connections have a direction. there can be multiple connections out
+                        // but only one connection in.
+                        ofLogVerbose(__FUNCTION__) << "connection from " << draggingEntity << " to " << hotEntity;
+                        mEntityManager.createConnector(draggingEntity, hotEntity);
+                    }
+                    
+                    
                 }
                 
-                mEntityManager.activeEntity = mEntityManager.draggingEntity = NULL;
+                mEntityManager.activeInteractive = mEntityManager.draggingInteractive = NULL;
                 mDragAEntityrea = false;
             }
             
             if( ImGui::IsMouseDragging() ) {
-                if( mEntityManager.activeEntity != NULL && mEntityManager.draggingEntity == NULL ) {
-                    mEntityManager.draggingEntity = mEntityManager.activeEntity;
-                    mEntityManager.draggingEntity->stateFlags |= io.KeyShift?Entity::State::SOURCE:Entity::State::DRAG;
+                if( mEntityManager.activeInteractive != NULL && mEntityManager.draggingInteractive == NULL ) {
+                    mEntityManager.draggingInteractive = mEntityManager.activeInteractive;
+                    mEntityManager.draggingInteractive->stateFlags |= io.KeyShift?Entity::State::SOURCE:Entity::State::DRAG;
                 }
                 
-                if( mEntityManager.draggingEntity != NULL ) {
+                EntityRef draggingEntity= NULL;
+                EntityRef hotEntity = NULL;
+                
+                if(mEntityManager.draggingInteractive != NULL &&
+                   (mEntityManager.draggingInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
+                    draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
+                }
+                
+                if(mEntityManager.hotInteractive != NULL &&
+                   (mEntityManager.hotInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
+                    hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
+                }
+                
+                if( draggingEntity != NULL ) {
                     
                     // drag connection to another entity
                     if( io.KeyShift ) {
-                        if( mEntityManager.draggingEntity != NULL ) {
+                        if( mEntityManager.draggingInteractive != NULL ) {
                             // we have a connection, draw a line ...
-                            if( mEntityManager.hotEntity != NULL ) {
+                            if( mEntityManager.hotInteractive != NULL ) {
                                 // ... to center of target
                                 const ImVec2 start = ImVec2(
-                                                            mEntityManager.draggingEntity->getPosition().x*
+                                                            draggingEntity->getPosition().x*
                                                             mEntityAreaScale+relativeOffset.x,
-                                                            mEntityManager.draggingEntity->getPosition().y*
+                                                            draggingEntity->getPosition().y*
                                                             mEntityAreaScale+relativeOffset.y
                                                             );
                                 const ImVec2 end = ImVec2(
-                                                          mEntityManager.hotEntity->getPosition().x*
+                                                          hotEntity->getPosition().x*
                                                           mEntityAreaScale+relativeOffset.x,
-                                                          mEntityManager.hotEntity->getPosition().y*
+                                                          hotEntity->getPosition().y*
                                                           mEntityAreaScale+relativeOffset.y
                                                           );
                                 ImGui::GetWindowDrawList()->AddLine(start, end, 0xff00ff00);
                             } else {
                                 // ... to mouse pointer
                                 const ImVec2 start = ImVec2(
-                                                            mEntityManager.draggingEntity->getPosition().x*
+                                                            draggingEntity->getPosition().x*
                                                             mEntityAreaScale+relativeOffset.x,
-                                                            mEntityManager.draggingEntity->getPosition().y*
+                                                            draggingEntity->getPosition().y*
                                                             mEntityAreaScale+relativeOffset.y
                                                             );
                                 ImGui::GetWindowDrawList()->AddLine(start, io.MousePos, 0xff00ffff);
@@ -276,11 +299,10 @@ void ofApp::GUI_entityArea() {
                     }
                     // drag entity around
                     else {
-                        mEntityManager.
-                            draggingEntity->move(
-                                io.MouseDelta.x/mEntityAreaScale,
-                                io.MouseDelta.y/mEntityAreaScale
-                            );
+                        draggingEntity->move(
+                                             io.MouseDelta.x/mEntityAreaScale,
+                                             io.MouseDelta.y/mEntityAreaScale
+                                             );
                     }
 
                 } else {

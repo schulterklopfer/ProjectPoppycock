@@ -8,8 +8,8 @@
 
 #include "Effect.h"
 
-Entity::Type Effect::getType() {
-    return Entity::Type::EFFECT;
+int Effect::getTypeFlags() {
+    return Effect::Type::EFFECT|Effect::Type::ENTITY;
 }
 
 void Effect::draw( ImVec2 offset, float scale ) {
