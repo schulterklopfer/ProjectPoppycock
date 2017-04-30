@@ -30,13 +30,14 @@ private:
     
 public:
 
-    static const int ST_OVER =  1;
-    static const int ST_DOWN =  2;
-    static const int ST_DRAG =  4;
-    static const int ST_SLCT =  8;
-    static const int ST_SRC  = 16;
-    static const int ST_TRGT = 32;
-
+    typedef enum E_STATE {
+        OVER   =  1,
+        DOWN   =  2,
+        DRAG   =  4,
+        SELECT =  8,
+        SOURCE = 16,
+        TARGET = 32
+    } State;
     
     Entity( string id, ImVec2 position );
 

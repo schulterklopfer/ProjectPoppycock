@@ -56,22 +56,22 @@ void Entity::draw( ImVec2 offset, float scale ) {
     
     int color = 0xffffffff;
     
-    if( (stateFlags&ST_OVER) == ST_OVER ) {
+    if( (stateFlags&State::OVER) == State::OVER ) {
         color = 0xff0000ff;
     }
-    if( (stateFlags&ST_DOWN) == ST_DOWN ) {
+    if( (stateFlags&State::DOWN) == State::DOWN ) {
         color = 0xffff00ff;
     }
-    if( (stateFlags&ST_SLCT) == ST_SLCT ) {
+    if( (stateFlags&State::SELECT) == State::SELECT ) {
         color = 0xff00ff00;
     }
-    if( (stateFlags&ST_DRAG) == ST_DRAG ) {
+    if( (stateFlags&State::DRAG) == State::DRAG ) {
         color = 0xaa00ff00;
     }
-    if( (stateFlags&ST_SRC) == ST_SRC ) {
+    if( (stateFlags&State::SOURCE) == State::SOURCE ) {
         color = 0xffc3c3c3;
     }
-    if( (stateFlags&ST_TRGT) == ST_TRGT ) {
+    if( (stateFlags&State::TARGET) == State::TARGET ) {
         color = 0xffff0000;
     }
     

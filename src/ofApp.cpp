@@ -180,7 +180,7 @@ void ofApp::GUI_entityArea() {
                 for (unsigned i = list->size(); i-- > 0; ) {
                     // hover
                     EntityRef eRef = list->at(i);
-                    eRef->stateFlags &= ~(Entity::ST_DOWN|Entity::ST_OVER|Entity::ST_TRGT);
+                    eRef->stateFlags &= ~(Entity::State::DOWN|Entity::State::OVER|Entity::State::TARGET);
 
                     if( eRef->hitTest((relMousePosition.x - mEntityAreaViewRect.getX())/mEntityAreaScale,
                                       (relMousePosition.y - mEntityAreaViewRect.getY())/mEntityAreaScale) ) {
@@ -188,15 +188,15 @@ void ofApp::GUI_entityArea() {
                         // mark entity under mouse as hot
                         if( mEntityManager.hotEntity == NULL ) {
                             mEntityManager.hotEntity = eRef;
-                            mEntityManager.hotEntity->stateFlags |= Entity::ST_OVER;
+                            mEntityManager.hotEntity->stateFlags |= Entity::State::OVER;
                         }
                         
                         // mark entity under mouse when left button is down as active
                         if( io.MouseDown[0] && mEntityManager.hotEntity == eRef ) {
                             mEntityManager.activeEntity = eRef;
-                            mEntityManager.activeEntity->stateFlags |= Entity::ST_DOWN;
+                            mEntityManager.activeEntity->stateFlags |= Entity::State::DOWN;
                             if( targetMode && mEntityManager.activeEntity != mEntityManager.draggingEntity ) {
-                                mEntityManager.activeEntity->stateFlags |= Entity::ST_TRGT;
+                                mEntityManager.activeEntity->stateFlags |= Entity::State::TARGET;
                             }
                         }
                         // select entity under mouse when button was pressed and released over the same entity
@@ -204,10 +204,10 @@ void ofApp::GUI_entityArea() {
                         else if( io.MouseReleased[0] && mEntityManager.activeEntity == eRef && !targetMode ) {
                             if( mEntityManager.selectedEntity != NULL &&
                                 mEntityManager.selectedEntity != eRef ) {
-                                mEntityManager.selectedEntity->stateFlags &= ~Entity::ST_SLCT;
+                                mEntityManager.selectedEntity->stateFlags &= ~Entity::State::SELECT;
                             }
                             mEntityManager.selectedEntity = eRef;
-                            mEntityManager.selectedEntity->stateFlags |= Entity::ST_SLCT;
+                            mEntityManager.selectedEntity->stateFlags |= Entity::State::SELECT;
                         }
                     }
                 }
@@ -217,13 +217,13 @@ void ofApp::GUI_entityArea() {
             // reset drag mode when mouse is release or shift key is released
             if( io.MouseReleased[0] || mKeyShift != io.KeyShift ) {
                 if( mEntityManager.draggingEntity != NULL ) {
-                    mEntityManager.draggingEntity->stateFlags &= ~(Entity::ST_DRAG|Entity::ST_SRC);
+                    mEntityManager.draggingEntity->stateFlags &= ~(Entity::State::DRAG|Entity::State::SOURCE);
                 }
                 if( mEntityManager.activeEntity != NULL ) {
-                    mEntityManager.activeEntity->stateFlags &= ~(Entity::ST_DOWN);
+                    mEntityManager.activeEntity->stateFlags &= ~(Entity::State::DOWN);
                 }
                 if( mEntityManager.hotEntity != NULL ) {
-                    mEntityManager.hotEntity->stateFlags &= ~(Entity::ST_TRGT);
+                    mEntityManager.hotEntity->stateFlags &= ~(Entity::State::TARGET);
 
                 }
                 
@@ -241,7 +241,7 @@ void ofApp::GUI_entityArea() {
             if( ImGui::IsMouseDragging() ) {
                 if( mEntityManager.activeEntity != NULL && mEntityManager.draggingEntity == NULL ) {
                     mEntityManager.draggingEntity = mEntityManager.activeEntity;
-                    mEntityManager.draggingEntity->stateFlags |= io.KeyShift?Entity::ST_SRC:Entity::ST_DRAG;
+                    mEntityManager.draggingEntity->stateFlags |= io.KeyShift?Entity::State::SOURCE:Entity::State::DRAG;
                 }
                 
                 if( mEntityManager.draggingEntity != NULL ) {
