@@ -26,7 +26,7 @@ void Connector::draw( ImVec2 offset, float scale ) {
     const ofPoint moveDistVecPerc = deltaPositionNormalized*moveDistance*perc;
     int count = deltaLength/moveDistance;
     
-    int color = 0xffffffff;
+    int color = isFader()?0xffaaffaa:0xffffffff;
     
     if( (stateFlags&State::OVER) == State::OVER ) {
         color = 0xff0000ff;
@@ -85,6 +85,10 @@ bool Connector::hitTest( float x, float y ) {
     
     return ofInsidePoly(x, y, points);
     
+}
+
+bool Connector::isFader() {
+    return (mTarget->getTypeFlags()&Entity::Type::OBSERVER)==Entity::Type::OBSERVER;
 }
 
 EntityRef Connector::getSource() {

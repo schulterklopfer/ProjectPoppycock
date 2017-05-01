@@ -38,6 +38,8 @@ public:
     
     virtual bool hitTest( float x, float y );
     
+    bool isFader();
+    
 };
 
 
