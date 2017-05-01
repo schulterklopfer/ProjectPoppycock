@@ -98,8 +98,21 @@ void Entity::recalcBounds() {
 }
 
 bool Entity::hitTest( float x, float y ) {
-    return mBounds.inside(x, y);
+    return inCircle(x, y);
 }
+
+inline bool Entity::inCircle( float x, float y ) {
+    const ofPoint c = mBounds.getCenter();
+    const float radius = mSize*0.5;
+    float dx = fabs(x-c.x);
+    if (    dx >  radius ) return false;
+    float dy = fabs(y-c.y);
+    if (    dy >  radius ) return false;
+    if ( dx+dy <= radius ) return true;
+    return ( dx*dx + dy*dy <= radius*radius );
+}
+
+
 
 int Entity::getTypeFlags() {
     return Entity::Type::ENTITY;

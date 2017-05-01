@@ -25,7 +25,9 @@ protected:
     
     virtual void recalcBounds();
     bool connectorIsCircular( Entity* target );
-
+    bool inCircle( float x, float y );
+    
+    
     string mId;
     ImVec2 mPosition;
     ofRectangle mBounds;
