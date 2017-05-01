@@ -146,8 +146,15 @@ void ofApp::GUI_entityArea() {
     ImGuiIO io = ImGui::GetIO();
     
     if( ImGui::Begin("entities", NULL, window_flags) ) {
- 
+        if( ImGui::IsKeyPressed( OF_KEY_ESC ) ) {
+            ofLogVerbose( __FUNCTION__ ) << "backspace pressed inside entities window";
+        }
         ImGui::BeginChild("draw area");
+        
+        // check for keyboard things
+        
+        
+        
         ImVec2 drawAreaSize = ImGui::GetWindowContentRegionMax();
         mEntityAreaViewRect.setSize(drawAreaSize.x/mEntityAreaScale,
                                     drawAreaSize.y/mEntityAreaScale);
@@ -317,7 +324,7 @@ void ofApp::GUI_entityArea() {
                                                       hotEntity->getPosition().y*
                                                       mEntityAreaScale+relativeOffset.y
                                                       );
-                            ImGui::GetWindowDrawList()->AddLine(start, end, 0xffffffff,5);
+                            ImGui::GetWindowDrawList()->AddLine(start, end, 0x33ffffff,6);
                         } else {
                             // ... to mouse pointer
                             const ImVec2 start = ImVec2(
@@ -326,7 +333,7 @@ void ofApp::GUI_entityArea() {
                                                         draggingEntity->getPosition().y*
                                                         mEntityAreaScale+relativeOffset.y
                                                         );
-                            ImGui::GetWindowDrawList()->AddLine(start, io.MousePos, 0xaaffffff,5);
+                            ImGui::GetWindowDrawList()->AddLine(start, io.MousePos, 0x33ffffff,6);
                         }
                         
                         
@@ -543,7 +550,7 @@ void ofApp::GUI_entityMenu() {
 void ofApp::keyPressed(int key){
     
     if( mEntityMenuIsOpen ) {
-        if( key == 27 ) { // ESC
+        if( key == OF_KEY_ESC ) { // ESC
             mToggleEntityMenu = true;
         }
         else if( !mEntityMenuFilter.IsActive() ) {

@@ -69,7 +69,7 @@ void Entity::draw( ImVec2 offset, float scale ) {
         color = 0xff00ff00;
     }
     if( (stateFlags&State::DRAG) == State::DRAG ) {
-        color = 0xaa00ff00;
+        color = 0xffffffff;
     }
     if( (stateFlags&State::SOURCE) == State::SOURCE ) {
         color = 0xffc3c3c3;
@@ -78,7 +78,7 @@ void Entity::draw( ImVec2 offset, float scale ) {
         color = 0xffff0000;
     }
     
-    ImGui::GetWindowDrawList()->AddCircleFilled(getDrawPosition(offset, scale), mSize*0.5*scale, color, 64 );
+    ImGui::GetWindowDrawList()->AddCircle(getDrawPosition(offset, scale), mSize*0.5*scale, color, 64, 3*scale );
 
 }
 
