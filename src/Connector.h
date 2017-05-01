@@ -31,7 +31,11 @@ public:
     Connector(boost::shared_ptr<Entity> source,
               boost::shared_ptr<Entity> target ) : Interactive(), mSource(source), mTarget(target) {};
     
-    virtual void draw( ImVec2 offset, float scale );
+    void draw( ImVec2 offset, float scale );
+    
+    static void draw( const ofPoint sp, const ofPoint tp,
+                      const float scale = 1.0, const int stateFlags = 0,
+                      const bool isFader = false );
     
     boost::shared_ptr<Entity> getSource();
     boost::shared_ptr<Entity> getTarget();

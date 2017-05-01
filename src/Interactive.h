@@ -32,7 +32,8 @@ public:
         DRAG   =  4,
         SELECT =  8,
         SOURCE = 16,
-        TARGET = 32
+        TARGET = 32,
+        GHOST  = 64
     } State;
 
     Interactive() : stateFlags(0) {};

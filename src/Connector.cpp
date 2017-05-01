@@ -9,25 +9,27 @@
 #include "Connector.h"
 #include "Entity.h"
 
-void Connector::draw( ImVec2 offset, float scale ) {
+void Connector::draw(const ofPoint sourcePosition,
+                     const ofPoint targetPosition,
+                     const float scale,
+                     const int stateFlags,
+                     const bool isFader ) {
+
     const int animationDurationMS = 500;
     const float moveDistance = 24*scale;
     const float lineSize = 6;
     const float animatorSize = 4;
-    const ofPoint sourcePosition = (ofPoint)mSource->getDrawPosition(offset, scale);
-    const ofPoint targetPosition = (ofPoint)mTarget->getDrawPosition(offset, scale);
     const ofPoint deltaPosition = (targetPosition - sourcePosition);
     const ofPoint deltaPositionNormalized = deltaPosition.getNormalized();
     const float deltaLength = deltaPosition.length() - 2.f*20.f*scale;
     const ImVec2 socketPosition = (ImVec2)(sourcePosition + deltaPositionNormalized*20*scale);
     const float perc = (float)(ofGetElapsedTimeMillis()%animationDurationMS)/(float)animationDurationMS;
-    //const ofPoint halfSizeVec = deltaPositionNormalized*animatorSize*0.5*scale;
     const ofPoint halfSizeVec = deltaPositionNormalized*lineSize*0.5*scale;
     const ofPoint moveDistVec = deltaPositionNormalized*moveDistance;
     const ofPoint moveDistVecPerc = deltaPositionNormalized*moveDistance*perc;
     int count = deltaLength/moveDistance;
     
-    int color = isFader()?0xffaaffaa:0xffffffff;
+    int color = isFader?0xffaaffaa:0xffffffff;
     
     if( (stateFlags&State::OVER) == State::OVER ) {
         color = 0xff0000ff;
@@ -47,22 +49,31 @@ void Connector::draw( ImVec2 offset, float scale ) {
     if( (stateFlags&State::TARGET) == State::TARGET ) {
         color = 0xffff0000;
     }
+    if( (stateFlags&State::GHOST) == State::GHOST ) {
+        color = 0x55ffffff;
+    }
 
     
     ImGui::GetWindowDrawList()->AddLine(socketPosition,
-                                        (ImVec2)((ofPoint)socketPosition+deltaPositionNormalized*deltaLength), color, 1);
+                                        (ImVec2)((ofPoint)socketPosition+deltaPositionNormalized*deltaLength), color, 3.f*scale);
     
     ImVec2 ap0;
     ImVec2 ap1;
 
-    for( int i=0; i<count; i++ ) {
+    const float moveDistanceRemainder = deltaLength - moveDistance*count;
+    
+    for( int i=0; i<=count; i++ ) {
         ap0.x = moveDistVec.x*i + socketPosition.x + moveDistVecPerc.x - halfSizeVec.x;
         ap0.y = moveDistVec.y*i + socketPosition.y + moveDistVecPerc.y - halfSizeVec.y;
         ap1.x = moveDistVec.x*i + socketPosition.x + moveDistVecPerc.x + halfSizeVec.x;
         ap1.y = moveDistVec.y*i + socketPosition.y + moveDistVecPerc.y + halfSizeVec.y;
         
         //ImGui::GetWindowDrawList()->AddLine(ap0, ap1, 0xff000000, animatorSize*scale);
-        ImGui::GetWindowDrawList()->AddLine(ap0, ap1, color, lineSize*scale);
+        
+        // clip moving dots to connector line
+        if( i<count || (i==count && moveDistance*perc < moveDistanceRemainder) ) {
+            ImGui::GetWindowDrawList()->AddLine(ap0, ap1, color, lineSize*scale);
+        }
 
     }
     
@@ -75,6 +86,14 @@ void Connector::draw( ImVec2 offset, float scale ) {
     //ImGui::GetWindowDrawList()->AddCircleFilled(ap0, 3*scale, color, 16 );
 
     //ImGui::GetWindowDrawList()->AddCircleFilled(socketPosition,7.f*scale, color, 32);
+}
+
+void Connector::draw( ImVec2 offset, float scale ) {
+    Connector::draw((ofPoint)getSource()->getDrawPosition(offset,scale),
+                    (ofPoint)getTarget()->getDrawPosition(offset,scale),
+                    scale,
+                    stateFlags,
+                    isFader() );
 }
 
 bool Connector::hitTest( float x, float y ) {

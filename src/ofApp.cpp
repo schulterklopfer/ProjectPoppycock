@@ -41,11 +41,11 @@ void ofApp::setup()
 
     ofLogVerbose() << "textureSourceID: " << textureSourceID;
     
-    mEntityManager.createEntity(Entity::Type::EFFECT, "test0", ofVec2f(20,20));
-    mEntityManager.createEntity(Entity::Type::EFFECT, "test1", ofVec2f(100.0f,100.0f));
-    mEntityManager.createEntity(Entity::Type::EFFECT, "test2", ofVec2f(100.0f,200.0f));
-    mEntityManager.createEntity(Entity::Type::EFFECT, "test3", ofVec2f(200.0f,100.0f));
-    mEntityManager.createEntity(Entity::Type::OBSERVER, "obs", ofVec2f(50,50));
+    mEntityManager.createEntity(Entity::Type::EFFECT, "test0", ofVec2f(120,120));
+    mEntityManager.createEntity(Entity::Type::EFFECT, "test1", ofVec2f(200.0f,200.0f));
+    mEntityManager.createEntity(Entity::Type::EFFECT, "test2", ofVec2f(200.0f,300.0f));
+    mEntityManager.createEntity(Entity::Type::EFFECT, "test3", ofVec2f(300.0f,200.0f));
+    mEntityManager.createEntity(Entity::Type::OBSERVER, "obs", ofVec2f(450,450));
 
     
 }
@@ -80,6 +80,7 @@ void ofApp::draw(){
     
     //In between gui.begin() and gui.end() you can use ImGui as you would anywhere else
     
+    /*
     // 1. Show a simple window
     {
         ImGui::Text("Hello, world!");
@@ -112,7 +113,7 @@ void ofApp::draw(){
     bool pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)imageButtonID, ImVec2(200, 200));
     pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)pixelsButtonID, ImVec2(200, 200));
     pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)textureSourceID, ImVec2(200, 200));
-    
+    */
     
     GUI_entityArea();
     GUI_sidebar();
@@ -162,14 +163,15 @@ void ofApp::GUI_entityArea() {
         ImVec2 relativeOffset = ImVec2( mEntityAreaViewRect.getX() + cPos.x,
                                         mEntityAreaViewRect.getY() + cPos.y );
 
+        const ImVec2 relMousePosition = ImVec2( io.MousePos.x - cPos.x,
+                                               io.MousePos.y - cPos.y );
+
         EntityList* entities = mEntityManager.getEntities();
         ConnectorList* connectors = mEntityManager.getConnectors();
 
         mEntityManager.hotInteractive = NULL;
 
         if (ImGui::IsWindowFocused() ) {
-            const ImVec2 relMousePosition = ImVec2( io.MousePos.x - cPos.x,
-                                                   io.MousePos.y - cPos.y );
             
             // target mode is entered when entity is dragged and shit key is held down
             // this is used to draw connections from draggingEntity to hotEntity
@@ -312,28 +314,20 @@ void ofApp::GUI_entityArea() {
                             hotEntity->acceptsInputFrom(draggingEntity) &&
                             draggingEntity->providesOutputTo(hotEntity) ) {
                             // ... to center of target
-                            const ImVec2 start = ImVec2(
-                                                        draggingEntity->getPosition().x*
-                                                        mEntityAreaScale+relativeOffset.x,
-                                                        draggingEntity->getPosition().y*
-                                                        mEntityAreaScale+relativeOffset.y
-                                                        );
-                            const ImVec2 end = ImVec2(
-                                                      hotEntity->getPosition().x*
-                                                      mEntityAreaScale+relativeOffset.x,
-                                                      hotEntity->getPosition().y*
-                                                      mEntityAreaScale+relativeOffset.y
-                                                      );
-                            ImGui::GetWindowDrawList()->AddLine(start, end, 0x33ffffff,6);
+                            
+                            Connector::draw((ofPoint)draggingEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
+                                            (ofPoint)hotEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
+                                            mEntityAreaScale,
+                                            Interactive::State::GHOST );
+                            
                         } else {
                             // ... to mouse pointer
-                            const ImVec2 start = ImVec2(
-                                                        draggingEntity->getPosition().x*
-                                                        mEntityAreaScale+relativeOffset.x,
-                                                        draggingEntity->getPosition().y*
-                                                        mEntityAreaScale+relativeOffset.y
-                                                        );
-                            ImGui::GetWindowDrawList()->AddLine(start, io.MousePos, 0x33ffffff,6);
+                            
+                            Connector::draw((ofPoint)draggingEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
+                                            (ofPoint)io.MousePos,
+                                            mEntityAreaScale,
+                                            Interactive::State::GHOST );
+                            
                         }
                         
                         
@@ -488,7 +482,6 @@ void ofApp::GUI_entityMenu() {
     // light-structures and effects
     
     static ImVec4 color = ImColor(0.8f, 0.5f, 1.0f, 1.0f);
-    ImGui::ColorButton(color);
     
     if ( mToggleEntityMenu ) {
         mToggleEntityMenu = false;
