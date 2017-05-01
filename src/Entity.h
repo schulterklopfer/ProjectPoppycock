@@ -24,7 +24,8 @@ class Entity : public Interactive {
 protected:
     
     virtual void recalcBounds();
-    
+    bool connectorIsCircular( Entity* target );
+
     string mId;
     ImVec2 mPosition;
     ofRectangle mBounds;
@@ -57,7 +58,12 @@ public:
     void setInput( ConnectorRef input );
     void addOutput( ConnectorRef output );
     bool outputExists( Entity* e );
-        
+    
+    virtual bool acceptsInputFrom(boost::shared_ptr<Entity> &source );
+    virtual bool providesOutputTo(boost::shared_ptr<Entity> &source );
+    virtual bool acceptsInput();
+    virtual bool providesOutput();
+
 };
 
 typedef boost::shared_ptr<Entity> EntityRef;

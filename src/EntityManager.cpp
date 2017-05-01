@@ -20,9 +20,8 @@ void EntityManager::createEffect(string id, ofVec2f position) {
 
 void EntityManager::createConnector( EntityRef source, EntityRef target ) {
     // check if there is already a connector between source and target
-    if( target->getInput() != NULL ) return; // only one input allowed
-    if( source == target || connectorExists( source, target ) ) return;
-    if( connectorIsCircular( source, target ) ) return;
+    if( connectorExists( source, target ) ) return;
+    if( !target->acceptsInputFrom(source) || !source->providesOutputTo(target) ) return;
     ConnectorRef cRef = ConnectorRef( new Connector( source, target ) );
     source->addOutput(cRef);
     target->setInput(cRef);
@@ -35,26 +34,6 @@ bool EntityManager::connectorExists( EntityRef &source, EntityRef &target ) {
         if(((*iter)->getSource() == source && (*iter)->getTarget() == target) ||
            ((*iter)->getSource() == target && (*iter)->getTarget() == source)) {
             return true;
-        }
-    }
-    return false;
-}
-
-bool EntityManager::connectorIsCircular( EntityRef &source, EntityRef &target ) {
-    // if nothing is connected to source, early out
-    if( source->getInput() == NULL ) return false;
-    
-    EntityRef prevSourceEntity = source->getInput()->getSource();
-    
-    while( prevSourceEntity != NULL ) {
-        if( prevSourceEntity == target ) {
-            ofLogVerbose( __FUNCTION__ ) << "target was reached... we have a circle";
-            return true;
-        }
-        if( prevSourceEntity->getInput() != NULL ) {
-            prevSourceEntity = prevSourceEntity->getInput()->getSource();
-        } else {
-            prevSourceEntity = NULL;
         }
     }
     return false;

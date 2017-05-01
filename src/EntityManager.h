@@ -32,7 +32,6 @@ public:
     void createEffect( string id, ofVec2f position );
     void createConnector( EntityRef source, EntityRef target );
     bool connectorExists( EntityRef &source, EntityRef &target );
-    bool connectorIsCircular( EntityRef &source, EntityRef &target );
     EntityList* getEntities();
     ConnectorList* getConnectors();
     InteractiveList getInteractives();

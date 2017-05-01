@@ -144,3 +144,39 @@ bool Entity::outputExists( Entity* e ) {
     }
     return false;
 }
+
+bool Entity::connectorIsCircular( Entity* target ) {
+    // if nothing is connected to source, early out
+    if( mInput == NULL ) return false;
+    
+    Entity* prevSourceEntity = mInput->getSource().get();
+    
+    while( prevSourceEntity != NULL ) {
+        if( prevSourceEntity == target ) {
+            return true;
+        }
+        if( prevSourceEntity->getInput() != NULL ) {
+            prevSourceEntity = prevSourceEntity->getInput()->getSource().get();
+        } else {
+            prevSourceEntity = NULL;
+        }
+    }
+    return false;
+}
+
+bool Entity::acceptsInputFrom( EntityRef &source ) {
+    return this != source.get() && mInput == NULL && !source.get()->connectorIsCircular( this );
+}
+
+bool Entity::providesOutputTo( EntityRef &target ) {
+    return this != target.get() && !connectorIsCircular( target.get() );
+}
+
+bool Entity::acceptsInput() {
+    return true;
+}
+
+bool Entity::providesOutput() {
+    return true;
+}
+
