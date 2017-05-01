@@ -41,11 +41,11 @@ void ofApp::setup()
 
     ofLogVerbose() << "textureSourceID: " << textureSourceID;
     
-    mEntityManager.createEffect("test0", ofVec2f(20,20));
-    mEntityManager.createEntity("test1", ofVec2f(100.0f,100.0f));
-    mEntityManager.createEffect("test2", ofVec2f(100.0f,200.0f));
-    mEntityManager.createEntity("test3", ofVec2f(200.0f,100.0f));
-    mEntityManager.createEntity("test4", ofVec2f(1030,1030));
+    mEntityManager.createEntity(Entity::Type::EFFECT, "test0", ofVec2f(20,20));
+    mEntityManager.createEntity(Entity::Type::EFFECT, "test1", ofVec2f(100.0f,100.0f));
+    mEntityManager.createEntity(Entity::Type::EFFECT, "test2", ofVec2f(100.0f,200.0f));
+    mEntityManager.createEntity(Entity::Type::EFFECT, "test3", ofVec2f(200.0f,100.0f));
+    mEntityManager.createEntity(Entity::Type::OBSERVER, "obs", ofVec2f(50,50));
 
     
 }
@@ -317,7 +317,7 @@ void ofApp::GUI_entityArea() {
                                                       hotEntity->getPosition().y*
                                                       mEntityAreaScale+relativeOffset.y
                                                       );
-                            ImGui::GetWindowDrawList()->AddLine(start, end, 0xff00ff00);
+                            ImGui::GetWindowDrawList()->AddLine(start, end, 0xffffffff,5);
                         } else {
                             // ... to mouse pointer
                             const ImVec2 start = ImVec2(
@@ -326,7 +326,7 @@ void ofApp::GUI_entityArea() {
                                                         draggingEntity->getPosition().y*
                                                         mEntityAreaScale+relativeOffset.y
                                                         );
-                            ImGui::GetWindowDrawList()->AddLine(start, io.MousePos, 0xff00ffff);
+                            ImGui::GetWindowDrawList()->AddLine(start, io.MousePos, 0xaaffffff,5);
                         }
                         
                         

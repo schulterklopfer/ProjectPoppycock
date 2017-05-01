@@ -118,17 +118,28 @@ int Entity::getTypeFlags() {
     return Entity::Type::ENTITY;
 }
 
-ConnectorRef Entity::getInput() {
-    return mInput;
+ConnectorList* Entity::getInputs() {
+    return &mInputs;
 }
 
 ConnectorList* Entity::getOutputs() {
     return &mOutputs;
 }
 
-void Entity::setInput( ConnectorRef input ) {
-    if( input == mInput ) return;
-    mInput = input;
+void Entity::addInput( ConnectorRef input ) {
+    
+    // connector doesn't have this object as source
+    if( input->getTarget().get() != this ) {
+        ofLogVerbose(__FUNCTION__ ) << "connector has wrong target " << input->getTarget()->getId();
+        return;
+    }
+    
+    if( inputExists( input->getSource().get() ) ) {
+        return;
+    }
+    
+    mInputs.push_back(input);
+    
 }
 
 void Entity::addOutput( ConnectorRef output ) {
@@ -147,38 +158,48 @@ void Entity::addOutput( ConnectorRef output ) {
     
 }
 
+bool Entity::inputExists( Entity* e ) {
+    // does an input with this object as target and e exist?
+    for( ConnectorListIterator iter = mInputs.begin(); iter != mInputs.end(); ++iter ) {
+        if( ((*iter)->getTarget()).get() == this && ((*iter)->getSource()).get() == e ) {
+            ofLogVerbose(__FUNCTION__ ) << "input from " << e->getId() << " exists.";
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Entity::outputExists( Entity* e ) {
     // does a output with this object as source and e exist?
     for( ConnectorListIterator iter = mOutputs.begin(); iter != mOutputs.end(); ++iter ) {
         if( ((*iter)->getSource()).get() == this && ((*iter)->getTarget()).get() == e ) {
-            ofLogVerbose(__FUNCTION__ ) << "out out to " << e->getId() << " exists.";
+            ofLogVerbose(__FUNCTION__ ) << "output to " << e->getId() << " exists.";
             return true;
         }
     }
     return false;
 }
+
+// look recursevely for entity matching *target going backwards in input sources
+bool Entity::__r_targetEntityInInputs( Entity* target ) {
+    for( ConnectorListIterator iter = mInputs.begin(); iter != mInputs.end(); ++iter ) {
+        if( (*iter)->getSource().get() == target ) {
+            return true;
+        }
+        return (*iter)->getSource()->__r_targetEntityInInputs(target);
+    }
+    return false;
+}
+
 
 bool Entity::connectorIsCircular( Entity* target ) {
     // if nothing is connected to source, early out
-    if( mInput == NULL ) return false;
-    
-    Entity* prevSourceEntity = mInput->getSource().get();
-    
-    while( prevSourceEntity != NULL ) {
-        if( prevSourceEntity == target ) {
-            return true;
-        }
-        if( prevSourceEntity->getInput() != NULL ) {
-            prevSourceEntity = prevSourceEntity->getInput()->getSource().get();
-        } else {
-            prevSourceEntity = NULL;
-        }
-    }
-    return false;
+    if( mInputs.size() == 0 ) return false;
+    return __r_targetEntityInInputs(target);
 }
 
 bool Entity::acceptsInputFrom( EntityRef &source ) {
-    return this != source.get() && mInput == NULL && !source.get()->connectorIsCircular( this );
+    return this != source.get() && mInputs.size() == 0 && !source.get()->connectorIsCircular( this );
 }
 
 bool Entity::providesOutputTo( EntityRef &target ) {

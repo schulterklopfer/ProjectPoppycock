@@ -15,7 +15,7 @@ int Effect::getTypeFlags() {
 void Effect::draw( ImVec2 offset, float scale ) {
     
     Entity::draw(offset, scale);
-    ImGui::GetWindowDrawList()->AddCircleFilled(getDrawPosition(offset, scale), 10*scale, 0xff000000, 64 );
+    //ImGui::GetWindowDrawList()->AddCircleFilled(getDrawPosition(offset, scale), 10*scale, 0xff000000, 64 );
     
 }
 

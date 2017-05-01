@@ -8,13 +8,20 @@
 
 #include "EntityManager.h"
 
-void EntityManager::createEntity(string id, ofVec2f position) {
-    mEntities.push_back(EntityRef(new Entity(id, position)));
-    recalcBounds();
-};
-
-void EntityManager::createEffect(string id, ofVec2f position) {
-    mEntities.push_back(EntityRef(new Effect(id, position)));
+void EntityManager::createEntity( Entity::Type type, string id, ofVec2f position) {
+    
+    switch( type ) {
+        case Entity::Type::EFFECT:
+            mEntities.push_back(EntityRef(new Effect(id, position)));
+            break;
+        case Entity::Type::OBSERVER:
+            mEntities.push_back(EntityRef(new Observer(id, position)));
+            break;
+        default:
+            mEntities.push_back(EntityRef(new Entity(id, position)));
+    }
+    
+    
     recalcBounds();
 };
 
@@ -24,7 +31,7 @@ void EntityManager::createConnector( EntityRef source, EntityRef target ) {
     if( !target->acceptsInputFrom(source) || !source->providesOutputTo(target) ) return;
     ConnectorRef cRef = ConnectorRef( new Connector( source, target ) );
     source->addOutput(cRef);
-    target->setInput(cRef);
+    target->addInput(cRef);
     mConnectors.push_back(cRef);
     
 }

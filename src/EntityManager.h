@@ -15,6 +15,7 @@
 
 #include "Entity.h"
 #include "Effect.h"
+#include "Observer.h"
 #include "Connector.h"
 
 class EntityManager {
@@ -28,8 +29,7 @@ private:
     
 public:
     
-    void createEntity( string id, ofVec2f position );
-    void createEffect( string id, ofVec2f position );
+    void createEntity( Entity::Type type, string id, ofVec2f position );
     void createConnector( EntityRef source, EntityRef target );
     bool connectorExists( EntityRef &source, EntityRef &target );
     EntityList* getEntities();

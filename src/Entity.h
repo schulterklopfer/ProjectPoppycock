@@ -20,13 +20,18 @@
 
 class Entity : public Interactive {
 
+private:
+    
+    bool __r_targetEntityInInputs( Entity* target );
     
 protected:
     
     virtual void recalcBounds();
     bool connectorIsCircular( Entity* target );
     bool inCircle( float x, float y );
-    
+    bool outputExists( Entity* e );
+    bool inputExists( Entity* e );
+
     
     string mId;
     ImVec2 mPosition;
@@ -34,7 +39,7 @@ protected:
     bool mBoundsDirty;
     float mSize;
     
-    ConnectorRef mInput;
+    ConnectorList mInputs;
     ConnectorList mOutputs;
     
     
@@ -55,11 +60,10 @@ public:
     string getId();
     void setId( string id );
     ofRectangle* getBounds();
-    ConnectorRef getInput();
+    ConnectorList* getInputs();
     ConnectorList* getOutputs();
-    void setInput( ConnectorRef input );
+    void addInput( ConnectorRef input );
     void addOutput( ConnectorRef output );
-    bool outputExists( Entity* e );
     
     virtual bool acceptsInputFrom(boost::shared_ptr<Entity> &source );
     virtual bool providesOutputTo(boost::shared_ptr<Entity> &source );
