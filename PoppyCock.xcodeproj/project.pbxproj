@@ -264,6 +264,21 @@
 			name = addons;
 			sourceTree = "<group>";
 		};
+		C2162D9C1EB77AD900B5D2BF /* interactive */ = {
+			isa = PBXGroup;
+			children = (
+				C27C57BB1EB27B810012AA66 /* Entity.cpp */,
+				C27C57BC1EB27B810012AA66 /* Entity.h */,
+				C2162D901EB5E6EC00B5D2BF /* Effect.cpp */,
+				C2162D911EB5E6EC00B5D2BF /* Effect.h */,
+				C2162D931EB5F36200B5D2BF /* Connector.cpp */,
+				C2162D941EB5F36300B5D2BF /* Connector.h */,
+				C2162D991EB6994000B5D2BF /* Interactive.cpp */,
+				C2162D9A1EB6994000B5D2BF /* Interactive.h */,
+			);
+			name = interactive;
+			sourceTree = "<group>";
+		};
 		C618591A26FF62625326E2DD /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -301,15 +316,8 @@
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				C27C57B81EB2775C0012AA66 /* EntityManager.cpp */,
 				C27C57B91EB2775C0012AA66 /* EntityManager.h */,
-				C27C57BB1EB27B810012AA66 /* Entity.cpp */,
-				C27C57BC1EB27B810012AA66 /* Entity.h */,
 				C27C57BE1EB3A0860012AA66 /* imgui_user.h */,
-				C2162D901EB5E6EC00B5D2BF /* Effect.cpp */,
-				C2162D911EB5E6EC00B5D2BF /* Effect.h */,
-				C2162D931EB5F36200B5D2BF /* Connector.cpp */,
-				C2162D941EB5F36300B5D2BF /* Connector.h */,
-				C2162D991EB6994000B5D2BF /* Interactive.cpp */,
-				C2162D9A1EB6994000B5D2BF /* Interactive.h */,
+				C2162D9C1EB77AD900B5D2BF /* interactive */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
