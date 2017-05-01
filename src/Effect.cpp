@@ -19,18 +19,3 @@ void Effect::draw( ImVec2 offset, float scale ) {
     
 }
 
-bool Effect::acceptsInputFrom(EntityRef &source) {
-    return Entity::acceptsInputFrom(source);
-}
-
-bool Effect::providesOutputTo(EntityRef &target) {
-    return Entity::providesOutputTo(target);
-}
-
-bool Effect::acceptsInput() {
-    return Entity::acceptsInput();
-}
-
-bool Effect::providesOutput() {
-    return Entity::acceptsInput();
-}
