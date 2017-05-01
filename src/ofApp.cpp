@@ -318,6 +318,7 @@ void ofApp::GUI_entityArea() {
                             Connector::draw((ofPoint)draggingEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
                                             (ofPoint)hotEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
                                             mEntityAreaScale,
+                                            20.f, 20.f,
                                             Interactive::State::GHOST );
                             
                         } else {
@@ -326,6 +327,7 @@ void ofApp::GUI_entityArea() {
                             Connector::draw((ofPoint)draggingEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
                                             (ofPoint)io.MousePos,
                                             mEntityAreaScale,
+                                            20.f, 0.f,
                                             Interactive::State::GHOST );
                             
                         }

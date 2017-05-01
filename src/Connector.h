@@ -34,7 +34,10 @@ public:
     void draw( ImVec2 offset, float scale );
     
     static void draw( const ofPoint sp, const ofPoint tp,
-                      const float scale = 1.0, const int stateFlags = 0,
+                      const float scale = 1.0,
+                      const float startOffset = 0.0,
+                      const float endOffset = 0.0,
+                      const int stateFlags = 0,
                       const bool isFader = false );
     
     boost::shared_ptr<Entity> getSource();
