@@ -30,9 +30,9 @@ public:
     
 private:
     
-    void GUI_entityArea_backgroundGrid();
-    void GUI_entityMenu();
+    bool GUI_entityMenu();
     void GUI_entityArea();
+    void GUI_entityArea_backgroundGrid();
     void GUI_sidebar();
     
     EntityManager mEntityManager;
@@ -46,8 +46,8 @@ private:
     ofxImGui::Gui mGui;
     ImVec4 mBackgroundColor;
     
-    bool mToggleEntityMenu;
-    bool mActivateFilter;
+    //bool mToggleEntityMenu;
+    //bool mActivateFilter;
     
     bool mEntityMenuIsOpen;
     ImGuiTextFilter mEntityMenuFilter;

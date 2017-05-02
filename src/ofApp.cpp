@@ -17,7 +17,7 @@ void ofApp::setup()
     mEntityAreaScale = 1.0;
     mDragAEntityrea = false;
     
-    mEntityMenuIsOpen = mToggleEntityMenu = mActivateFilter = false;
+    mEntityMenuIsOpen = false;
     
     //load your own ofImage
     imageButtonSource.load("of.png");
@@ -115,10 +115,8 @@ void ofApp::draw(){
     pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)textureSourceID, ImVec2(200, 200));
     */
     
-    GUI_entityArea();
     GUI_sidebar();
-    GUI_entityMenu();
-
+    GUI_entityArea();
     
     //required to call this at end
     mGui.end();
@@ -130,8 +128,9 @@ void ofApp::draw(){
 }
 
 void ofApp::GUI_entityArea() {
+
     ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
+    //window_flags |= ImGuiWindowFlags_NoTitleBar;
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoMove;
     window_flags |= ImGuiWindowFlags_NoCollapse;
@@ -146,15 +145,16 @@ void ofApp::GUI_entityArea() {
     
     ImGuiIO io = ImGui::GetIO();
     
-    if( ImGui::Begin("entities", NULL, window_flags) ) {
-        if( ImGui::IsKeyPressed( OF_KEY_ESC ) ) {
-            ofLogVerbose( __FUNCTION__ ) << "backspace pressed inside entities window";
-        }
+    if( ImGui::Begin("Patch", NULL, window_flags) ) {
+
         ImGui::BeginChild("draw area");
         
-        // check for keyboard things
-        
-        
+        if( ImGui::IsRootWindowOrAnyChildHovered() ) {
+            ImGui::SetWindowFocus();
+        }
+
+
+
         
         ImVec2 drawAreaSize = ImGui::GetWindowContentRegionMax();
         mEntityAreaViewRect.setSize(drawAreaSize.x/mEntityAreaScale,
@@ -171,7 +171,18 @@ void ofApp::GUI_entityArea() {
 
         mEntityManager.hotInteractive = NULL;
 
-        if (ImGui::IsWindowFocused() ) {
+        // check for keyboard things if entity menu is not open
+        if( !GUI_entityMenu() ) {
+            const bool backspacePressed = ImGui::IsKeyPressed( ImGui::GetKeyIndex(ImGuiKey_Backspace));
+            if( backspacePressed ) {
+                ofLogVerbose( __FUNCTION__ ) << "entity area: backspace pressed inside entities window";
+                // delete selected interactive from EntityManager
+            }
+            
+        }
+        
+        if (ImGui::IsWindowFocused() && ImGui::IsMouseHoveringWindow() ) {
+        
             
             // target mode is entered when entity is dragged and shit key is held down
             // this is used to draw connections from draggingEntity to hotEntity
@@ -462,7 +473,7 @@ void ofApp::GUI_entityArea_backgroundGrid() {
 
 void ofApp::GUI_sidebar() {
     ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
+    //window_flags |= ImGuiWindowFlags_NoTitleBar;
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoMove;
     window_flags |= ImGuiWindowFlags_NoCollapse;
@@ -472,39 +483,51 @@ void ofApp::GUI_sidebar() {
     ImGui::SetNextWindowSize(ImVec2(398, ofGetHeight()-20));
     ImGui::SetNextWindowPos(ImVec2(ImVec2(ofGetWidth()-408,10)));
     
-    if( ImGui::Begin("sidebar", NULL, ImVec2(0.f,0.f), -1.0f, window_flags) ) {
+    if( ImGui::Begin("Inspector", NULL, ImVec2(0.f,0.f), -1.0f, window_flags) ) {
     }
     
     ImGui::End();
 
 }
 
-void ofApp::GUI_entityMenu() {
+bool ofApp::GUI_entityMenu() {
     // show menu for creating Entities like
     // light-structures and effects
-    
-    static ImVec4 color = ImColor(0.8f, 0.5f, 1.0f, 1.0f);
-    
-    if ( mToggleEntityMenu ) {
-        mToggleEntityMenu = false;
+  
+    bool activateFilter = false;
+    // consider only space pressed if window is focused and mouse is over it
+    if( !mEntityMenuIsOpen &&
+        ImGui::IsKeyPressed(' ') &&
+        ImGui::IsWindowFocused() &&
+        ImGui::IsRootWindowOrAnyChildHovered() ) {
         
-        if( !ImGui::BeginPopup("entity context menu") ) {
-            ImGui::OpenPopup("entity context menu");
-            ImVec2 mPos = ImGui::GetIO().MousePos;
-            ImGui::SetNextWindowPos(ImVec2( mPos.x-20.0, mPos.y-20.0 ));
-        } else {
-            ImGui::CloseCurrentPopup();
-            ImGui::EndPopup();
-        }
+        ImGui::OpenPopup("entity context menu");
+        ImVec2 mPos = ImGui::GetIO().MousePos;
+        ImGui::SetNextWindowPos(ImVec2( mPos.x-20.0, mPos.y-20.0 ));
+        activateFilter = true;
     }
-    
     
     if (ImGui::BeginPopup("entity context menu"))
     {
+        
+        if (ImGui::IsWindowFocused() && mEntityMenuIsOpen ) {
+            
+            if( ImGui::IsKeyPressed( ImGui::GetKeyIndex(ImGuiKey_Escape)) ||
+               (ImGui::IsKeyPressed(' ') && !mEntityMenuFilter.IsActive() )) {
+                ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                mEntityMenuIsOpen = false;
+                if( mEntityMenuFilter.InputBuf[0] != 0 ) {
+                    mEntityMenuFilter.Clear();
+                }
+                return false;
+            }
+        }
+        
         mEntityMenuIsOpen = true;
-        if( mActivateFilter ) {
+
+        if( activateFilter ) {
             ImGui::SetKeyboardFocusHere();
-            mActivateFilter = false;
         }
         
         mEntityMenuFilter.Draw("");
@@ -533,36 +556,14 @@ void ofApp::GUI_entityMenu() {
         
         
         ImGui::EndPopup();
-    } else {
-        mEntityMenuIsOpen = false;
-        if( mEntityMenuFilter.InputBuf[0] != 0 ) {
-            mEntityMenuFilter.Clear();
-        }
+        return true;
     }
+    return false;
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     
-    if( mEntityMenuIsOpen ) {
-        if( key == OF_KEY_ESC ) { // ESC
-            mToggleEntityMenu = true;
-        }
-        else if( !mEntityMenuFilter.IsActive() ) {
-            if( key == ' ' ) {
-                if( !mEntityMenuFilter.IsActive() ) {
-                    mToggleEntityMenu = true;
-                }
-            }
-        }
-    } else {
-        if( key == ' ' ) {
-            if( !mEntityMenuFilter.IsActive() ) {
-                mToggleEntityMenu = true;
-                mActivateFilter = true;
-            }
-        }
-    }
 }
 
 //--------------------------------------------------------------
