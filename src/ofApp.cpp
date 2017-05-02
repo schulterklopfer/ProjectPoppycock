@@ -334,12 +334,14 @@ void ofApp::GUI_entityArea() {
                             
                         } else {
                             // ... to mouse pointer
-                            
-                            Connector::draw((ofPoint)draggingEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
-                                            (ofPoint)io.MousePos,
-                                            mEntityAreaScale,
-                                            20.f, 0.f,
-                                            Interactive::State::GHOST );
+                            if( draggingEntity != hotEntity ) {
+                                Connector::draw((ofPoint)draggingEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
+                                                (ofPoint)io.MousePos,
+                                                mEntityAreaScale,
+                                                20.f, 0.f,
+                                                Interactive::State::GHOST );
+
+                            }
                             
                         }
                         
