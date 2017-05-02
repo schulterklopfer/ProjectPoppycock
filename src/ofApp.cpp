@@ -15,7 +15,7 @@ void ofApp::setup()
     show_another_window = false;
     floatValue = 0.0f;
     mEntityAreaScale = 1.0;
-    mDragAEntityrea = false;
+    mDragEntityArea = false;
     
     mEntityMenuIsOpen = false;
     
@@ -180,17 +180,17 @@ void ofApp::GUI_entityArea() {
             }
             
         }
+        bool overAnyInteractive = false;
         
         if (ImGui::IsWindowFocused() && ImGui::IsMouseHoveringWindow() ) {
         
-            
             // target mode is entered when entity is dragged and shit key is held down
             // this is used to draw connections from draggingEntity to hotEntity
             const bool targetMode = (io.KeyShift && mEntityManager.draggingInteractive != NULL);
             
             // check if we hover an entity in reverse so
             // top entities are selected first
-            if( targetMode || (mEntityManager.draggingInteractive == NULL && !mDragAEntityrea ) ) {
+            if( targetMode || (mEntityManager.draggingInteractive == NULL && !mDragEntityArea ) ) {
                 //EntityList* list = mEntityManager.getEntities();
                 InteractiveList list = mEntityManager.getInteractives();
                 for (unsigned i = list.size(); i-- > 0; ) {
@@ -200,6 +200,8 @@ void ofApp::GUI_entityArea() {
 
                     if( eRef->hitTest((relMousePosition.x - mEntityAreaViewRect.getX())/mEntityAreaScale,
                                       (relMousePosition.y - mEntityAreaViewRect.getY())/mEntityAreaScale) ) {
+                        
+                        overAnyInteractive = true;
                         
                         // mark entity under mouse as hot
                         if( mEntityManager.hotInteractive == NULL ) {
@@ -239,8 +241,8 @@ void ofApp::GUI_entityArea() {
                         }
                     }
                 }
+                
             }
-
 
             // reset drag mode when mouse is release or shift key is released
             if( io.MouseReleased[0] || mKeyShift != io.KeyShift ) {
@@ -277,7 +279,7 @@ void ofApp::GUI_entityArea() {
                 }
                 
                 mEntityManager.activeInteractive = mEntityManager.draggingInteractive = NULL;
-                mDragAEntityrea = false;
+                mDragEntityArea = false;
             }
             
             if( ImGui::IsMouseDragging() ) {
@@ -358,11 +360,16 @@ void ofApp::GUI_entityArea() {
                 } else {
                     // drag view around
                     // TODO: Limit to bounds of EntityManager
-                    mDragAEntityrea = true;
+                    mDragEntityArea = true;
                     mEntityAreaViewRect.position.x += io.MouseDelta.x;
                     mEntityAreaViewRect.position.y += io.MouseDelta.y;
                 }
                 
+            }
+            
+            if( io.MouseClicked[0]  && !overAnyInteractive && mEntityManager.selectedInteractive != NULL ) {
+                mEntityManager.selectedInteractive->stateFlags &= ~Entity::State::SELECT;
+                mEntityManager.selectedInteractive = NULL;
             }
             
             // scale view with mouse wheel around mouse pointer
