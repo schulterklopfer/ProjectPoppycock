@@ -31,6 +31,7 @@ public:
     
     void createEntity( Entity::Type type, string id, ofVec2f position );
     void createConnector( EntityRef source, EntityRef target );
+    void deleteInteractive( InteractiveRef& interactive );
     bool connectorExists( EntityRef &source, EntityRef &target );
     EntityList* getEntities();
     ConnectorList* getConnectors();

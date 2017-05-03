@@ -25,6 +25,47 @@ void EntityManager::createEntity( Entity::Type type, string id, ofVec2f position
     recalcBounds();
 };
 
+void EntityManager::deleteInteractive( InteractiveRef& interactive ) {
+    if( (interactive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
+        const EntityRef eRef = boost::static_pointer_cast<Entity>(interactive);
+        ConnectorList* const inputs = eRef->getInputs();
+        ConnectorList* const outputs = eRef->getOutputs();
+        
+        // for each input connection, go to source entitiy of this connection and delete it from outputs
+        for( ConnectorListIterator iter = inputs->begin(); iter != inputs->end(); ++iter ) {
+            ConnectorList* const inputSourceOutputs = (*iter)->getSource()->getOutputs();
+            inputSourceOutputs->erase(std::remove(inputSourceOutputs->begin(), inputSourceOutputs->end(), (*iter)), inputSourceOutputs->end());
+            mConnectors.erase(std::remove(mConnectors.begin(), mConnectors.end(), (*iter)), mConnectors.end());
+        }
+        
+        // for each output connection, go to target entitiy of this connection and delete it from inputs
+        for( ConnectorListIterator iter = outputs->begin(); iter != outputs->end(); ++iter ) {
+            ConnectorList* const outputTargetInputs = (*iter)->getTarget()->getInputs();
+            outputTargetInputs->erase(std::remove(outputTargetInputs->begin(), outputTargetInputs->end(), (*iter)), outputTargetInputs->end());
+            mConnectors.erase(std::remove(mConnectors.begin(), mConnectors.end(), (*iter)), mConnectors.end());
+        }
+
+        // just to be sure, cleanup inputs and outpus
+        inputs->clear();
+        outputs->clear();
+        
+        // finally remove the entity from the list of entities
+        mEntities.erase(std::remove(mEntities.begin(), mEntities.end(), eRef), mEntities.end());
+        
+    }
+    else if( (interactive->getTypeFlags()&Interactive::Type::CONNECTOR) == Interactive::Type::CONNECTOR ) {
+        const ConnectorRef cRef = boost::static_pointer_cast<Connector>(interactive);
+        ConnectorList* const sourceOutputs = cRef->getSource()->getOutputs();
+        ConnectorList* const targetInputs = cRef->getTarget()->getInputs();
+        
+        // remove all refs to connector
+        sourceOutputs->erase(std::remove(sourceOutputs->begin(), sourceOutputs->end(), cRef), sourceOutputs->end());
+        targetInputs->erase(std::remove(targetInputs->begin(), targetInputs->end(), cRef), targetInputs->end());
+        mConnectors.erase(std::remove(mConnectors.begin(), mConnectors.end(), cRef), mConnectors.end());
+        
+    }
+}
+
 void EntityManager::createConnector( EntityRef source, EntityRef target ) {
     // check if there is already a connector between source and target
     if( connectorExists( source, target ) ) return;

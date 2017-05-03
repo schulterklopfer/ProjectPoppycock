@@ -177,6 +177,9 @@ void ofApp::GUI_entityArea() {
             if( backspacePressed ) {
                 ofLogVerbose( __FUNCTION__ ) << "entity area: backspace pressed inside entities window";
                 // delete selected interactive from EntityManager
+                if( mEntityManager.selectedInteractive != NULL ) {
+                    mEntityManager.deleteInteractive(mEntityManager.selectedInteractive);
+                }
             }
             
         }
