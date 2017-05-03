@@ -22,15 +22,15 @@ class Entity : public Interactive {
 
 private:
     
-    bool __r_targetEntityInInputs( Entity* target );
+    bool __r_targetEntityInInputs( Entity* const target );
     
 protected:
     
     virtual void recalcBounds();
-    bool connectorIsCircular( Entity* target );
-    bool inCircle( float x, float y );
-    bool outputExists( Entity* e );
-    bool inputExists( Entity* e );
+    bool connectorIsCircular( Entity* const target );
+    bool inCircle( const float x, const float y );
+    bool outputExists( Entity* const e );
+    bool inputExists( Entity* const e );
 
     
     string mId;
@@ -45,28 +45,28 @@ protected:
     
 public:
 
-    Entity( string id, ImVec2 position );
+    Entity( const string id, const ImVec2 position );
 
-    virtual void draw( ImVec2 offset, float scale );
-    void drawBoundingBox( ImVec2 offset, float scale );
-    virtual bool hitTest( float x, float y );
+    virtual void draw( const ImVec2 offset, const float scale );
+    void drawBoundingBox( const ImVec2 offset, const float scale );
+    virtual bool hitTest( const float x, const float y );
     virtual int getTypeFlags();
     ImVec2 getPosition();
-    ImVec2 getDrawPosition( ImVec2 offset, float scale );
-    void setPosition( ImVec2 p);
-    void move( float x, float y );
+    ImVec2 getDrawPosition( const ImVec2 offset, float scale );
+    void setPosition( const ImVec2 p);
+    void move( const float x, const float y );
     bool getBoundsDirty();
     void clearBoundsDirty();
     string getId();
-    void setId( string id );
+    void setId( const string id );
     ofRectangle* getBounds();
     ConnectorList* getInputs();
     ConnectorList* getOutputs();
-    void addInput( ConnectorRef input );
-    void addOutput( ConnectorRef output );
+    void addInput( const ConnectorRef input );
+    void addOutput( const ConnectorRef output );
     
-    virtual bool acceptsInputFrom(boost::shared_ptr<Entity> &source );
-    virtual bool providesOutputTo(boost::shared_ptr<Entity> &source );
+    virtual bool acceptsInputFrom(const boost::shared_ptr<Entity> &source );
+    virtual bool providesOutputTo(const boost::shared_ptr<Entity> &source );
     virtual bool acceptsInput();
     virtual bool providesOutput();
 

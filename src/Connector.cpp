@@ -86,7 +86,7 @@ void Connector::draw(const ofPoint sourcePosition,
 
 }
 
-void Connector::draw( ImVec2 offset, float scale ) {
+void Connector::draw( const ImVec2 offset, const float scale ) {
     Connector::draw((ofPoint)getSource()->getDrawPosition(offset,scale),
                     (ofPoint)getTarget()->getDrawPosition(offset,scale),
                     scale,
@@ -95,7 +95,7 @@ void Connector::draw( ImVec2 offset, float scale ) {
                     isFader() );
 }
 
-bool Connector::hitTest( float x, float y ) {
+bool Connector::hitTest( const float x, const float y ) {
     const float lineSize = 6;
 
     const ofPoint sourcePosition = (ofPoint)mSource->getPosition();

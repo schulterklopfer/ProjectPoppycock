@@ -16,12 +16,12 @@ class Observer: public Entity {
     
 public:
     
-    Observer( string id, ImVec2 position ) : Entity(id, position) {};
+    Observer( const string id, const ImVec2 position ) : Entity(id, position) {};
     
-    virtual void draw( ImVec2 offset, float scale );
+    virtual void draw( const ImVec2 offset, const float scale );
     virtual int getTypeFlags();
-    virtual bool acceptsInputFrom(boost::shared_ptr<Entity> &source );
-    virtual bool providesOutputTo(boost::shared_ptr<Entity> &source );
+    virtual bool acceptsInputFrom(const boost::shared_ptr<Entity> &source );
+    virtual bool providesOutputTo(const boost::shared_ptr<Entity> &source );
     virtual bool providesOutput();
 };
 #endif /* Observer_h */

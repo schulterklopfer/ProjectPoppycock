@@ -39,7 +39,7 @@ public:
     Interactive() : stateFlags(0) {};
 
     
-    virtual bool hitTest( float x, float y );
+    virtual bool hitTest( const float x, const float y );
     virtual int getTypeFlags();
 
     int stateFlags;

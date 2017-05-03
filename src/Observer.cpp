@@ -12,7 +12,7 @@ int Observer::getTypeFlags() {
     return Observer::Type::OBSERVER|Observer::Type::ENTITY;
 }
 
-void Observer::draw( ImVec2 offset, float scale ) {
+void Observer::draw( const ImVec2 offset, const float scale ) {
     
     Entity::draw(offset, scale);
     ImGui::GetWindowDrawList()->AddCircleFilled(getDrawPosition(offset, scale), 18*scale, 0xffaaffaa, 64 );
@@ -20,7 +20,7 @@ void Observer::draw( ImVec2 offset, float scale ) {
 }
 
 // Observer has no outputs.
-bool Observer::providesOutputTo( EntityRef &target ) {
+bool Observer::providesOutputTo( const EntityRef &target ) {
     return false;
 }
 
@@ -29,6 +29,6 @@ bool Observer::providesOutput() {
 }
 
 // accepts more than one input
-bool Observer::acceptsInputFrom( EntityRef &source ) {
+bool Observer::acceptsInputFrom( const EntityRef &source ) {
     return this != source.get();
 }

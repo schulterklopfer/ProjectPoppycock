@@ -16,9 +16,9 @@ class Effect: public Entity {
 
 public:
     
-    Effect( string id, ImVec2 position ) : Entity(id, position) {};
+    Effect( const string id, const ImVec2 position ) : Entity(id, position) {};
 
-    virtual void draw( ImVec2 offset, float scale );
+    virtual void draw( const ImVec2 offset, const float scale );
     virtual int getTypeFlags();
 
 };

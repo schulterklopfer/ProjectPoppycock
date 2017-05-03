@@ -8,7 +8,7 @@
 
 #include "Interactive.h"
 
-bool Interactive::hitTest( float x, float y ) {
+bool Interactive::hitTest( const float x, const float y ) {
     return false;
 }
 

@@ -8,7 +8,7 @@
 
 #include "Entity.h"
 
-Entity::Entity( string id, ImVec2 position ) :
+Entity::Entity( const string id, const ImVec2 position ) :
     Interactive(),
     mId(id),
     mPosition(position),
@@ -22,7 +22,7 @@ ImVec2 Entity::getPosition() {
     return mPosition;
 }
 
-ImVec2 Entity::getDrawPosition( ImVec2 offset, float scale ) {
+ImVec2 Entity::getDrawPosition( const ImVec2 offset, const float scale ) {
     return  ImVec2( mPosition.x*scale + offset.x,
                     mPosition.y*scale + offset.y );
 }
@@ -34,7 +34,7 @@ void Entity::setPosition( ImVec2 p) {
     recalcBounds();
 }
 
-void Entity::move( float x, float y ) {
+void Entity::move( const float x, const float y ) {
     mPosition.x += x;
     mPosition.y += y;
     recalcBounds();
@@ -52,11 +52,11 @@ string Entity::getId() {
     return mId;
 }
 
-void Entity::setId( string id ) {
+void Entity::setId( const string id ) {
     mId = id;
 }
 
-void Entity::draw( ImVec2 offset, float scale ) {
+void Entity::draw( const ImVec2 offset, const float scale ) {
     int color = 0xffffffff;
     
     if( (stateFlags&State::OVER) == State::OVER ) {
@@ -82,7 +82,7 @@ void Entity::draw( ImVec2 offset, float scale ) {
 
 }
 
-void Entity::drawBoundingBox(  ImVec2 offset, float scale  ) {
+void Entity::drawBoundingBox( const ImVec2 offset, const float scale  ) {
     ImVec2 upperLeft = ImVec2( mBounds.getMinX()*scale+offset.x, mBounds.getMinY()*scale+offset.y );
     ImVec2 lowerRight = ImVec2( mBounds.getMaxX()*scale+offset.x, mBounds.getMaxY()*scale+offset.y );
     ImGui::GetWindowDrawList()->AddRect(upperLeft, lowerRight, 0xff0000ff );
@@ -97,11 +97,11 @@ void Entity::recalcBounds() {
     mBoundsDirty = true;
 }
 
-bool Entity::hitTest( float x, float y ) {
+bool Entity::hitTest( const float x, const float y ) {
     return inCircle(x, y);
 }
 
-inline bool Entity::inCircle( float x, float y ) {
+inline bool Entity::inCircle( const float x, const float y ) {
     const ofPoint c = mBounds.getCenter();
     const float radius = mSize*0.5;
     float dx = fabs(x-c.x);
@@ -126,7 +126,7 @@ ConnectorList* Entity::getOutputs() {
     return &mOutputs;
 }
 
-void Entity::addInput( ConnectorRef input ) {
+void Entity::addInput( const ConnectorRef input ) {
     
     // connector doesn't have this object as source
     if( input->getTarget().get() != this ) {
@@ -142,7 +142,7 @@ void Entity::addInput( ConnectorRef input ) {
     
 }
 
-void Entity::addOutput( ConnectorRef output ) {
+void Entity::addOutput( const ConnectorRef output ) {
     
     // connector doesn't have this object as source
     if( output->getSource().get() != this ) {
@@ -158,7 +158,7 @@ void Entity::addOutput( ConnectorRef output ) {
     
 }
 
-bool Entity::inputExists( Entity* e ) {
+bool Entity::inputExists( Entity* const e ) {
     // does an input with this object as target and e exist?
     for( ConnectorListIterator iter = mInputs.begin(); iter != mInputs.end(); ++iter ) {
         if( ((*iter)->getTarget()).get() == this && ((*iter)->getSource()).get() == e ) {
@@ -169,7 +169,7 @@ bool Entity::inputExists( Entity* e ) {
     return false;
 }
 
-bool Entity::outputExists( Entity* e ) {
+bool Entity::outputExists( Entity* const e ) {
     // does a output with this object as source and e exist?
     for( ConnectorListIterator iter = mOutputs.begin(); iter != mOutputs.end(); ++iter ) {
         if( ((*iter)->getSource()).get() == this && ((*iter)->getTarget()).get() == e ) {
@@ -181,7 +181,7 @@ bool Entity::outputExists( Entity* e ) {
 }
 
 // look recursevely for entity matching *target going backwards in input sources
-bool Entity::__r_targetEntityInInputs( Entity* target ) {
+bool Entity::__r_targetEntityInInputs( Entity* const target ) {
     for( ConnectorListIterator iter = mInputs.begin(); iter != mInputs.end(); ++iter ) {
         if( (*iter)->getSource().get() == target ) {
             return true;
@@ -192,17 +192,17 @@ bool Entity::__r_targetEntityInInputs( Entity* target ) {
 }
 
 
-bool Entity::connectorIsCircular( Entity* target ) {
+bool Entity::connectorIsCircular( Entity* const target ) {
     // if nothing is connected to source, early out
     if( mInputs.size() == 0 ) return false;
     return __r_targetEntityInInputs(target);
 }
 
-bool Entity::acceptsInputFrom( EntityRef &source ) {
+bool Entity::acceptsInputFrom( const EntityRef &source ) {
     return this != source.get() && mInputs.size() == 0 && !source.get()->connectorIsCircular( this );
 }
 
-bool Entity::providesOutputTo( EntityRef &target ) {
+bool Entity::providesOutputTo( const EntityRef &target ) {
     return this != target.get() && !connectorIsCircular( target.get() );
 }
 

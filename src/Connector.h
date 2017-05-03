@@ -28,12 +28,13 @@ protected:
     
 public:
     
-    Connector(boost::shared_ptr<Entity> source,
-              boost::shared_ptr<Entity> target ) : Interactive(), mSource(source), mTarget(target) {};
+    Connector(const boost::shared_ptr<Entity> source,
+              const boost::shared_ptr<Entity> target ) : Interactive(), mSource(source), mTarget(target) {};
     
-    void draw( ImVec2 offset, float scale );
+    void draw( const ImVec2 offset, const float scale );
     
-    static void draw( const ofPoint sp, const ofPoint tp,
+    static void draw( const ofPoint sp,
+                      const ofPoint tp,
                       const float scale = 1.0,
                       const float startOffset = 0.0,
                       const float endOffset = 0.0,
@@ -43,7 +44,7 @@ public:
     boost::shared_ptr<Entity> getSource();
     boost::shared_ptr<Entity> getTarget();
     
-    virtual bool hitTest( float x, float y );
+    virtual bool hitTest( const float x, const float y );
     virtual int getTypeFlags();
     bool isFader();
     
