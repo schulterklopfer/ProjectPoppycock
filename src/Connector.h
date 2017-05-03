@@ -44,7 +44,7 @@ public:
     boost::shared_ptr<Entity> getTarget();
     
     virtual bool hitTest( float x, float y );
-    
+    virtual int getTypeFlags();
     bool isFader();
     
 };

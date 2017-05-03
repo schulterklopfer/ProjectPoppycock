@@ -120,6 +120,10 @@ bool Connector::isFader() {
     return (mTarget->getTypeFlags()&Entity::Type::OBSERVER)==Entity::Type::OBSERVER;
 }
 
+int Connector::getTypeFlags() {
+    return Connector::Type::CONNECTOR;
+}
+
 EntityRef Connector::getSource() {
     return mSource;
 }
