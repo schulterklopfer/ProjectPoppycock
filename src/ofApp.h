@@ -8,10 +8,15 @@
 #include "ThemeTest.h"
 #include "EntityManager.h"
 
-#define ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
+typedef struct EntityMenuListEntry {
+    string label;
+    Interactive::Type type;
+} EntityMenuListEntry;
 
 class ofApp : public ofBaseApp{
 public:
+    
+    
     void setup();
     void update();
     void draw();
@@ -27,6 +32,11 @@ public:
     void gotMessage(ofMessage msg);
     void mouseScrolled(float x, float y);
     
+    std::vector<EntityMenuListEntry> mEntityMenuEntries = {
+        {"Generator", Interactive::Type::EFFECT },
+        {"Observer", Interactive::Type::OBSERVER }
+    };
+
     
 private:
     
@@ -34,6 +44,8 @@ private:
     void GUI_entityArea();
     void GUI_entityArea_backgroundGrid();
     void GUI_sidebar();
+    
+    static bool __failsEntityMenuFilter (string s);
     
     EntityManager mEntityManager;
     
@@ -51,7 +63,8 @@ private:
     
     bool mEntityMenuIsOpen;
     ImGuiTextFilter mEntityMenuFilter;
-
+    int mEntityMenuSelectedOption;
+    int mEntityMenuCreate;
     
     
     

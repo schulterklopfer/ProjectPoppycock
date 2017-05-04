@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "ImGui.h"
 
 //--------------------------------------------------------------
 void ofApp::setup()
@@ -16,7 +17,8 @@ void ofApp::setup()
     floatValue = 0.0f;
     mEntityAreaScale = 1.0;
     mDragEntityArea = false;
-    
+    mEntityMenuSelectedOption = 0;
+    mEntityMenuCreate = -1;
     mEntityMenuIsOpen = false;
     
     //load your own ofImage
@@ -40,13 +42,6 @@ void ofApp::setup()
     //textureSourceID = gui.loadTexture("of_upside_down.png");
 
     ofLogVerbose() << "textureSourceID: " << textureSourceID;
-    
-    mEntityManager.createEntity(Entity::Type::EFFECT, "test0", ofVec2f(120,120));
-    mEntityManager.createEntity(Entity::Type::EFFECT, "test1", ofVec2f(200.0f,200.0f));
-    mEntityManager.createEntity(Entity::Type::EFFECT, "test2", ofVec2f(200.0f,300.0f));
-    mEntityManager.createEntity(Entity::Type::EFFECT, "test3", ofVec2f(300.0f,200.0f));
-    mEntityManager.createEntity(Entity::Type::OBSERVER, "obs", ofVec2f(450,450));
-
     
 }
 
@@ -103,17 +98,10 @@ void ofApp::draw(){
     }
     
     // 2. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
-    if (show_test_window)
-    {
-        ImGui::SetNextWindowPos(ofVec2f(650, 20), ImGuiSetCond_FirstUseEver);
-        ImGui::ShowTestWindow(&show_test_window);
-    }
-    
-    
-    bool pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)imageButtonID, ImVec2(200, 200));
-    pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)pixelsButtonID, ImVec2(200, 200));
-    pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)textureSourceID, ImVec2(200, 200));
-    */
+     */
+
+    //ImGui::SetNextWindowPos(ofVec2f(650, 20), ImGuiSetCond_FirstUseEver);
+    //ImGui::ShowTestWindow(&show_test_window);
     
     GUI_sidebar();
     GUI_entityArea();
@@ -506,26 +494,64 @@ bool ofApp::GUI_entityMenu() {
     // show menu for creating Entities like
     // light-structures and effects
   
-    bool activateFilter = false;
     // consider only space pressed if window is focused and mouse is over it
+    bool initialFilterFocus = false;
+    bool arrowKeysUsed = false;
+    const ofPoint cPos = (ofPoint)ImGui::GetCursorScreenPos();
+    
     if( !mEntityMenuIsOpen &&
-        ImGui::IsKeyPressed(' ') &&
+        (ImGui::IsKeyPressed(' ') || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) &&
         ImGui::IsWindowFocused() &&
         ImGui::IsRootWindowOrAnyChildHovered() ) {
         
         ImGui::OpenPopup("entity context menu");
         ImVec2 mPos = ImGui::GetIO().MousePos;
         ImGui::SetNextWindowPos(ImVec2( mPos.x-20.0, mPos.y-20.0 ));
-        activateFilter = true;
+        mEntityMenuSelectedOption = 0;
+        initialFilterFocus = true;
     }
     
     if (ImGui::BeginPopup("entity context menu"))
     {
         
+        std::vector<EntityMenuListEntry> filteredLines;
+        
+        for( std::vector<EntityMenuListEntry>::iterator iter=mEntityMenuEntries.begin(); iter!=mEntityMenuEntries.end(); ++iter ) {
+            if( mEntityMenuFilter.PassFilter(iter->label.c_str()) ) {
+                filteredLines.push_back(*iter);
+            }
+        }
+
+        const int optionCount = filteredLines.size();
+
         if (ImGui::IsWindowFocused() && mEntityMenuIsOpen ) {
+            bool closeMenu = false;
             
             if( ImGui::IsKeyPressed( ImGui::GetKeyIndex(ImGuiKey_Escape)) ||
-               (ImGui::IsKeyPressed(' ') && !mEntityMenuFilter.IsActive() )) {
+               (ImGui::IsKeyPressed(' ') && !mEntityMenuFilter.IsActive())) {
+                closeMenu=true;
+            } else if( ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)) ){
+                mEntityMenuCreate = mEntityMenuSelectedOption;
+            } else if( mEntityMenuCreate != -1 ) {
+                ofLogVerbose( __FUNCTION__ ) << "selecting: " << mEntityMenuCreate;
+                
+                Interactive::Type entityToCreate = filteredLines[mEntityMenuCreate].type;
+                
+                ofPoint position = ((ofPoint)ImGui::GetIO().MousePos - cPos - mEntityAreaViewRect.position)/mEntityAreaScale;
+                
+                mEntityManager.createEntity(entityToCreate, "test", position);
+                
+                mEntityMenuCreate = -1;
+                closeMenu=true;
+            } else if( ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_UpArrow)) ){
+                mEntityMenuSelectedOption--;
+                arrowKeysUsed = true;
+            } else if( ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_DownArrow)) ){
+                mEntityMenuSelectedOption++;
+                arrowKeysUsed = true;
+            }
+            
+            if( closeMenu ) {
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
                 mEntityMenuIsOpen = false;
@@ -536,36 +562,48 @@ bool ofApp::GUI_entityMenu() {
             }
         }
         
+        if( mEntityMenuSelectedOption >= optionCount ) {
+            mEntityMenuSelectedOption=0;
+        } else if( mEntityMenuSelectedOption < 0 ) {
+            mEntityMenuSelectedOption=optionCount-1;
+        }
+        
+        
         mEntityMenuIsOpen = true;
 
-        if( activateFilter ) {
+        ImGui::CaptureKeyboardFromApp();
+        
+        // sets focus to filter either when mouse was release over other element
+        // or menu was opened. This ensures, that the focus is always
+        // set where it needs to be
+        
+        
+        ImGui::Text("CREATE");
+        
+        if( initialFilterFocus || ImGui::GetIO().MouseReleased[0] ) {
             ImGui::SetKeyboardFocusHere();
         }
         
         mEntityMenuFilter.Draw("");
-        const char* lines[] = { "aaa1.c", "bbb1.c", "ccc1.c", "aaa2.cpp", "bbb2.cpp", "ccc2.cpp", "abc.h", "hello, world" };
-        /*
-        for (int i = 0; i < ARRAYSIZE(lines); i++)
-            if (mEntityMenuFilter.PassFilter(lines[i]))
-                ImGui::BulletText("%s", lines[i]);
-        */
         
-
         ImGui::BeginChild("child", ImVec2(208.0f, 75.0f), false);
         ImGui::PushItemWidth(208);
 
-        for (int line = 0; line < ARRAYSIZE(lines); line++)
-        {
-            if (mEntityMenuFilter.PassFilter(lines[line])) {
-                ImGui::Button(lines[line]);
-            
+        for (int line = 0; line < optionCount; line++) {
+            const bool selected = line==mEntityMenuSelectedOption;
+            if( selected && arrowKeysUsed ) {
+                ImGui::SetScrollHere(0.5f);
             }
 
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.f,1.f,1.f,0.2f));
+            if( ImGui::Selectable(filteredLines[line].label.c_str(), selected ) ) {
+                mEntityMenuCreate = line;
+            }
+            ImGui::PopStyleColor(1);
         }
+        
         ImGui::PopItemWidth();
         ImGui::EndChild();
-        
-        
         
         ImGui::EndPopup();
         return true;
