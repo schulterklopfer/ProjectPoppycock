@@ -40,6 +40,7 @@ public:
     void deleteInteractive( const InteractiveRef& interactive );
     bool connectorExists( EntityRef &source, EntityRef &target );
     bool isInSelection( const InteractiveRef& interactive );
+    void deselectInteractive( const InteractiveRef& interactive );
     EntityList* const getEntities();
     ConnectorList* const getConnectors();
     InteractiveList* const getInteractives();

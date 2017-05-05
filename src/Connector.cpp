@@ -132,3 +132,7 @@ EntityRef Connector::getSource() {
 EntityRef Connector::getTarget() {
     return mTarget;
 }
+
+void Connector::recalcBounds() {
+    mBounds.set((ofPoint)mSource->getPosition(), (ofPoint)mTarget->getPosition());
+}

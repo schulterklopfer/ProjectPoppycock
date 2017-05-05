@@ -31,12 +31,14 @@ void Entity::setPosition( ImVec2 p) {
     mPosition.x = p.x;
     mPosition.y = p.y;
     recalcBounds();
+    recalcConnectionBounds();
 }
 
 void Entity::move( const float x, const float y ) {
     mPosition.x += x;
     mPosition.y += y;
     recalcBounds();
+    recalcConnectionBounds();
 }
 
 bool Entity::getBoundsDirty() {
@@ -79,13 +81,18 @@ void Entity::drawBoundingBox( const ImVec2 offset, const float scale  ) {
     ImGui::GetWindowDrawList()->AddRect(upperLeft, lowerRight, 0xff0000ff );
 }
 
-ofRectangle* Entity::getBounds() {
-    return &mBounds;
-}
-
 void Entity::recalcBounds() {
     mBounds.setFromCenter(mPosition.x, mPosition.y, mSize, mSize);
     mBoundsDirty = true;
+}
+
+void Entity::recalcConnectionBounds() {
+    for( ConnectorListIterator iter = mInputs.begin(); iter != mInputs.end(); ++iter ) {
+        (*iter)->recalcBounds();
+    }
+    for( ConnectorListIterator iter = mOutputs.begin(); iter != mOutputs.end(); ++iter ) {
+        (*iter)->recalcBounds();
+    }
 }
 
 bool Entity::hitTest( const float x, const float y ) {
@@ -129,7 +136,7 @@ void Entity::addInput( const ConnectorRef input ) {
     }
     
     mInputs.push_back(input);
-    
+    recalcConnectionBounds();
 }
 
 void Entity::addOutput( const ConnectorRef output ) {
@@ -144,7 +151,7 @@ void Entity::addOutput( const ConnectorRef output ) {
     }
     
     mOutputs.push_back(output);
-    
+    recalcConnectionBounds();
 }
 
 bool Entity::inputExists( Entity* const e ) {

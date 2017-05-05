@@ -70,6 +70,17 @@ bool EntityManager::isInSelection(const InteractiveRef &interactive) {
     return std::find( selectedInteractives.begin(), selectedInteractives.end(), interactive ) != selectedInteractives.end();
 }
 
+void EntityManager::deselectInteractive(const InteractiveRef& interactive) {
+    interactive->stateFlags &= ~Interactive::State::SELECT;
+    for ( SelectionIterator iter = selectedInteractives.begin(); iter != selectedInteractives.end(); ) {
+        if ( (*iter) == interactive ) {
+            iter = selectedInteractives.erase( iter );
+        } else {
+            ++iter;
+        }
+    }
+}
+
 void EntityManager::createConnector( EntityRef source, EntityRef target ) {
     // check if there is already a connector between source and target
     if( connectorExists( source, target ) ) return;

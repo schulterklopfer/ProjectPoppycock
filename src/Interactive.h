@@ -11,11 +11,14 @@
 
 #include <stdio.h>
 #include <vector>
-
+#include "ofRectangle.h"
 #include "boost/shared_ptr.hpp"
 
 class Interactive {
 
+protected:
+    ofRectangle mBounds;
+    
 public:
     
     typedef enum Type {
@@ -41,7 +44,8 @@ public:
     
     virtual bool hitTest( const float x, const float y );
     virtual int getTypeFlags();
-
+    virtual void recalcBounds();
+    virtual ofRectangle* getBounds();
     int stateFlags;
     
 };

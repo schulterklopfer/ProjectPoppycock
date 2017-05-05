@@ -181,6 +181,18 @@ void ofApp::GUI_entityArea() {
         }
         bool overAnyInteractive = false;
         
+        GUI_entityArea_backgroundGrid();
+        
+        // draw connectors
+        for( ConnectorListIterator iter = connectors->begin(); iter != connectors->end(); ++iter ) {
+            (*iter)->draw( relativeOffset, mEntityAreaScale );
+        }
+        
+        // draw entities
+        for( EntityListIterator iter = entities->begin(); iter != entities->end(); ++iter ) {
+            (*iter)->draw( relativeOffset, mEntityAreaScale );
+        }
+        
         if (ImGui::IsWindowFocused() && ImGui::IsMouseHoveringWindow() ) {
             // check some commands here:
             //if( io.ShortcutsUseSuperKey?io.KeySuper:io.KeyCtrl ) {
@@ -293,6 +305,9 @@ void ofApp::GUI_entityArea() {
                 }
                 
                 mEntityManager.activeInteractive = mEntityManager.draggingInteractive = NULL;
+                
+                // reset selection rectangle when mouse is released
+                mMouseSelectionActive = !io.MouseReleased[0];
             }
             
             if( ImGui::IsMouseDragging() ) {
@@ -398,6 +413,40 @@ void ofApp::GUI_entityArea() {
                     // TODO: Limit to bounds of EntityManager
                     mEntityAreaViewRect.position.x += io.MouseDelta.x;
                     mEntityAreaViewRect.position.y += io.MouseDelta.y;
+                } else {
+                    if( mMouseSelectionActive ) {
+                        // draw rectangle for mouse selection and select interactives inside it.
+                        ofRectangle drawRect = ofRectangle((mMouseSelectionStartPoint*mEntityAreaScale +
+                                                        mEntityAreaViewRect.position +
+                                                        (ofPoint)cPos),
+                                                       (ofPoint)io.MousePos);
+                        
+                        ofRectangle rect = ofRectangle(mMouseSelectionStartPoint,
+                                                       ((ofPoint)io.MousePos - (ofPoint)cPos - mEntityAreaViewRect.position )/mEntityAreaScale);
+
+                        ImGui::GetWindowDrawList()->AddRectFilled((ImVec2)drawRect.getMin(), (ImVec2)drawRect.getMax(), 0x11ffffff);
+
+                        InteractiveList* const list = mEntityManager.getInteractives();
+                        
+                        // TODO: selection based on shape, not on bounds
+                        for( InteractiveListIterator iter = list->begin(); iter != list->end(); ++iter ) {
+                            ofLogVerbose(__FUNCTION__) << *((*iter)->getBounds()) << " vs " << rect;
+                            if( (*iter)->getBounds()->intersects(rect) ) {
+                                (*iter)->stateFlags |= Entity::State::SELECT;
+                                mEntityManager.selectedInteractives.insert(*iter);
+                            } else {
+                                mEntityManager.deselectInteractive(*iter);
+                            }
+                        }
+                        
+                        
+                    } else {
+                        
+                        mMouseSelectionStartPoint.set((io.MousePos.x - cPos.x - mEntityAreaViewRect.position.x)/mEntityAreaScale,
+                                                      (io.MousePos.y - cPos.y - mEntityAreaViewRect.position.y)/mEntityAreaScale );
+                        mMouseSelectionActive = true;
+                    }
+                    
                 }
                 
             }
@@ -445,22 +494,6 @@ void ofApp::GUI_entityArea() {
 
 
             }
-
-        }
-        
-        GUI_entityArea_backgroundGrid();
-        
-        // draw connectors
-        for( ConnectorListIterator iter = connectors->begin(); iter != connectors->end(); ++iter ) {
-            (*iter)->draw( relativeOffset, mEntityAreaScale );
-            //(*iter)->drawBoundingBox( relativeOffset, mEntityAreaScale );
-            
-        }
-
-        // draw entities
-        for( EntityListIterator iter = entities->begin(); iter != entities->end(); ++iter ) {
-            (*iter)->draw( relativeOffset, mEntityAreaScale );
-            //(*iter)->drawBoundingBox( relativeOffset, mEntityAreaScale );
 
         }
                 

@@ -50,6 +50,9 @@ private:
     EntityManager mEntityManager;
     
     bool mShortcutKeyDown;
+    bool mMouseSelectionActive;
+    ofPoint mMouseSelectionStartPoint;
+    
 
     ofRectangle mEntityAreaViewRect;
     float mEntityAreaScale;

@@ -15,3 +15,9 @@ bool Interactive::hitTest( const float x, const float y ) {
 int Interactive::getTypeFlags() {
     return Interactive::Type::NONE;
 }
+
+ofRectangle* Interactive::getBounds() {
+    return &mBounds;
+}
+
+void Interactive::recalcBounds() {}

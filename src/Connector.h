@@ -46,6 +46,8 @@ public:
     
     virtual bool hitTest( const float x, const float y );
     virtual int getTypeFlags();
+    virtual void recalcBounds();
+
     bool isFader();
     
 };

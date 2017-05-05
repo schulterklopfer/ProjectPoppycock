@@ -26,14 +26,13 @@ private:
     
 protected:
     
-    virtual void recalcBounds();
     bool connectorIsCircular( Entity* const target );
     bool inCircle( const float x, const float y );
     bool outputExists( Entity* const e );
     bool inputExists( Entity* const e );
+    void recalcConnectionBounds();
 
     ImVec2 mPosition;
-    ofRectangle mBounds;
     bool mBoundsDirty;
     float mSize;
     
@@ -55,7 +54,6 @@ public:
     void move( const float x, const float y );
     bool getBoundsDirty();
     void clearBoundsDirty();
-    ofRectangle* getBounds();
     ConnectorList* getInputs();
     ConnectorList* getOutputs();
     void addInput( const ConnectorRef input );
@@ -66,6 +64,7 @@ public:
     virtual bool acceptsInput();
     virtual bool providesOutput();
     virtual boost::shared_ptr<Entity> clone();
+    virtual void recalcBounds();
 
 };
 
