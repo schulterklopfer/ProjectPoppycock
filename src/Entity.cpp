@@ -203,3 +203,11 @@ bool Entity::providesOutput() {
     return true;
 }
 
+
+EntityRef Entity::clone() {
+    EntityRef clone = EntityRef( new Entity(mPosition) );
+    clone->mSize = mSize;
+    return clone;
+}
+
+

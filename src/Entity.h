@@ -65,6 +65,7 @@ public:
     virtual bool providesOutputTo(const boost::shared_ptr<Entity> &source );
     virtual bool acceptsInput();
     virtual bool providesOutput();
+    virtual boost::shared_ptr<Entity> clone();
 
 };
 
