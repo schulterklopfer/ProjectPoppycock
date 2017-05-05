@@ -26,9 +26,11 @@ class EntityManager {
 private:
     
     void recalcBounds();
+    void regenerateInteractivesList();
     
     EntityList mEntities;
     ConnectorList mConnectors;
+    InteractiveList mInteractives;
     ofRectangle mBounds;
     
 public:
@@ -38,9 +40,9 @@ public:
     void deleteInteractive( const InteractiveRef& interactive );
     bool connectorExists( EntityRef &source, EntityRef &target );
     bool isInSelection( const InteractiveRef& interactive );
-    EntityList* getEntities();
-    ConnectorList* getConnectors();
-    InteractiveList getInteractives();
+    EntityList* const getEntities();
+    ConnectorList* const getConnectors();
+    InteractiveList* const getInteractives();
     void drawBoundingBox( ImVec2 offset, float scale );
     ofRectangle* getBounds();
     void checkDirtyBounds();

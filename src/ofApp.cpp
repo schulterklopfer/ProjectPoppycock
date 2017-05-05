@@ -196,10 +196,10 @@ void ofApp::GUI_entityArea() {
             // top entities are selected first
             if( targetMode || (mEntityManager.draggingInteractive == NULL && !ImGui::IsMouseDragging() ) ) {
                 //EntityList* list = mEntityManager.getEntities();
-                InteractiveList list = mEntityManager.getInteractives();
-                for (unsigned i = list.size(); i-- > 0; ) {
+                InteractiveList* const list = mEntityManager.getInteractives();
+                for (unsigned i = list->size(); i-- > 0; ) {
                     // hover
-                    InteractiveRef eRef = list.at(i);
+                    InteractiveRef eRef = list->at(i);
                     eRef->stateFlags &= ~(Entity::State::DOWN|Entity::State::OVER|Entity::State::TARGET);
 
                     if( eRef->hitTest((relMousePosition.x - mEntityAreaViewRect.getX())/mEntityAreaScale,

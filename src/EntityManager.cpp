@@ -20,8 +20,7 @@ void EntityManager::createEntity( Entity::Type type, ofVec2f position) {
         default:
             mEntities.push_back(EntityRef(new Entity(position)));
     }
-    
-    
+    regenerateInteractivesList();
     recalcBounds();
 };
 
@@ -64,6 +63,7 @@ void EntityManager::deleteInteractive( const InteractiveRef& interactive ) {
         mConnectors.erase(std::remove(mConnectors.begin(), mConnectors.end(), cRef), mConnectors.end());
         
     }
+    regenerateInteractivesList();
 }
 
 bool EntityManager::isInSelection(const InteractiveRef &interactive) {
@@ -78,7 +78,7 @@ void EntityManager::createConnector( EntityRef source, EntityRef target ) {
     source->addOutput(cRef);
     target->addInput(cRef);
     mConnectors.push_back(cRef);
-    
+    regenerateInteractivesList();
 }
 
 bool EntityManager::connectorExists( EntityRef &source, EntityRef &target ) {
@@ -91,28 +91,28 @@ bool EntityManager::connectorExists( EntityRef &source, EntityRef &target ) {
     return false;
 }
 
-EntityList* EntityManager::getEntities() {
+EntityList* const EntityManager::getEntities() {
     return &mEntities;
 }
 
-ConnectorList* EntityManager::getConnectors() {
+ConnectorList* const EntityManager::getConnectors() {
     return &mConnectors;
 }
 
-InteractiveList EntityManager::getInteractives() {
-    InteractiveList list;
-    for( ConnectorListIterator iter = mConnectors.begin(); iter != mConnectors.end(); ++iter ) {
-        list.push_back((*iter));
-    }
-
-    for( EntityListIterator iter = mEntities.begin(); iter != mEntities.end(); ++iter ) {
-        list.push_back((*iter));
-    }
-    
-    return list;
-    
+InteractiveList* const EntityManager::getInteractives() {
+    return &mInteractives;
 }
 
+void EntityManager::regenerateInteractivesList() {
+    mInteractives.clear();
+    for( ConnectorListIterator iter = mConnectors.begin(); iter != mConnectors.end(); ++iter ) {
+        mInteractives.push_back((*iter));
+    }
+    
+    for( EntityListIterator iter = mEntities.begin(); iter != mEntities.end(); ++iter ) {
+        mInteractives.push_back((*iter));
+    }
+}
 
 void EntityManager::recalcBounds() {
     for( EntityListIterator iter = mEntities.begin(); iter != mEntities.end(); ++iter ) {
