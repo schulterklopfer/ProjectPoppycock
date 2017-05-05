@@ -8,17 +8,17 @@
 
 #include "EntityManager.h"
 
-void EntityManager::createEntity( Entity::Type type, string id, ofVec2f position) {
+void EntityManager::createEntity( Entity::Type type, ofVec2f position) {
     
     switch( type ) {
         case Entity::Type::EFFECT:
-            mEntities.push_back(EntityRef(new Effect(id, position)));
+            mEntities.push_back(EntityRef(new Effect(position)));
             break;
         case Entity::Type::OBSERVER:
-            mEntities.push_back(EntityRef(new Observer(id, position)));
+            mEntities.push_back(EntityRef(new Observer(position)));
             break;
         default:
-            mEntities.push_back(EntityRef(new Entity(id, position)));
+            mEntities.push_back(EntityRef(new Entity(position)));
     }
     
     

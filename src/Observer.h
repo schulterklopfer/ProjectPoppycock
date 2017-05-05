@@ -16,7 +16,7 @@ class Observer: public Entity {
     
 public:
     
-    Observer( const string id, const ImVec2 position ) : Entity(id, position) {};
+    Observer( const ImVec2 position ) : Entity(position) {};
     
     virtual void draw( const ImVec2 offset, const float scale );
     virtual int getTypeFlags();

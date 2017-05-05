@@ -573,7 +573,7 @@ bool ofApp::GUI_entityMenu() {
                 
                 ofPoint position = ((ofPoint)ImGui::GetIO().MousePos - cPos - mEntityAreaViewRect.position)/mEntityAreaScale;
                 
-                mEntityManager.createEntity(entityToCreate, "test", position);
+                mEntityManager.createEntity(entityToCreate, position);
                 
                 mEntityMenuCreate = -1;
                 closeMenu=true;

@@ -32,8 +32,6 @@ protected:
     bool outputExists( Entity* const e );
     bool inputExists( Entity* const e );
 
-    
-    string mId;
     ImVec2 mPosition;
     ofRectangle mBounds;
     bool mBoundsDirty;
@@ -45,7 +43,7 @@ protected:
     
 public:
 
-    Entity( const string id, const ImVec2 position );
+    Entity( const ImVec2 position );
 
     virtual void draw( const ImVec2 offset, const float scale );
     void drawBoundingBox( const ImVec2 offset, const float scale );
@@ -57,8 +55,6 @@ public:
     void move( const float x, const float y );
     bool getBoundsDirty();
     void clearBoundsDirty();
-    string getId();
-    void setId( const string id );
     ofRectangle* getBounds();
     ConnectorList* getInputs();
     ConnectorList* getOutputs();

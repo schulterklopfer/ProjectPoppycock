@@ -8,9 +8,8 @@
 
 #include "Entity.h"
 
-Entity::Entity( const string id, const ImVec2 position ) :
+Entity::Entity( const ImVec2 position ) :
     Interactive(),
-    mId(id),
     mPosition(position),
     mSize(40),
     mBoundsDirty(false)
@@ -46,14 +45,6 @@ bool Entity::getBoundsDirty() {
 
 void Entity::clearBoundsDirty() {
     mBoundsDirty = false;
-}
-
-string Entity::getId() {
-    return mId;
-}
-
-void Entity::setId( const string id ) {
-    mId = id;
 }
 
 void Entity::draw( const ImVec2 offset, const float scale ) {
@@ -130,7 +121,6 @@ void Entity::addInput( const ConnectorRef input ) {
     
     // connector doesn't have this object as source
     if( input->getTarget().get() != this ) {
-        ofLogVerbose(__FUNCTION__ ) << "connector has wrong target " << input->getTarget()->getId();
         return;
     }
     
@@ -146,7 +136,6 @@ void Entity::addOutput( const ConnectorRef output ) {
     
     // connector doesn't have this object as source
     if( output->getSource().get() != this ) {
-        ofLogVerbose(__FUNCTION__ ) << "connector has wrong source " << output->getSource()->getId();
         return;
     }
     
@@ -162,7 +151,7 @@ bool Entity::inputExists( Entity* const e ) {
     // does an input with this object as target and e exist?
     for( ConnectorListIterator iter = mInputs.begin(); iter != mInputs.end(); ++iter ) {
         if( ((*iter)->getTarget()).get() == this && ((*iter)->getSource()).get() == e ) {
-            ofLogVerbose(__FUNCTION__ ) << "input from " << e->getId() << " exists.";
+            ofLogVerbose(__FUNCTION__ ) << "input exists.";
             return true;
         }
     }
@@ -173,7 +162,7 @@ bool Entity::outputExists( Entity* const e ) {
     // does a output with this object as source and e exist?
     for( ConnectorListIterator iter = mOutputs.begin(); iter != mOutputs.end(); ++iter ) {
         if( ((*iter)->getSource()).get() == this && ((*iter)->getTarget()).get() == e ) {
-            ofLogVerbose(__FUNCTION__ ) << "output to " << e->getId() << " exists.";
+            ofLogVerbose(__FUNCTION__ ) << "output exists.";
             return true;
         }
     }
