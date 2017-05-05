@@ -6,10 +6,12 @@ void ofApp::setup()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetEscapeQuitsApp(false);
+    ofHideCursor();
     //required call
     mGui.setup();
     
-    ImGui::GetIO().MouseDrawCursor = false;
+    ImGui::GetIO().MouseDrawCursor = true;
+    
     //backgroundColor is stored as an ImVec4 type but can handle ofColor
     mBackgroundColor = ofColor(114, 144, 154);
     show_test_window = true;
@@ -130,7 +132,11 @@ void ofApp::GUI_entityArea() {
     ImGui::SetNextWindowSize(ImVec2(width, height));
     ImGui::SetNextWindowPos(ImVec2(margin, margin));
     
+    ImGui::SetMouseCursor(0);
+    
     ImGuiIO io = ImGui::GetIO();
+    
+    const bool shortcutKeyDown = io.ShortcutsUseSuperKey?io.KeySuper:io.KeyCtrl;
     
     if( ImGui::Begin("Patch", NULL, window_flags) ) {
 
@@ -176,10 +182,15 @@ void ofApp::GUI_entityArea() {
         bool overAnyInteractive = false;
         
         if (ImGui::IsWindowFocused() && ImGui::IsMouseHoveringWindow() ) {
-        
+            // check some commands here:
+            //if( io.ShortcutsUseSuperKey?io.KeySuper:io.KeyCtrl ) {
+            //    ofLogVerbose( __FUNCTION__ ) << "duplicating selection " << (int)'d';
+                
+            //}
+
             // target mode is entered when entity is dragged and shit key is held down
             // this is used to draw connections from draggingEntity to hotEntity
-            const bool targetMode = (io.KeyShift && mEntityManager.draggingInteractive != NULL);
+            const bool targetMode = (shortcutKeyDown && mEntityManager.draggingInteractive != NULL);
             
             // check if we hover an entity in reverse so
             // top entities are selected first
@@ -227,8 +238,8 @@ void ofApp::GUI_entityArea() {
                         else if( io.MouseReleased[0] && mEntityManager.activeInteractive == eRef && !targetMode ) {
                             
                             
-                            // shift key = multiselect
-                            if( !io.KeyShift ) {
+                            //  multiselect
+                            if( !(io.MultiSelectUsesSuperKey?io.KeySuper:io.KeyCtrl) ) {
                                 for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
                                     if( (*iter) == eRef )
                                         continue;
@@ -247,8 +258,8 @@ void ofApp::GUI_entityArea() {
                 
             }
 
-            // reset drag mode when mouse is release or shift key is released
-            if( io.MouseReleased[0] || mKeyShift != io.KeyShift ) {
+            // reset drag mode when mouse is release or shortcut key is released
+            if( io.MouseReleased[0] || mShortcutKeyDown != shortcutKeyDown ) {
                 if( mEntityManager.draggingInteractive != NULL ) {
                     mEntityManager.draggingInteractive->stateFlags &= ~(Entity::State::DRAG|Entity::State::SOURCE);
                 }
@@ -260,7 +271,7 @@ void ofApp::GUI_entityArea() {
 
                 }
                 
-                if( mEntityManager.draggingInteractive != NULL && mEntityManager.hotInteractive != NULL && io.KeyShift ) {
+                if( mEntityManager.draggingInteractive != NULL && mEntityManager.hotInteractive != NULL && shortcutKeyDown ) {
                     
                     // check if hot and dragging interactive are Entities
                     if((mEntityManager.draggingInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY &&
@@ -306,7 +317,7 @@ void ofApp::GUI_entityArea() {
                 }
                 
                 if( activeEntity != NULL && draggingEntity == NULL ) {
-                    if( io.KeyShift ) {
+                    if( shortcutKeyDown ) {
                         // we have no outputs for this entity
                         if( activeEntity->providesOutput() ) {
                             draggingEntity = activeEntity;
@@ -324,7 +335,7 @@ void ofApp::GUI_entityArea() {
                 if( draggingEntity != NULL ) {
                     
                     // drag connection to another entity
-                    if( io.KeyShift ) {
+                    if( shortcutKeyDown ) {
                         if( hotEntity != NULL &&
                             hotEntity->acceptsInputFrom(draggingEntity) &&
                             draggingEntity->providesOutputTo(hotEntity) ) {
@@ -381,8 +392,9 @@ void ofApp::GUI_entityArea() {
                         
                     }
 
-                } else if( io.KeyShift ) {
-                    // drag view around with shift mouse drag
+                } else if( shortcutKeyDown ) {
+                    ImGui::SetMouseCursor(2);
+                    // drag view around with shortcut mouse drag
                     // TODO: Limit to bounds of EntityManager
                     mEntityAreaViewRect.position.x += io.MouseDelta.x;
                     mEntityAreaViewRect.position.y += io.MouseDelta.y;
@@ -456,7 +468,7 @@ void ofApp::GUI_entityArea() {
         //mEntityManager.drawBoundingBox(relativeOffset, mEntityAreaScale);
         
         ImGui::EndChild();
-        mKeyShift = io.KeyShift;
+        mShortcutKeyDown = shortcutKeyDown;
         
     }
     

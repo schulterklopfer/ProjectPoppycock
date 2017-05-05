@@ -49,7 +49,7 @@ private:
     
     EntityManager mEntityManager;
     
-    bool mKeyShift;
+    bool mShortcutKeyDown;
 
     ofRectangle mEntityAreaViewRect;
     float mEntityAreaScale;
