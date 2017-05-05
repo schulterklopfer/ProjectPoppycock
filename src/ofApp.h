@@ -49,7 +49,6 @@ private:
     
     EntityManager mEntityManager;
     
-    bool mDragEntityArea;
     bool mKeyShift;
 
     ofRectangle mEntityAreaViewRect;

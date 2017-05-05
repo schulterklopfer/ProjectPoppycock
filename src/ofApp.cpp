@@ -16,7 +16,6 @@ void ofApp::setup()
     show_another_window = false;
     floatValue = 0.0f;
     mEntityAreaScale = 1.0;
-    mDragEntityArea = false;
     mEntityMenuSelectedOption = 0;
     mEntityMenuCreate = -1;
     mEntityMenuIsOpen = false;
@@ -165,8 +164,11 @@ void ofApp::GUI_entityArea() {
             if( backspacePressed ) {
                 ofLogVerbose( __FUNCTION__ ) << "entity area: backspace pressed inside entities window";
                 // delete selected interactive from EntityManager
-                if( mEntityManager.selectedInteractive != NULL ) {
-                    mEntityManager.deleteInteractive(mEntityManager.selectedInteractive);
+                if( mEntityManager.selectedInteractives.size() != 0 ) {
+                    for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
+                        mEntityManager.deleteInteractive(*iter);
+                    }
+                    mEntityManager.selectedInteractives.clear();
                 }
             }
             
@@ -181,7 +183,7 @@ void ofApp::GUI_entityArea() {
             
             // check if we hover an entity in reverse so
             // top entities are selected first
-            if( targetMode || (mEntityManager.draggingInteractive == NULL && !mDragEntityArea ) ) {
+            if( targetMode || (mEntityManager.draggingInteractive == NULL && !ImGui::IsMouseDragging() ) ) {
                 //EntityList* list = mEntityManager.getEntities();
                 InteractiveList list = mEntityManager.getInteractives();
                 for (unsigned i = list.size(); i-- > 0; ) {
@@ -205,8 +207,8 @@ void ofApp::GUI_entityArea() {
                                 if((mEntityManager.hotInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY &&
                                    (mEntityManager.draggingInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY) {
                                     // only accepted as target when entity and acceptsInput
-                                    EntityRef hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
-                                    EntityRef draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
+                                    const EntityRef hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
+                                    const EntityRef draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
                                     if( hotEntity->acceptsInputFrom(draggingEntity) ) {
                                         hotEntity->stateFlags |= Entity::State::TARGET;
                                     }
@@ -223,12 +225,22 @@ void ofApp::GUI_entityArea() {
                         // select entity under mouse when button was pressed and released over the same entity
                         // but only when not in target mode
                         else if( io.MouseReleased[0] && mEntityManager.activeInteractive == eRef && !targetMode ) {
-                            if( mEntityManager.selectedInteractive != NULL &&
-                                mEntityManager.selectedInteractive != eRef ) {
-                                mEntityManager.selectedInteractive->stateFlags &= ~Entity::State::SELECT;
+                            
+                            
+                            // shift key = multiselect
+                            if( !io.KeyShift ) {
+                                for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
+                                    if( (*iter) == eRef )
+                                        continue;
+                                    (*iter)->stateFlags &= ~Entity::State::SELECT;
+                                }
+                                mEntityManager.selectedInteractives.clear();
                             }
-                            mEntityManager.selectedInteractive = eRef;
-                            mEntityManager.selectedInteractive->stateFlags |= Entity::State::SELECT;
+                            if( !mEntityManager.isInSelection(eRef) ) {
+                                eRef->stateFlags |= Entity::State::SELECT;
+                                mEntityManager.selectedInteractives.insert(eRef);
+                            }
+
                         }
                     }
                 }
@@ -253,8 +265,8 @@ void ofApp::GUI_entityArea() {
                     // check if hot and dragging interactive are Entities
                     if((mEntityManager.draggingInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY &&
                        (mEntityManager.hotInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
-                        EntityRef draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
-                        EntityRef hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
+                        const EntityRef draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
+                        const EntityRef hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
                         
                         // we have a connection, add connection object to data structs
                         // connections have a direction. there can be multiple connections out
@@ -270,7 +282,6 @@ void ofApp::GUI_entityArea() {
                 }
                 
                 mEntityManager.activeInteractive = mEntityManager.draggingInteractive = NULL;
-                mDragEntityArea = false;
             }
             
             if( ImGui::IsMouseDragging() ) {
@@ -342,25 +353,48 @@ void ofApp::GUI_entityArea() {
                     }
                     // drag entity around
                     else {
-                        draggingEntity->move(
-                                             io.MouseDelta.x/mEntityAreaScale,
-                                             io.MouseDelta.y/mEntityAreaScale
-                                             );
+                        
+                        if( mEntityManager.isInSelection(draggingEntity) ) {
+                            // move the whole selection
+                            for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
+                                // only move entities, not connectors
+                                if( ((*iter)->getTypeFlags()&Interactive::Type::CONNECTOR) == Interactive::Type::CONNECTOR )
+                                    continue;
+                                const EntityRef selectedEntity = boost::static_pointer_cast<Entity>(*iter);
+
+                                if( selectedEntity != NULL ) {
+                                    selectedEntity->move(
+                                                         io.MouseDelta.x/mEntityAreaScale,
+                                                         io.MouseDelta.y/mEntityAreaScale
+                                                         );
+
+                                }
+                            }
+                            
+                        } else {
+                            draggingEntity->move(
+                                                 io.MouseDelta.x/mEntityAreaScale,
+                                                 io.MouseDelta.y/mEntityAreaScale
+                                                 );
+                        }
+                        
+                        
                     }
 
-                } else {
-                    // drag view around
+                } else if( io.KeyShift ) {
+                    // drag view around with shift mouse drag
                     // TODO: Limit to bounds of EntityManager
-                    mDragEntityArea = true;
                     mEntityAreaViewRect.position.x += io.MouseDelta.x;
                     mEntityAreaViewRect.position.y += io.MouseDelta.y;
                 }
                 
             }
             
-            if( io.MouseClicked[0]  && !overAnyInteractive && mEntityManager.selectedInteractive != NULL ) {
-                mEntityManager.selectedInteractive->stateFlags &= ~Entity::State::SELECT;
-                mEntityManager.selectedInteractive = NULL;
+            if( io.MouseClicked[0]  && !overAnyInteractive && mEntityManager.selectedInteractives.size() != 0 ) {
+                for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
+                    (*iter)->stateFlags &= ~Entity::State::SELECT;
+                }
+                mEntityManager.selectedInteractives.clear();
             }
             
             // scale view with mouse wheel around mouse pointer

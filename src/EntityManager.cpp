@@ -25,7 +25,7 @@ void EntityManager::createEntity( Entity::Type type, string id, ofVec2f position
     recalcBounds();
 };
 
-void EntityManager::deleteInteractive( InteractiveRef& interactive ) {
+void EntityManager::deleteInteractive( const InteractiveRef& interactive ) {
     if( (interactive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
         const EntityRef eRef = boost::static_pointer_cast<Entity>(interactive);
         ConnectorList* const inputs = eRef->getInputs();
@@ -64,6 +64,10 @@ void EntityManager::deleteInteractive( InteractiveRef& interactive ) {
         mConnectors.erase(std::remove(mConnectors.begin(), mConnectors.end(), cRef), mConnectors.end());
         
     }
+}
+
+bool EntityManager::isInSelection(const InteractiveRef &interactive) {
+    return std::find( selectedInteractives.begin(), selectedInteractives.end(), interactive ) != selectedInteractives.end();
 }
 
 void EntityManager::createConnector( EntityRef source, EntityRef target ) {
