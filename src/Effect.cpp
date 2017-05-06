@@ -14,8 +14,62 @@ int Effect::getTypeFlags() {
 
 void Effect::draw( const ImVec2 offset, const float scale ) {
     
+    // draw area of effect
+    if( isFinal() ) {
+        mAOE->draw(offset, scale);
+    }
     Entity::draw(offset, scale);
-    //ImGui::GetWindowDrawList()->AddCircleFilled(getDrawPosition(offset, scale), 10*scale, 0xff000000, 64 );
+    
     
 }
+
+// is Effect connected to an observer?
+bool Effect::isFinal() {
+    for( ConnectorListIterator iter = mOutputs.begin(); iter != mOutputs.end(); ++iter ) {
+        if( (*iter)->isFader() )
+            return true;
+    }
+    return false;
+}
+
+AOERef Effect::getAOE() {
+    return mAOE;
+}
+
+// Area of Effect
+
+void Effect::AOE::draw( const ImVec2 offset, const float scale ) {
+    int color = 0xffffffff;
+    
+    if( (stateFlags&State::OVER) == State::OVER ) {
+        color = 0xff0000ff;
+    }
+    if( (stateFlags&State::DOWN) == State::DOWN ) {
+        color = 0xffff00ff;
+    }
+    if( (stateFlags&State::SELECT) == State::SELECT ) {
+        color = 0xff00ff00;
+    }
+    if( (stateFlags&State::DRAG) == State::DRAG ) {
+        color = 0xffffffff;
+    }
+    if( (stateFlags&State::SOURCE) == State::SOURCE ) {
+        color = 0xffc3c3c3;
+    }
+    if( (stateFlags&State::TARGET) == State::TARGET ) {
+        color = 0xffff0000;
+    }
+    
+    ImGui::GetWindowDrawList()->AddCircle(Entity::getDrawPosition(mEffect->getPosition(), offset, scale), mRadius*scale, color, 64 );
+    ImGui::GetWindowDrawList()->AddCircleFilled(Entity::getDrawPosition((ImVec2)((ofPoint)mEffect->getPosition() + mHandlePosition), offset, scale), 5*scale, color, 16 );
+}
+
+int Effect::AOE::getTypeFlags() {
+    return Interactive::Type::AOE;
+}
+
+bool Effect::AOE::hitTest(const float x, const float y) {
+    return Entity::inCircle((ofPoint)mEffect->getPosition() + mHandlePosition, 5, x, y);
+}
+
 

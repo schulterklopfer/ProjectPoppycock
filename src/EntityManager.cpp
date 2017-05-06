@@ -122,6 +122,12 @@ void EntityManager::regenerateInteractivesList() {
     
     for( EntityListIterator iter = mEntities.begin(); iter != mEntities.end(); ++iter ) {
         mInteractives.push_back((*iter));
+        if( ((*iter)->getTypeFlags()&Interactive::Type::EFFECT) == Interactive::Type::EFFECT ) {
+            const EffectRef eRef = boost::static_pointer_cast<Effect>(*iter);
+            if( eRef->isFinal() ) {
+                mInteractives.push_back(eRef->getAOE());
+            }
+        }
     }
 }
 

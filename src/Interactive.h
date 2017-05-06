@@ -22,11 +22,12 @@ protected:
 public:
     
     typedef enum Type {
-        NONE      = 0,
-        ENTITY    = 1,
-        CONNECTOR = 2,
-        EFFECT    = 4,
-        OBSERVER  = 8,
+        NONE      =  0,
+        ENTITY    =  1,
+        CONNECTOR =  2,
+        EFFECT    =  4,
+        OBSERVER  =  8,
+        AOE       = 16,
     } Type;
     
     typedef enum State {
