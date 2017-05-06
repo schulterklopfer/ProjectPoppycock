@@ -1,22 +1,14 @@
 # Project Poppycock (pre alpha)
-
 ## Abstract
 A visual editor for quickly creating lighting effects on arbitrary, 3d structures using point lights.
-
 ![Demo Project Poppycock pre alpha](https://github.com/schulterklopfer/ProjectPoppycock/raw/master/demo.gif)
-
 ## Installation
-
 put this repo into your openframeworks 0.9.8 apps/myApps folder.
 You will need the following addons:
-
 * ofxAssets
 * ofxImGui ()
 * ofxXmlSettings
-
-
 ## Usage
-
 * Hit space or enter to open a popup menu. Select one of the options in the menu by mouse click or arrow key following Enter.
 Its also possible to type a search string for filtering the list.
 * Hold down shortcut key (Windows: Ctrl, Mac: CMD) and drag outside of a node to scroll the patch.
