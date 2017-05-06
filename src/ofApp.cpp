@@ -13,51 +13,22 @@ void ofApp::setup()
     ImGui::GetIO().MouseDrawCursor = true;
     
     //backgroundColor is stored as an ImVec4 type but can handle ofColor
-    mBackgroundColor = ofColor(114, 144, 154);
-    show_test_window = true;
-    show_another_window = false;
-    floatValue = 0.0f;
+    mBackgroundColor = ofColor::gray;
     mEntityAreaScale = 1.0;
     mEntityMenuSelectedOption = 0;
     mEntityMenuCreate = -1;
     mEntityMenuIsOpen = false;
-    
-    //load your own ofImage
-    imageButtonSource.load("of.png");
-    imageButtonID = mGui.loadImage(imageButtonSource);
-    
-    //or have the loading done for you if you don't need the ofImage reference
-    //imageButtonID = gui.loadImage("of.png");
-    
-    //can also use ofPixels in same manner
-    ofLoadImage(pixelsButtonSource, "of_upside_down.png");
-    pixelsButtonID = mGui.loadPixels(pixelsButtonSource);
-    
-    //and alt method
-    //pixelsButtonID = gui.loadPixels("of_upside_down.png");
-    
-    //pass in your own texture reference if you want to keep it
-    textureSourceID = mGui.loadTexture(textureSource, "of_upside_down.png");
-    
-    //or just pass a path
-    //textureSourceID = gui.loadTexture("of_upside_down.png");
 
-    ofLogVerbose() << "textureSourceID: " << textureSourceID;
+    show_test_window = false;
+    
+    //mGui.setTheme(new ThemeTest());
+        
     
 }
 
-bool doSetTheme = false;
 //--------------------------------------------------------------
 void ofApp::update(){
-    
-    if(doSetTheme)
-    {
-        doSetTheme = false;
-        mGui.setTheme(new ThemeTest());
-        
-    }
-    
-    
+
 }
 //--------------------------------------------------------------
 void ofApp::draw(){
@@ -70,50 +41,16 @@ void ofApp::draw(){
     //required to call this at beginning
     mGui.begin();
     
-   
-    
-   
-    
-    //In between gui.begin() and gui.end() you can use ImGui as you would anywhere else
-    
-    /*
-    // 1. Show a simple window
-    {
-        ImGui::Text("Hello, world!");
-        ImGui::SliderFloat("Float", &floatValue, 0.0f, 1.0f);
-        
-        //this will change the app background color
-        ImGui::ColorEdit3("Background Color", (float*)&mBackgroundColor);
-        if(ImGui::Button("Test Window"))
-        {
-            show_test_window = !show_test_window;
-        }
-        
-        if (ImGui::Button("Another Window"))
-        {
-            //bitwise OR
-            show_another_window ^= 1;
-            
-        }
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    if( show_test_window ) {
+        ImGui::ShowTestWindow();
     }
-    
-    // 2. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
-     */
-
-    //ImGui::SetNextWindowPos(ofVec2f(650, 20), ImGuiSetCond_FirstUseEver);
-    //ImGui::ShowTestWindow(&show_test_window);
     
     GUI_sidebar();
     GUI_entityArea();
     
     //required to call this at end
     mGui.end();
-    
-    if(textureSource.isAllocated())
-    {
-        //textureSource.draw(ofRandom(200), ofRandom(200));
-    }
+
 }
 
 void ofApp::GUI_entityArea() {
@@ -699,7 +636,7 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    
+
 }
 
 

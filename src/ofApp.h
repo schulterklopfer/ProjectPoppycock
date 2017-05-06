@@ -68,19 +68,6 @@ private:
     int mEntityMenuSelectedOption;
     int mEntityMenuCreate;
     
-    
-    
     bool show_test_window;
-    bool show_another_window;
-    
-    float floatValue;
-    ofImage imageButtonSource;
-    GLuint imageButtonID;
-
-    ofPixels pixelsButtonSource;
-    GLuint pixelsButtonID;
-    
-    ofTexture textureSource;
-    GLuint textureSourceID;
     
 };
