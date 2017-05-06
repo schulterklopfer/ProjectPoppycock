@@ -581,7 +581,7 @@ bool ofApp::GUI_entityMenu() {
     const ofPoint cPos = (ofPoint)ImGui::GetCursorScreenPos();
     
     if( !mEntityMenuIsOpen &&
-        (ImGui::IsKeyPressed(' ') || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter))) &&
+        (ImGui::IsKeyPressed(' ', false) || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter), false)) &&
         ImGui::IsWindowFocused() &&
         ImGui::IsRootWindowOrAnyChildHovered() ) {
         
@@ -594,7 +594,6 @@ bool ofApp::GUI_entityMenu() {
     
     if (ImGui::BeginPopup("entity context menu"))
     {
-        
         std::vector<EntityMenuListEntry> filteredLines;
         
         for( std::vector<EntityMenuListEntry>::iterator iter=mEntityMenuEntries.begin(); iter!=mEntityMenuEntries.end(); ++iter ) {
@@ -609,9 +608,9 @@ bool ofApp::GUI_entityMenu() {
             bool closeMenu = false;
             
             if( ImGui::IsKeyPressed( ImGui::GetKeyIndex(ImGuiKey_Escape)) ||
-               (ImGui::IsKeyPressed(' ') && !mEntityMenuFilter.IsActive())) {
+               (ImGui::IsKeyPressed(' ', false) && !mEntityMenuFilter.IsActive())) {
                 closeMenu=true;
-            } else if( ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)) ){
+            } else if( ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter), false) ){
                 mEntityMenuCreate = mEntityMenuSelectedOption;
             } else if( mEntityMenuCreate != -1 ) {
                 ofLogVerbose( __FUNCTION__ ) << "selecting: " << mEntityMenuCreate;
