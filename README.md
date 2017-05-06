@@ -6,7 +6,7 @@ Abstract
 
 A visual editor for quickly creating lighting effects on arbitrary, 3d structures using point lights.
 
-[![Demo Project Poppycock alpha](https://github.com/schulterklopfer/ProjectPoppycock/raw/master/demo.gif)]
+![Demo Project Poppycock alpha](https://github.com/schulterklopfer/ProjectPoppycock/raw/master/demo.gif)
 
 Installation
 ------
