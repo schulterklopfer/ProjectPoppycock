@@ -685,9 +685,10 @@ bool ofApp::GUI_entityMenu() {
         
         ImGui::PopItemWidth();
         ImGui::EndChild();
-        
         ImGui::EndPopup();
         return true;
+    } else {
+        mEntityMenuIsOpen = false;
     }
     return false;
 }
