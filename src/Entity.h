@@ -27,7 +27,6 @@ private:
 protected:
     
     bool connectorIsCircular( Entity* const target );
-    bool inCircle( const float x, const float y );
     bool outputExists( Entity* const e );
     bool inputExists( Entity* const e );
     void recalcConnectionBounds();
@@ -44,6 +43,7 @@ public:
 
     Entity( const ImVec2 position );
 
+    static bool inCircle( const ofPoint center, const float radius, const float x, const float y );
     static ImVec2 getDrawPosition( const ImVec2 position, const ImVec2 offset, float scale );
     
     virtual void draw( const ImVec2 offset, const float scale );

@@ -96,15 +96,13 @@ void Entity::recalcConnectionBounds() {
 }
 
 bool Entity::hitTest( const float x, const float y ) {
-    return inCircle(x, y);
+    return inCircle(mBounds.getCenter(), mSize*0.5, x, y);
 }
 
-inline bool Entity::inCircle( const float x, const float y ) {
-    const ofPoint c = mBounds.getCenter();
-    const float radius = mSize*0.5;
-    float dx = fabs(x-c.x);
+bool Entity::inCircle( const ofPoint center, const float radius, const float x, const float y ) {
+    float dx = fabs(x-center.x);
     if (    dx >  radius ) return false;
-    float dy = fabs(y-c.y);
+    float dy = fabs(y-center.y);
     if (    dy >  radius ) return false;
     if ( dx+dy <= radius ) return true;
     return ( dx*dx + dy*dy <= radius*radius );
