@@ -430,7 +430,9 @@ void ofApp::GUI_entityArea() {
                         
                         // TODO: selection based on shape, not on bounds
                         for( InteractiveListIterator iter = list->begin(); iter != list->end(); ++iter ) {
-                            ofLogVerbose(__FUNCTION__) << *((*iter)->getBounds()) << " vs " << rect;
+                            // do not select connectors
+                            if( ( (*iter)->getTypeFlags()&Interactive::Type::CONNECTOR ) == Interactive::Type::CONNECTOR )
+                                continue;
                             if( (*iter)->getBounds()->intersects(rect) ) {
                                 (*iter)->stateFlags |= Entity::State::SELECT;
                                 mEntityManager.selectedInteractives.insert(*iter);
