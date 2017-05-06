@@ -20,12 +20,16 @@ You will need the following addons:
 Usage
 ------
 
-#Creating a node in the patch field:
+##Creating a node in the patch field:
 
 Hit space or enter, select one of the options in the menu by mouse click or arrow key following Enter.
+
 Hold down shortcut key (Windows: Ctrl, Mac: CMD) and drag outside of a node to scroll the patch
+
 Use mousewheel to zoom in and out
+
 Hold down shortcut key inside a node to drag a connection to anther node
+
 Use backspace to delete either a node or a connection
 
 Observer nodes only take inputs and have no outputs
