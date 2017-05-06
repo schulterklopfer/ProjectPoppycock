@@ -44,12 +44,14 @@ public:
 
     Entity( const ImVec2 position );
 
+    static ImVec2 getDrawPosition( const ImVec2 position, const ImVec2 offset, float scale );
+    
     virtual void draw( const ImVec2 offset, const float scale );
     void drawBoundingBox( const ImVec2 offset, const float scale );
     virtual bool hitTest( const float x, const float y );
     virtual int getTypeFlags();
     ImVec2 getPosition();
-    ImVec2 getDrawPosition( const ImVec2 offset, float scale );
+    
     void setPosition( const ImVec2 p);
     void move( const float x, const float y );
     bool getBoundsDirty();

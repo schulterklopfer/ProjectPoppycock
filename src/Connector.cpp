@@ -87,8 +87,8 @@ void Connector::draw(const ofPoint sourcePosition,
 }
 
 void Connector::draw( const ImVec2 offset, const float scale ) {
-    Connector::draw((ofPoint)getSource()->getDrawPosition(offset,scale),
-                    (ofPoint)getTarget()->getDrawPosition(offset,scale),
+    Connector::draw((ofPoint)Entity::getDrawPosition(mSource->getPosition(),offset,scale),
+                    (ofPoint)Entity::getDrawPosition(mTarget->getPosition(),offset,scale),
                     scale,
                     20.f, 20.f,
                     stateFlags,

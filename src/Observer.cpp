@@ -15,7 +15,7 @@ int Observer::getTypeFlags() {
 void Observer::draw( const ImVec2 offset, const float scale ) {
     
     Entity::draw(offset, scale);
-    ImGui::GetWindowDrawList()->AddCircleFilled(getDrawPosition(offset, scale), 18*scale, 0xffaaffaa, 64 );
+    ImGui::GetWindowDrawList()->AddCircleFilled(getDrawPosition(mPosition, offset, scale), 18*scale, 0xffaaffaa, 64 );
     
 }
 

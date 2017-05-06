@@ -293,8 +293,8 @@ void ofApp::GUI_entityArea() {
                             draggingEntity->providesOutputTo(hotEntity) ) {
                             // ... to center of target
                             
-                            Connector::draw((ofPoint)draggingEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
-                                            (ofPoint)hotEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
+                            Connector::draw((ofPoint)Entity::getDrawPosition(draggingEntity->getPosition(), relativeOffset,mEntityAreaScale),
+                                            (ofPoint)Entity::getDrawPosition(hotEntity->getPosition(), relativeOffset,mEntityAreaScale),
                                             mEntityAreaScale,
                                             20.f, 20.f,
                                             Interactive::State::GHOST );
@@ -302,7 +302,7 @@ void ofApp::GUI_entityArea() {
                         } else {
                             // ... to mouse pointer
                             if( draggingEntity != hotEntity ) {
-                                Connector::draw((ofPoint)draggingEntity->getDrawPosition(relativeOffset,mEntityAreaScale),
+                                Connector::draw((ofPoint)Entity::getDrawPosition(draggingEntity->getPosition(), relativeOffset,mEntityAreaScale),
                                                 (ofPoint)io.MousePos,
                                                 mEntityAreaScale,
                                                 20.f, 0.f,

@@ -21,9 +21,9 @@ ImVec2 Entity::getPosition() {
     return mPosition;
 }
 
-ImVec2 Entity::getDrawPosition( const ImVec2 offset, const float scale ) {
-    return  ImVec2( mPosition.x*scale + offset.x,
-                    mPosition.y*scale + offset.y );
+ImVec2 Entity::getDrawPosition( const ImVec2 position, const ImVec2 offset, const float scale ) {
+    return  ImVec2( position.x*scale + offset.x,
+                    position.y*scale + offset.y );
 }
 
 
@@ -71,7 +71,7 @@ void Entity::draw( const ImVec2 offset, const float scale ) {
         color = 0xffff0000;
     }
     
-    ImGui::GetWindowDrawList()->AddCircle(getDrawPosition(offset, scale), mSize*0.5*scale, color, 64, 3*scale );
+    ImGui::GetWindowDrawList()->AddCircle(getDrawPosition(mPosition, offset, scale), mSize*0.5*scale, color, 64, 3*scale );
 
 }
 
