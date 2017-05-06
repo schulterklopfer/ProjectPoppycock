@@ -27,6 +27,7 @@
 		C2162D951EB5F36300B5D2BF /* Connector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2162D931EB5F36200B5D2BF /* Connector.cpp */; };
 		C2162D9B1EB6994000B5D2BF /* Interactive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2162D991EB6994000B5D2BF /* Interactive.cpp */; };
 		C2162D9F1EB77B3600B5D2BF /* Observer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2162D9D1EB77B3600B5D2BF /* Observer.cpp */; };
+		C241177E1EBDEC9100E58272 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = C241177D1EBDEC9100E58272 /* README.md */; };
 		C27C57BA1EB2775C0012AA66 /* EntityManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27C57B81EB2775C0012AA66 /* EntityManager.cpp */; };
 		C27C57BD1EB27B810012AA66 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27C57BB1EB27B810012AA66 /* Entity.cpp */; };
 		D57027F36B35F3FF654824D9 /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CED095FF14A0932EE69B7A8 /* Shader.cpp */; };
@@ -112,6 +113,7 @@
 		C2162D9A1EB6994000B5D2BF /* Interactive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interactive.h; sourceTree = "<group>"; };
 		C2162D9D1EB77B3600B5D2BF /* Observer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Observer.cpp; sourceTree = "<group>"; };
 		C2162D9E1EB77B3600B5D2BF /* Observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Observer.h; sourceTree = "<group>"; };
+		C241177D1EBDEC9100E58272 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C27C57B81EB2775C0012AA66 /* EntityManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityManager.cpp; sourceTree = "<group>"; };
 		C27C57B91EB2775C0012AA66 /* EntityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
 		C27C57BB1EB27B810012AA66 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
@@ -303,6 +305,7 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
+				C241177D1EBDEC9100E58272 /* README.md */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
@@ -456,6 +459,7 @@
 				D57027F36B35F3FF654824D9 /* Shader.cpp in Sources */,
 				69F41565AE8CB530C199B35F /* Sound.cpp in Sources */,
 				C2162D9F1EB77B3600B5D2BF /* Observer.cpp in Sources */,
+				C241177E1EBDEC9100E58272 /* README.md in Sources */,
 				D6D9A3631B256390D73E2C18 /* ofxAssets.cpp in Sources */,
 				C27C57BA1EB2775C0012AA66 /* EntityManager.cpp in Sources */,
 				DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */,
