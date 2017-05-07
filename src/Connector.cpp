@@ -122,7 +122,7 @@ bool Connector::isFader() {
 }
 
 int Connector::getTypeFlags() {
-    return Connector::Type::CONNECTOR;
+    return Interactive::Type::CONNECTOR;
 }
 
 EntityRef Connector::getSource() {

@@ -9,7 +9,7 @@
 #include "Effect.h"
 
 int Effect::getTypeFlags() {
-    return Effect::Type::EFFECT|Effect::Type::ENTITY;
+    return Interactive::Type::EFFECT|Interactive::Type::ENTITY;
 }
 
 void Effect::draw( const ImVec2 offset, const float scale ) {

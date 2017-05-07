@@ -111,7 +111,7 @@ bool Entity::inCircle( const ofPoint center, const float radius, const float x, 
 
 
 int Entity::getTypeFlags() {
-    return Entity::Type::ENTITY;
+    return Interactive::Type::ENTITY;
 }
 
 ConnectorList* Entity::getInputs() {
