@@ -15,11 +15,13 @@
 #include "boost/shared_ptr.hpp"
 
 
-#define TO_ENTITY boost::static_pointer_cast<Entity>
-#define TO_EFFECT boost::static_pointer_cast<Effect>
-#define TO_AOE boost::static_pointer_cast<Effect::AOE>
-#define TO_OBSERVER boost::static_pointer_cast<Observer>
-#define TO_CONNECTOR boost::static_pointer_cast<Connector>
+#define TO_(i,tFlag,T) (i==NULL?NULL:(i->isOfType(tFlag)?boost::static_pointer_cast<T>(i):NULL))
+
+#define TO_ENTITY(i)    TO_(i, Interactive::Type::ENTITY, Entity)
+#define TO_EFFECT(i)    TO_(i, Interactive::Type::EFFECT, Effect)
+#define TO_AOE(i)       TO_(i, Interactive::Type::AOE, Effect::AOE)
+#define TO_OBSERVER(i)  TO_(i, Interactive::Type::OBSERVER, Observer)
+#define TO_CONNECTOR(i) TO_(i, Interactive::Type::CONNECTOR, Connector)
 
 class Interactive {
 
