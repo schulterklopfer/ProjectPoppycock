@@ -14,8 +14,8 @@ void EntityManager::createEntity( Entity::Type type, ofVec2f position) {
         case Entity::Type::EFFECT:
             mEntities.push_back(EntityRef(new Effect(position)));
             break;
-        case Entity::Type::SHADER_EFFECT:
-            mEntities.push_back(EntityRef(new ShaderEffect(position)));
+        case Entity::Type::GPU_EFFECT:
+            mEntities.push_back(EntityRef(new GPUEffect(position)));
             break;
         case Entity::Type::OBSERVER:
             mEntities.push_back(EntityRef(new Observer(position)));

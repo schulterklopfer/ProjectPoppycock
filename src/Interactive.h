@@ -32,13 +32,13 @@ protected:
 public:
     
     typedef enum Type {
-        NONE          =  0,
-        ENTITY        =  1,
-        CONNECTOR     =  2,
-        OBSERVER      =  4,
-        AOE           =  8,
-        EFFECT        = 16,
-        SHADER_EFFECT = 32,
+        NONE       =  0,
+        ENTITY     =  1,
+        CONNECTOR  =  2,
+        OBSERVER   =  4,
+        AOE        =  8,
+        EFFECT     = 16,
+        GPU_EFFECT = 32,
     } Type;
     
     typedef enum State {

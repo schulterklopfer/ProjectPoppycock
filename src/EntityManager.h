@@ -15,7 +15,7 @@
 
 #include "Entity.h"
 #include "Effect.h"
-#include "ShaderEffect.h"
+#include "GPUEffect.h"
 #include "Observer.h"
 #include "Connector.h"
 

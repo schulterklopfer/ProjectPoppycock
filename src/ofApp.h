@@ -34,7 +34,7 @@ public:
     void mouseScrolled(float x, float y);
     
     std::vector<EntityMenuListEntry> mEntityMenuEntries = {
-        {"Shader Effect", Interactive::Type::SHADER_EFFECT },
+        {"GPU Effect", Interactive::Type::GPU_EFFECT },
         {"Observer", Interactive::Type::OBSERVER }
     };
 
