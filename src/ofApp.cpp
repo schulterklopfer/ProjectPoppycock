@@ -167,8 +167,8 @@ void ofApp::GUI_entityArea() {
                                 if(mEntityManager.hotInteractive->isOfType(Interactive::Type::ENTITY) &&
                                    mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
                                     // only accepted as target when entity and acceptsInput
-                                    const EntityRef hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
-                                    const EntityRef draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
+                                    const EntityRef hotEntity = TO_ENTITY(mEntityManager.hotInteractive);
+                                    const EntityRef draggingEntity = TO_ENTITY(mEntityManager.draggingInteractive);
                                     if( hotEntity->acceptsInputFrom(draggingEntity) ) {
                                         hotEntity->stateFlags |= Entity::State::TARGET;
                                     }
@@ -225,8 +225,8 @@ void ofApp::GUI_entityArea() {
                     // check if hot and dragging interactive are Entities
                     if(mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) &&
                        mEntityManager.hotInteractive->isOfType(Interactive::Type::ENTITY) ) {
-                        const EntityRef draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
-                        const EntityRef hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
+                        const EntityRef draggingEntity = TO_ENTITY(mEntityManager.draggingInteractive);
+                        const EntityRef hotEntity = TO_ENTITY(mEntityManager.hotInteractive);
                         
                         // we have a connection, add connection object to data structs
                         // connections have a direction. there can be multiple connections out
@@ -252,22 +252,27 @@ void ofApp::GUI_entityArea() {
                 EntityRef draggingEntity= NULL;
                 EntityRef hotEntity = NULL;
                 EntityRef activeEntity = NULL;
+                AOERef aoe = NULL;
                 
-                if(mEntityManager.draggingInteractive != NULL &&
-                   (mEntityManager.draggingInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
-                    draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
+                
+                if(mEntityManager.draggingInteractive != NULL ) {
+                   if( mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
+                       draggingEntity = TO_ENTITY(mEntityManager.draggingInteractive);
+                   } else if( mEntityManager.draggingInteractive->isOfType(Interactive::Type::AOE) ) {
+                       aoe = TO_AOE(mEntityManager.draggingInteractive);
+                   }
                 }
                 
                 if(mEntityManager.hotInteractive != NULL &&
                    mEntityManager.hotInteractive->isOfType(Interactive::Type::ENTITY) ) {
-                    hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
+                    hotEntity = TO_ENTITY(mEntityManager.hotInteractive);
                 }
                 
                 if(mEntityManager.activeInteractive != NULL &&
                    mEntityManager.activeInteractive->isOfType(Interactive::Type::ENTITY) ) {
-                    activeEntity = boost::static_pointer_cast<Entity>(mEntityManager.activeInteractive);
+                    activeEntity = TO_ENTITY(mEntityManager.activeInteractive);
                 }
-                
+                // TODO: provide code for dragging aoe handle
                 if( activeEntity != NULL && draggingEntity == NULL ) {
                     if( shortcutKeyDown ) {
                         // we have no outputs for this entity
@@ -317,31 +322,37 @@ void ofApp::GUI_entityArea() {
                     // drag entity around
                     else {
                         
-                        if( mEntityManager.isInSelection(draggingEntity) ) {
-                            // move the whole selection
-                            for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
-                                // only move entities, not connectors
-                                if( ((*iter)->getTypeFlags()&Interactive::Type::CONNECTOR) == Interactive::Type::CONNECTOR )
-                                    continue;
-                                const EntityRef selectedEntity = boost::static_pointer_cast<Entity>(*iter);
-
-                                if( selectedEntity != NULL ) {
-                                    selectedEntity->move(
-                                                         io.MouseDelta.x/mEntityAreaScale,
-                                                         io.MouseDelta.y/mEntityAreaScale
-                                                         );
-
-                                }
-                            }
+                        if( aoe != NULL ) {
+                            // dragging area of effect.
+                            
+                            ofLogVerbose(__FUNCTION__) << "dragging area of effect " << aoe;
                             
                         } else {
-                            draggingEntity->move(
-                                                 io.MouseDelta.x/mEntityAreaScale,
-                                                 io.MouseDelta.y/mEntityAreaScale
-                                                 );
+                            
+                            if( mEntityManager.isInSelection(draggingEntity) ) {
+                                // move the whole selection
+                                for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
+                                    // only move entities, not connectors
+                                    if( (*iter)->isOfType(Interactive::Type::CONNECTOR) )
+                                        continue;
+                                    const EntityRef selectedEntity = TO_ENTITY(*iter);
+                                    
+                                    if( selectedEntity != NULL ) {
+                                        selectedEntity->move(
+                                                             io.MouseDelta.x/mEntityAreaScale,
+                                                             io.MouseDelta.y/mEntityAreaScale
+                                                             );
+                                        
+                                    }
+                                }
+                                
+                            } else {
+                                draggingEntity->move(
+                                                     io.MouseDelta.x/mEntityAreaScale,
+                                                     io.MouseDelta.y/mEntityAreaScale
+                                                     );
+                            }
                         }
-                        
-                        
                     }
 
                 } else if( shortcutKeyDown ) {

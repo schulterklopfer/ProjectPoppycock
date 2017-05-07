@@ -14,6 +14,13 @@
 #include "ofRectangle.h"
 #include "boost/shared_ptr.hpp"
 
+
+#define TO_ENTITY boost::static_pointer_cast<Entity>
+#define TO_EFFECT boost::static_pointer_cast<Effect>
+#define TO_AOE boost::static_pointer_cast<Effect::AOE>
+#define TO_OBSERVER boost::static_pointer_cast<Observer>
+#define TO_CONNECTOR boost::static_pointer_cast<Connector>
+
 class Interactive {
 
 protected:
