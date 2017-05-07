@@ -30,6 +30,14 @@ void ofApp::setup()
 void ofApp::update(){
     // update (for example time scaled millis counter)
     Globals::update();
+    
+    // call update() in entities
+    EntityList* const entities = mEntityManager.getEntities();
+
+    for( EntityListIterator iter = entities->begin(); iter != entities->end(); ++iter ) {
+        (*iter)->update();
+    }
+    
 }
 //--------------------------------------------------------------
 void ofApp::draw(){

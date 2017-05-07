@@ -67,6 +67,7 @@ public:
     virtual bool providesOutput();
     virtual boost::shared_ptr<Entity> clone();
     virtual void recalcBounds();
+    virtual void update();
 
 };
 

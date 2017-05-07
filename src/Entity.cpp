@@ -49,6 +49,10 @@ void Entity::clearBoundsDirty() {
     mBoundsDirty = false;
 }
 
+void Entity::update() {
+
+}
+
 void Entity::draw( const ImVec2 offset, const float scale ) {
     int color = 0xffffffff;
     
