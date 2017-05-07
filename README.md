@@ -17,3 +17,4 @@ Its also possible to type a search string for filtering the list.
 Observer nodes only take inputs and have no outputs.
 Effect nodes take one input and can have multiple outputs.
 * Use backspace to delete either a node or a connection.
+* As soon as you connect an effect to an observer, the effect will have an area of effect. Move the little handle to resize the area.
