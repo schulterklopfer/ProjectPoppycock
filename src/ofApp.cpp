@@ -97,8 +97,8 @@ void ofApp::GUI_entityArea() {
         const ImVec2 relMousePosition = ImVec2( io.MousePos.x - cPos.x,
                                                io.MousePos.y - cPos.y );
 
-        EntityList* entities = mEntityManager.getEntities();
-        ConnectorList* connectors = mEntityManager.getConnectors();
+        EntityList* const entities = mEntityManager.getEntities();
+        ConnectorList* const connectors = mEntityManager.getConnectors();
 
         mEntityManager.hotInteractive = NULL;
 
