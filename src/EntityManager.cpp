@@ -25,7 +25,7 @@ void EntityManager::createEntity( Entity::Type type, ofVec2f position) {
 };
 
 void EntityManager::deleteInteractive( const InteractiveRef& interactive ) {
-    if( (interactive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
+    if( interactive->isOfType(Interactive::Type::ENTITY) ) {
         const EntityRef eRef = boost::static_pointer_cast<Entity>(interactive);
         ConnectorList* const inputs = eRef->getInputs();
         ConnectorList* const outputs = eRef->getOutputs();
@@ -52,7 +52,7 @@ void EntityManager::deleteInteractive( const InteractiveRef& interactive ) {
         mEntities.erase(std::remove(mEntities.begin(), mEntities.end(), eRef), mEntities.end());
         
     }
-    else if( (interactive->getTypeFlags()&Interactive::Type::CONNECTOR) == Interactive::Type::CONNECTOR ) {
+    else if( interactive->isOfType(Interactive::Type::CONNECTOR) ) {
         const ConnectorRef cRef = boost::static_pointer_cast<Connector>(interactive);
         ConnectorList* const sourceOutputs = cRef->getSource()->getOutputs();
         ConnectorList* const targetInputs = cRef->getTarget()->getInputs();
@@ -122,7 +122,7 @@ void EntityManager::regenerateInteractivesList() {
     
     for( EntityListIterator iter = mEntities.begin(); iter != mEntities.end(); ++iter ) {
         mInteractives.push_back((*iter));
-        if( ((*iter)->getTypeFlags()&Interactive::Type::EFFECT) == Interactive::Type::EFFECT ) {
+        if( (*iter)->isOfType(Interactive::Type::EFFECT) ) {
             const EffectRef eRef = boost::static_pointer_cast<Effect>(*iter);
             if( eRef->isFinal() ) {
                 mInteractives.push_back(eRef->getAOE());

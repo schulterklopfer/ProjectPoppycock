@@ -117,7 +117,7 @@ bool Connector::hitTest( const float x, const float y ) {
 }
 
 bool Connector::isFader() {
-    return (mTarget->getTypeFlags()&Entity::Type::OBSERVER)==Entity::Type::OBSERVER;
+    return mTarget->isOfType(Interactive::Type::OBSERVER);
 }
 
 int Connector::getTypeFlags() {

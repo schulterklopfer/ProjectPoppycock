@@ -164,8 +164,8 @@ void ofApp::GUI_entityArea() {
                                 mEntityManager.hotInteractive->stateFlags |= Entity::State::OVER;
                             }
                             if( targetMode && mEntityManager.hotInteractive != mEntityManager.draggingInteractive ) {
-                                if((mEntityManager.hotInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY &&
-                                   (mEntityManager.draggingInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY) {
+                                if(mEntityManager.hotInteractive->isOfType(Interactive::Type::ENTITY) &&
+                                   mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
                                     // only accepted as target when entity and acceptsInput
                                     const EntityRef hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
                                     const EntityRef draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
@@ -223,8 +223,8 @@ void ofApp::GUI_entityArea() {
                 if( mEntityManager.draggingInteractive != NULL && mEntityManager.hotInteractive != NULL && shortcutKeyDown ) {
                     
                     // check if hot and dragging interactive are Entities
-                    if((mEntityManager.draggingInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY &&
-                       (mEntityManager.hotInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
+                    if(mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) &&
+                       mEntityManager.hotInteractive->isOfType(Interactive::Type::ENTITY) ) {
                         const EntityRef draggingEntity = boost::static_pointer_cast<Entity>(mEntityManager.draggingInteractive);
                         const EntityRef hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
                         
@@ -259,12 +259,12 @@ void ofApp::GUI_entityArea() {
                 }
                 
                 if(mEntityManager.hotInteractive != NULL &&
-                   (mEntityManager.hotInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
+                   mEntityManager.hotInteractive->isOfType(Interactive::Type::ENTITY) ) {
                     hotEntity = boost::static_pointer_cast<Entity>(mEntityManager.hotInteractive);
                 }
                 
                 if(mEntityManager.activeInteractive != NULL &&
-                   (mEntityManager.activeInteractive->getTypeFlags()&Interactive::Type::ENTITY) == Interactive::Type::ENTITY ) {
+                   mEntityManager.activeInteractive->isOfType(Interactive::Type::ENTITY) ) {
                     activeEntity = boost::static_pointer_cast<Entity>(mEntityManager.activeInteractive);
                 }
                 
@@ -368,7 +368,7 @@ void ofApp::GUI_entityArea() {
                         // TODO: selection based on shape, not on bounds
                         for( InteractiveListIterator iter = list->begin(); iter != list->end(); ++iter ) {
                             // do not select connectors
-                            if( ( (*iter)->getTypeFlags()&Interactive::Type::CONNECTOR ) == Interactive::Type::CONNECTOR )
+                            if( (*iter)->isOfType(Interactive::Type::CONNECTOR ) )
                                 continue;
                             if( (*iter)->getBounds()->intersects(rect) ) {
                                 (*iter)->stateFlags |= Entity::State::SELECT;

@@ -42,6 +42,7 @@ public:
 
     Interactive() : stateFlags(0) {};
 
+    bool isOfType( Interactive::Type t );
     
     virtual bool hitTest( const float x, const float y );
     virtual int getTypeFlags();

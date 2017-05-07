@@ -20,4 +20,8 @@ ofRectangle* Interactive::getBounds() {
     return &mBounds;
 }
 
+bool Interactive::isOfType( Interactive::Type t ) {
+    return (getTypeFlags()&t)==t;
+}
+
 void Interactive::recalcBounds() {}
