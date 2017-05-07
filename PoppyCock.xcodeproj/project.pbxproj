@@ -31,6 +31,7 @@
 		C27C57BA1EB2775C0012AA66 /* EntityManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27C57B81EB2775C0012AA66 /* EntityManager.cpp */; };
 		C27C57BD1EB27B810012AA66 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27C57BB1EB27B810012AA66 /* Entity.cpp */; };
 		C2E84CCF1EBF7F3C00506A25 /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2E84CCD1EBF7F3C00506A25 /* Globals.cpp */; };
+		C2E84CD21EBF931000506A25 /* ShaderEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2E84CD01EBF931000506A25 /* ShaderEffect.cpp */; };
 		D57027F36B35F3FF654824D9 /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CED095FF14A0932EE69B7A8 /* Shader.cpp */; };
 		D6D9A3631B256390D73E2C18 /* ofxAssets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13FF4A2D641AAE64D70ABCC6 /* ofxAssets.cpp */; };
 		DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7C7BDAD29F580A47FF56B52 /* BaseEngine.cpp */; };
@@ -122,6 +123,8 @@
 		C27C57BE1EB3A0860012AA66 /* imgui_user.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = imgui_user.h; sourceTree = "<group>"; };
 		C2E84CCD1EBF7F3C00506A25 /* Globals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Globals.cpp; sourceTree = "<group>"; };
 		C2E84CCE1EBF7F3C00506A25 /* Globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Globals.h; sourceTree = "<group>"; };
+		C2E84CD01EBF931000506A25 /* ShaderEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderEffect.cpp; sourceTree = "<group>"; };
+		C2E84CD11EBF931000506A25 /* ShaderEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderEffect.h; sourceTree = "<group>"; };
 		CB5C15EA0881D35A88C22937 /* EngineOpenGLES.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = EngineOpenGLES.h; path = ../../../addons/ofxImGui/src/EngineOpenGLES.h; sourceTree = SOURCE_ROOT; };
 		CC333C075AA06FB210BE2266 /* Image.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Image.h; path = ../../../addons/ofxAssets/src/ofxAssets/Image.h; sourceTree = SOURCE_ROOT; };
 		D729ECA86453DE065311E034 /* Set.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Set.cpp; path = ../../../addons/ofxAssets/src/ofxAssets/Set.cpp; sourceTree = SOURCE_ROOT; };
@@ -281,6 +284,8 @@
 				C27C57BC1EB27B810012AA66 /* Entity.h */,
 				C2162D901EB5E6EC00B5D2BF /* Effect.cpp */,
 				C2162D911EB5E6EC00B5D2BF /* Effect.h */,
+				C2E84CD01EBF931000506A25 /* ShaderEffect.cpp */,
+				C2E84CD11EBF931000506A25 /* ShaderEffect.h */,
 				C2162D9D1EB77B3600B5D2BF /* Observer.cpp */,
 				C2162D9E1EB77B3600B5D2BF /* Observer.h */,
 				C2162D931EB5F36200B5D2BF /* Connector.cpp */,
@@ -457,6 +462,7 @@
 				C2162D951EB5F36300B5D2BF /* Connector.cpp in Sources */,
 				977E32123A8A07E1DB9A0D85 /* BaseAsset.cpp in Sources */,
 				48AA27BB22351E4FA5861B1A /* Font.cpp in Sources */,
+				C2E84CD21EBF931000506A25 /* ShaderEffect.cpp in Sources */,
 				5982B12539F35D02AB49803E /* Image.cpp in Sources */,
 				F3061312C884CB6931AC899E /* Register.cpp in Sources */,
 				C2162D921EB5E6EC00B5D2BF /* Effect.cpp in Sources */,

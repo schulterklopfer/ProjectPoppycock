@@ -17,11 +17,12 @@
 
 #define TO_(i,tFlag,T) (i==NULL?NULL:(i->isOfType(tFlag)?boost::static_pointer_cast<T>(i):NULL))
 
-#define TO_ENTITY(i)    TO_(i, Interactive::Type::ENTITY, Entity)
-#define TO_EFFECT(i)    TO_(i, Interactive::Type::EFFECT, Effect)
-#define TO_AOE(i)       TO_(i, Interactive::Type::AOE, Effect::AOE)
-#define TO_OBSERVER(i)  TO_(i, Interactive::Type::OBSERVER, Observer)
-#define TO_CONNECTOR(i) TO_(i, Interactive::Type::CONNECTOR, Connector)
+#define TO_ENTITY(i)        TO_(i, Interactive::Type::ENTITY, Entity)
+#define TO_EFFECT(i)        TO_(i, Interactive::Type::EFFECT, Effect)
+#define TO_SHADER_EFFECT(i) TO_(i, Interactive::Type::SHADER_EFFECT, ShaderEffect)
+#define TO_AOE(i)           TO_(i, Interactive::Type::AOE, Effect::AOE)
+#define TO_OBSERVER(i)      TO_(i, Interactive::Type::OBSERVER, Observer)
+#define TO_CONNECTOR(i)     TO_(i, Interactive::Type::CONNECTOR, Connector)
 
 class Interactive {
 
@@ -31,12 +32,13 @@ protected:
 public:
     
     typedef enum Type {
-        NONE      =  0,
-        ENTITY    =  1,
-        CONNECTOR =  2,
-        EFFECT    =  4,
-        OBSERVER  =  8,
-        AOE       = 16,
+        NONE          =  0,
+        ENTITY        =  1,
+        CONNECTOR     =  2,
+        OBSERVER      =  4,
+        AOE           =  8,
+        EFFECT        = 16,
+        SHADER_EFFECT = 32,
     } Type;
     
     typedef enum State {
