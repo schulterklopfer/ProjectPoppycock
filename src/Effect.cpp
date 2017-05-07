@@ -14,13 +14,11 @@ int Effect::getTypeFlags() {
 
 void Effect::draw( const ImVec2 offset, const float scale ) {
     
+    Entity::draw(offset, scale);
     // draw area of effect
     if( isFinal() ) {
         mAOE->draw(offset, scale);
     }
-    Entity::draw(offset, scale);
-    
-    
 }
 
 // is Effect connected to an observer?
@@ -71,5 +69,18 @@ int Effect::AOE::getTypeFlags() {
 bool Effect::AOE::hitTest(const float x, const float y) {
     return Entity::inCircle((ofPoint)mEffect->getPosition() + mHandlePosition, 5, x, y);
 }
+
+void Effect::AOE::move( const float x, const float y ) {
+    
+    // look ahead and check if handle will be inside effect
+    const ofPoint toCheck = (ofPoint)mEffect->getPosition() + mHandlePosition + ofPoint(x,y);
+    
+    if( !mEffect->hitTest(toCheck.x, toCheck.y) ) {
+        mHandlePosition.x += x; mHandlePosition.y += y;
+        mRadius = mHandlePosition.length();
+    }
+    
+}
+
 
 

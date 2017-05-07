@@ -30,6 +30,7 @@ public:
         void draw( const ImVec2 offset, const float scale );
         int getTypeFlags();
         bool hitTest( const float x, const float y );
+        void move( const float x, const float y );
     
     };
     

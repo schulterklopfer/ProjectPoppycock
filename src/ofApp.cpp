@@ -149,7 +149,7 @@ void ofApp::GUI_entityArea() {
                 for (unsigned i = list->size(); i-- > 0; ) {
                     // hover
                     InteractiveRef eRef = list->at(i);
-                    eRef->stateFlags &= ~(Entity::State::DOWN|Entity::State::OVER|Entity::State::TARGET);
+                    eRef->stateFlags &= ~(Entity::State::DOWN|Entity::State::OVER|Entity::State::TARGET|Entity::State::SOURCE);
 
                     if( eRef->hitTest((relMousePosition.x - mEntityAreaViewRect.getX())/mEntityAreaScale,
                                       (relMousePosition.y - mEntityAreaViewRect.getY())/mEntityAreaScale) ) {
@@ -249,12 +249,12 @@ void ofApp::GUI_entityArea() {
             
             if( ImGui::IsMouseDragging() ) {
                 
-                EntityRef draggingEntity= NULL;
-                EntityRef hotEntity = NULL;
-                EntityRef activeEntity = NULL;
-                AOERef aoe = NULL;
+                //EntityRef draggingEntity= NULL;
+                //EntityRef hotEntity = NULL;
+                //EntityRef activeEntity = NULL;
+                //AOERef aoe = NULL;
                 
-                
+                /*
                 if(mEntityManager.draggingInteractive != NULL ) {
                    if( mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
                        draggingEntity = TO_ENTITY(mEntityManager.draggingInteractive);
@@ -272,70 +272,70 @@ void ofApp::GUI_entityArea() {
                    mEntityManager.activeInteractive->isOfType(Interactive::Type::ENTITY) ) {
                     activeEntity = TO_ENTITY(mEntityManager.activeInteractive);
                 }
-                // TODO: provide code for dragging aoe handle
-                if( activeEntity != NULL && draggingEntity == NULL ) {
-                    if( shortcutKeyDown ) {
-                        // we have no outputs for this entity
-                        if( activeEntity->providesOutput() ) {
-                            draggingEntity = activeEntity;
-                            mEntityManager.draggingInteractive = mEntityManager.activeInteractive;
-                            draggingEntity->stateFlags |= Entity::State::SOURCE;
-                        }
-                    } else {
-                        draggingEntity = activeEntity;
+                 */
+                
+                if( mEntityManager.activeInteractive != NULL && mEntityManager.draggingInteractive == NULL ) {
+                    // mark and set dragging object, if its not a connector
+                    if( !mEntityManager.activeInteractive->isOfType(Interactive::Type::CONNECTOR) ) {
+                        
                         mEntityManager.draggingInteractive = mEntityManager.activeInteractive;
-                        draggingEntity->stateFlags |= Entity::State::DRAG;
+                        mEntityManager.draggingInteractive->stateFlags |= Entity::State::DRAG;
+
+                        if( mEntityManager.activeInteractive->isOfType(Interactive::Type::ENTITY) ) {
+                            const EntityRef activeEntity = TO_ENTITY(mEntityManager.activeInteractive);
+                            if( shortcutKeyDown ) {
+                                if( activeEntity->providesOutput() ) {
+                                    mEntityManager.draggingInteractive->stateFlags |= Entity::State::SOURCE;
+                                }
+                            }
+                        }
                     }
                 }
 
                 
-                if( draggingEntity != NULL ) {
+                if( mEntityManager.draggingInteractive != NULL ) {
                     
                     // drag connection to another entity
-                    if( shortcutKeyDown ) {
-                        if( hotEntity != NULL &&
-                            hotEntity->acceptsInputFrom(draggingEntity) &&
-                            draggingEntity->providesOutputTo(hotEntity) ) {
-                            // ... to center of target
-                            
-                            Connector::draw((ofPoint)Entity::getDrawPosition(draggingEntity->getPosition(), relativeOffset,mEntityAreaScale),
-                                            (ofPoint)Entity::getDrawPosition(hotEntity->getPosition(), relativeOffset,mEntityAreaScale),
-                                            mEntityAreaScale,
-                                            20.f, 20.f,
-                                            Interactive::State::GHOST );
-                            
-                        } else {
-                            // ... to mouse pointer
-                            if( draggingEntity != hotEntity ) {
-                                Connector::draw((ofPoint)Entity::getDrawPosition(draggingEntity->getPosition(), relativeOffset,mEntityAreaScale),
-                                                (ofPoint)io.MousePos,
-                                                mEntityAreaScale,
-                                                20.f, 0.f,
-                                                Interactive::State::GHOST );
+                    if( mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
+                        const EntityRef draggingEntity = TO_ENTITY(mEntityManager.draggingInteractive);
 
+                        if( shortcutKeyDown ) {
+                            
+                            const EntityRef hotEntity = TO_ENTITY(mEntityManager.hotInteractive);
+                            
+                            if( hotEntity != NULL &&
+                               hotEntity->acceptsInputFrom(draggingEntity) &&
+                               draggingEntity->providesOutputTo(hotEntity) ) {
+                                // ... to center of target
+                                
+                                Connector::draw((ofPoint)Entity::getDrawPosition(draggingEntity->getPosition(), relativeOffset,mEntityAreaScale),
+                                                (ofPoint)Entity::getDrawPosition(hotEntity->getPosition(), relativeOffset,mEntityAreaScale),
+                                                mEntityAreaScale,
+                                                20.f, 20.f,
+                                                Interactive::State::GHOST );
+                                
+                            } else {
+                                // ... to mouse pointer
+                                if( draggingEntity->providesOutput() && draggingEntity != hotEntity ) {
+                                    Connector::draw((ofPoint)Entity::getDrawPosition(draggingEntity->getPosition(), relativeOffset,mEntityAreaScale),
+                                                    (ofPoint)io.MousePos,
+                                                    mEntityAreaScale,
+                                                    20.f, 0.f,
+                                                    Interactive::State::GHOST );
+                                    
+                                }
+                                
                             }
-                            
-                        }
-                        
-                        
-                    }
-                    // drag entity around
-                    else {
-                        
-                        if( aoe != NULL ) {
-                            // dragging area of effect.
-                            
-                            ofLogVerbose(__FUNCTION__) << "dragging area of effect " << aoe;
-                            
                         } else {
-                            
+
                             if( mEntityManager.isInSelection(draggingEntity) ) {
+                                // drag entity around
                                 // move the whole selection
                                 for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
                                     // only move entities, not connectors
                                     if( (*iter)->isOfType(Interactive::Type::CONNECTOR) )
                                         continue;
-                                    const EntityRef selectedEntity = TO_ENTITY(*iter);
+                                    const EntityRef selectedEntity = TO_ENTITY((*iter));
                                     
                                     if( selectedEntity != NULL ) {
                                         selectedEntity->move(
@@ -353,8 +353,10 @@ void ofApp::GUI_entityArea() {
                                                      );
                             }
                         }
+                    } else if( mEntityManager.draggingInteractive->isOfType(Interactive::Type::AOE) ) {
+                        const AOERef aoe = TO_AOE(mEntityManager.draggingInteractive);
+                        aoe->move( io.MouseDelta.x/mEntityAreaScale, io.MouseDelta.y/mEntityAreaScale );
                     }
-
                 } else if( shortcutKeyDown ) {
                     ImGui::SetMouseCursor(2);
                     // drag view around with shortcut mouse drag
