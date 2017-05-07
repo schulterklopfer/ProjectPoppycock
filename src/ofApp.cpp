@@ -28,7 +28,8 @@ void ofApp::setup()
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    // update (for example time scaled millis counter)
+    Globals::update();
 }
 //--------------------------------------------------------------
 void ofApp::draw(){

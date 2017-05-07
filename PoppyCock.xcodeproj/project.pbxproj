@@ -30,6 +30,7 @@
 		C241177E1EBDEC9100E58272 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = C241177D1EBDEC9100E58272 /* README.md */; };
 		C27C57BA1EB2775C0012AA66 /* EntityManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27C57B81EB2775C0012AA66 /* EntityManager.cpp */; };
 		C27C57BD1EB27B810012AA66 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27C57BB1EB27B810012AA66 /* Entity.cpp */; };
+		C2E84CCF1EBF7F3C00506A25 /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2E84CCD1EBF7F3C00506A25 /* Globals.cpp */; };
 		D57027F36B35F3FF654824D9 /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CED095FF14A0932EE69B7A8 /* Shader.cpp */; };
 		D6D9A3631B256390D73E2C18 /* ofxAssets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13FF4A2D641AAE64D70ABCC6 /* ofxAssets.cpp */; };
 		DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7C7BDAD29F580A47FF56B52 /* BaseEngine.cpp */; };
@@ -119,6 +120,8 @@
 		C27C57BB1EB27B810012AA66 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		C27C57BC1EB27B810012AA66 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		C27C57BE1EB3A0860012AA66 /* imgui_user.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = imgui_user.h; sourceTree = "<group>"; };
+		C2E84CCD1EBF7F3C00506A25 /* Globals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Globals.cpp; sourceTree = "<group>"; };
+		C2E84CCE1EBF7F3C00506A25 /* Globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Globals.h; sourceTree = "<group>"; };
 		CB5C15EA0881D35A88C22937 /* EngineOpenGLES.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = EngineOpenGLES.h; path = ../../../addons/ofxImGui/src/EngineOpenGLES.h; sourceTree = SOURCE_ROOT; };
 		CC333C075AA06FB210BE2266 /* Image.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Image.h; path = ../../../addons/ofxAssets/src/ofxAssets/Image.h; sourceTree = SOURCE_ROOT; };
 		D729ECA86453DE065311E034 /* Set.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Set.cpp; path = ../../../addons/ofxAssets/src/ofxAssets/Set.cpp; sourceTree = SOURCE_ROOT; };
@@ -320,6 +323,8 @@
 			isa = PBXGroup;
 			children = (
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
+				C2E84CCD1EBF7F3C00506A25 /* Globals.cpp */,
+				C2E84CCE1EBF7F3C00506A25 /* Globals.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				C27C57B81EB2775C0012AA66 /* EntityManager.cpp */,
@@ -471,6 +476,7 @@
 				5C2607C471F8D48C0036C56E /* imgui.cpp in Sources */,
 				C27C57BD1EB27B810012AA66 /* Entity.cpp in Sources */,
 				E984796BE84AA4315636B6E7 /* imgui_demo.cpp in Sources */,
+				C2E84CCF1EBF7F3C00506A25 /* Globals.cpp in Sources */,
 				C2162D9B1EB6994000B5D2BF /* Interactive.cpp in Sources */,
 				00413C35AAE31B483D7538AB /* imgui_draw.cpp in Sources */,
 				63B57AC5BF4EF088491E0317 /* ofxXmlSettings.cpp in Sources */,

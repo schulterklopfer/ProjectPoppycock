@@ -8,6 +8,7 @@
 
 #include "Connector.h"
 #include "Entity.h"
+#include "Globals.h"
 
 void Connector::draw(const ofPoint sourcePosition,
                      const ofPoint targetPosition,
@@ -25,7 +26,7 @@ void Connector::draw(const ofPoint sourcePosition,
     const ofPoint deltaPositionNormalized = deltaPosition.getNormalized();
     const float deltaLength = deltaPosition.length() - (startOffset+endOffset)*scale;
     const ImVec2 socketPosition = (ImVec2)(sourcePosition + deltaPositionNormalized*startOffset*scale);
-    const float perc = (float)(ofGetElapsedTimeMillis()%animationDurationMS)/(float)animationDurationMS;
+    const float perc = ((float)(Globals::getElapsedTimeMillis()%animationDurationMS))/(float)animationDurationMS;
     const ofPoint halfSizeVec = deltaPositionNormalized*lineSize*0.5*scale;
     const ofPoint moveDistVec = deltaPositionNormalized*moveDistance;
     const ofPoint moveDistVecPerc = deltaPositionNormalized*moveDistance*perc;

@@ -7,6 +7,7 @@
 #include "ofxImGui.h"
 #include "ThemeTest.h"
 #include "EntityManager.h"
+#include "Globals.h"
 
 typedef struct EntityMenuListEntry {
     string label;
