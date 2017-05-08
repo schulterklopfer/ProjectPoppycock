@@ -1,3 +1,4 @@
-ofxAssets
 ofxImGui
-ofxXmlSettings
+ofxJSON
+ofxMSAOpenCL
+ofxSingleton

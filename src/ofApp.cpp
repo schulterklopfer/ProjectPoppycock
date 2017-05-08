@@ -1,5 +1,6 @@
 #include "ofApp.h"
 #include "ImGui.h"
+#include "OCLKernelRegistry.h"
 
 //--------------------------------------------------------------
 void ofApp::setup()
@@ -23,7 +24,7 @@ void ofApp::setup()
     
     //mGui.setTheme(new ThemeTest());
         
-    
+    KernelRegistryInstance->setupFromDirectory("opencl");
 }
 
 //--------------------------------------------------------------
