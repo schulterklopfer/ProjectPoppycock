@@ -16,6 +16,7 @@ class Globals {
 private:
     static __int64_t sLastTimeMillis;
     static __int64_t sElapsedTimeMillis;
+    static float sElapsedTimef;
     static float sTimeScale;
     
 public:
@@ -23,7 +24,8 @@ public:
     static float getTimeScale();
     static void setTimeScale( const float ts );
     static __int64_t getElapsedTimeMillis();
-    static void resetElapsedTimeMillis();
+    static float getElapsedTimef();
+    static void resetElapsedTime();
     static void update();
 };
 
