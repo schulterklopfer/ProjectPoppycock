@@ -30,25 +30,25 @@ protected:
     ofRectangle mBounds;
     
 public:
-    
+
     typedef enum Type {
-        NONE       =  0,
-        ENTITY     =  1,
-        CONNECTOR  =  2,
-        OBSERVER   =  4,
-        AOE        =  8,
-        EFFECT     = 16,
-        GPU_EFFECT = 32,
+        NONE       = 0,
+        ENTITY     = (1 << 0),
+        CONNECTOR  = (1 << 1),
+        OBSERVER   = (1 << 2),
+        AOE        = (1 << 3),
+        EFFECT     = (1 << 4),
+        GPU_EFFECT = (1 << 5),
     } Type;
     
     typedef enum State {
-        OVER   =  1,
-        DOWN   =  2,
-        DRAG   =  4,
-        SELECT =  8,
-        SOURCE = 16,
-        TARGET = 32,
-        GHOST  = 64
+        OVER   = (1 << 0),
+        DOWN   = (1 << 1),
+        DRAG   = (1 << 2),
+        SELECT = (1 << 3),
+        SOURCE = (1 << 4),
+        TARGET = (1 << 5),
+        GHOST  = (1 << 6)
     } State;
 
     Interactive() : stateFlags(0) {};
