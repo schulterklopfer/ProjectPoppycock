@@ -29,12 +29,18 @@ public:
         float maxValue;
     } Param;
     
-    OCLKernelWrapper( msa::OpenCLKernelPtr kernel, string name, string description, string version,
-                      KernelType type, vector<Param> params ) :
+    OCLKernelWrapper( const msa::OpenCLKernelPtr kernel, const string name, const string description, const string version,
+                      const KernelType type, const vector<Param> params ) :
         mKernel(kernel),
         mName(name), mDescription(description), mVersion(version),
         mType(type), mParams(params) {};
     
+    const string getName();
+    const string getDescription();
+    const string getVersion();
+    const KernelType getType();
+    const msa::OpenCLKernelPtr& getKernel();
+    const vector<Param>& getParams();
     
 private:
     
