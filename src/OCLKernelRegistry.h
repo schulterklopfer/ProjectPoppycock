@@ -19,12 +19,14 @@ class OCLKernelRegistry : public ofxSingleton::UnmanagedSingleton<OCLKernelRegis
 
 private:
     msa::OpenCL	mOpenCL;
-    OCLKernelWrapperList mKernelWrappers;
+    OCLKernelWrapperList mKernels;
     
 public:
     OCLKernelRegistry();
     
     void setupFromDirectory( const string directory );
+    
+    OCLKernelWrapperList& getKernels();
     
 };
 

@@ -13,7 +13,7 @@
 OFXSINGLETON_DEFINE_UNMANAGED(OCLKernelRegistry)
 
 OCLKernelRegistry::OCLKernelRegistry() {
-    mOpenCL.setup(CL_DEVICE_TYPE_GPU);
+    mOpenCL.setup(CL_DEVICE_TYPE_GPU,1);
 }
 
 void OCLKernelRegistry::setupFromDirectory( const string directory ) {
@@ -67,7 +67,7 @@ void OCLKernelRegistry::setupFromDirectory( const string directory ) {
                         
                         if( kernel->getCLKernel() != NULL && name != "" ) {
                             // everything ok
-                            mKernelWrappers.push_back( OCLKernelWrapperRef( new OCLKernelWrapper(kernel,name,description,version,kType,params) ) );
+                            mKernels.push_back( OCLKernelWrapperRef( new OCLKernelWrapper(kernel,name,description,version,kType,params) ) );
                         }
                         
                     }
@@ -75,4 +75,8 @@ void OCLKernelRegistry::setupFromDirectory( const string directory ) {
             }
         }
     }
+}
+
+OCLKernelWrapperList& OCLKernelRegistry::getKernels() {
+    return mKernels;
 }
