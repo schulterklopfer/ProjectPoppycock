@@ -1,0 +1,10 @@
+{
+	"name": "A test generator",
+	"description": "this is used for testing the opencl environment",
+	"version": "0.0.1",
+	"type": "3d",
+	"params": [
+		{ "name" : "testparam0", "default" : 1.0, "min": 0.0, "max": 10.0 },
+		{ "name" : "testparam1", "default" : 2.0, "min": 1.0, "max": 3.0}
+	]
+}
