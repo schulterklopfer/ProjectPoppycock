@@ -11,14 +11,20 @@
 
 float Globals::sTimeScale = 1.0f;
 __int64_t Globals::sElapsedTimeMillis = 0;
+float Globals::sElapsedTimef = 0.0;
 __int64_t Globals::sLastTimeMillis = 0;
 
 __int64_t Globals::getElapsedTimeMillis() {
     return sElapsedTimeMillis;
 }
 
-void Globals::resetElapsedTimeMillis() {
+float Globals::getElapsedTimef() {
+    return sElapsedTimef;
+}
+
+void Globals::resetElapsedTime() {
     sElapsedTimeMillis = 0;
+    sElapsedTimef = 0.0f;
 }
 
 float Globals::getTimeScale() {
@@ -35,4 +41,5 @@ void Globals::update() {
     const int delta = elapsed - sLastTimeMillis;
     sLastTimeMillis = elapsed;
     sElapsedTimeMillis += (int)((float)delta*sTimeScale);
+    sElapsedTimef = (float)sElapsedTimeMillis/1000.0f;
 }
