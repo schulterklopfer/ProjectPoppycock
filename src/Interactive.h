@@ -59,6 +59,7 @@ public:
     virtual int getTypeFlags();
     virtual void recalcBounds();
     virtual ofRectangle* getBounds();
+    virtual void inspectorContent();
     int stateFlags;
     
 };

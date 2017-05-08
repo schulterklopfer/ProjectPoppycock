@@ -525,6 +525,13 @@ void ofApp::GUI_sidebar() {
     ImGui::SetNextWindowPos(ImVec2(ImVec2(ofGetWidth()-408,10)));
     
     if( ImGui::Begin("Inspector", NULL, ImVec2(0.f,0.f), -1.0f, window_flags) ) {
+        if( mEntityManager.selectedInteractives.size() > 0 ) {
+            for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
+                (*iter)->inspectorContent();
+            }
+        } else {
+            ImGui::Text("Nothing selected");
+        }
     }
     
     ImGui::End();

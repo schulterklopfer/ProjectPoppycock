@@ -7,6 +7,7 @@
 //
 
 #include "Interactive.h"
+#include "ofxImGui.h"
 
 bool Interactive::hitTest( const float x, const float y ) {
     return false;
@@ -25,3 +26,7 @@ bool Interactive::isOfType( Interactive::Type t ) {
 }
 
 void Interactive::recalcBounds() {}
+
+void Interactive::inspectorContent() {
+    ImGui::Text("Inspector content");
+}
