@@ -15,30 +15,46 @@ GPUEffect::GPUEffect( ImVec2 position ) : Effect(position) {
     // TODO: make this configurable:
     mKernelWrapper = KernelRegistryInstance->getKernels().at(0);
     
-    mSizeX = mSizeY = mSizeZ = 100;
+    mSizeX = mSizeY = mSizeZ = 1;
     mTotalSize = mSizeX*mSizeY*mSizeZ;
     __sizes__[0] = mTotalSize;
-    
-    mInputBuffer.initBuffer(mTotalSize);
-    mOutputBuffer.initBuffer(mTotalSize);
+    int data[1] = { (int)ofRandom(100) };
+
+    mBuffer.initBuffer(mTotalSize);
     
 }
 
 void GPUEffect::update() {
-    mKernelWrapper->getKernel()->setArg(0, mInputBuffer);
+    
+    if( mInputs.size() == 0 ) {
+        // no inputs! generate empty input buffer
+        if( mEmptyInputBuffer == NULL ) {
+            ofLogVerbose(__FUNCTION__) << "creating empty input buffer";
+            mEmptyInputBuffer = BufferRef(new msa::OpenCLBufferManagedT<int>() );
+            int data[1] = { 1 };
+            mEmptyInputBuffer->initBuffer( mTotalSize );
+        }
+        mKernelWrapper->getKernel()->setArg(0, *(mEmptyInputBuffer.get()) );
+    } else {
+        // destroy empty input buffer
+        if( mEmptyInputBuffer != NULL ) {
+            ofLogVerbose(__FUNCTION__) << "removing empty input buffer";
+            mEmptyInputBuffer.reset();
+            mEmptyInputBuffer = NULL;
+        }
+        if( mInputs[0]->getSource()->isOfType(Interactive::Type::GPU_EFFECT) ) {
+            GPUEffectRef eRef = TO_GPU_EFFECT(mInputs[0]->getSource());
+            mKernelWrapper->getKernel()->setArg(0, *(eRef->getBuffer()) );
+        }
+    }
+    
     mKernelWrapper->getKernel()->setArg(1, mSizeX);
     mKernelWrapper->getKernel()->setArg(2, mSizeY);
     mKernelWrapper->getKernel()->setArg(3, mSizeZ);
     mKernelWrapper->getKernel()->setArg(4, Globals::getElapsedTimef() );
     mKernelWrapper->getKernel()->setArg(5, 1.0f );
-    mKernelWrapper->getKernel()->setArg(6, mOutputBuffer );
+    mKernelWrapper->getKernel()->setArg(6, mBuffer );
     mKernelWrapper->getKernel()->run(1, __sizes__ );
-    
-    // this is just a test, only use on observer to read from
-    // hardware
-    //mOutputBuffer.readFromDevice();
-    //ofLogVerbose(__FUNCTION__) << mOutputBuffer[3];
-    
 
 }
 
@@ -60,11 +76,7 @@ void GPUEffect::inspectorContent() {
 
 }
 
-msa::OpenCLBufferManagedT<int>* GPUEffect::getInputBuffer() {
-    return &mInputBuffer;
-}
-
-msa::OpenCLBufferManagedT<int>* GPUEffect::getOutputBuffer() {
-    return &mOutputBuffer;
+msa::OpenCLBufferManagedT<int>* GPUEffect::getBuffer() {
+    return &mBuffer;
 }
 

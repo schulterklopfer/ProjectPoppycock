@@ -13,14 +13,17 @@
 #include "Effect.h"
 #include "MSAOpenCL.h"
 #include "OCLKernelRegistry.h"
+#include "boost/shared_ptr.hpp"
+
+typedef boost::shared_ptr<msa::OpenCLBufferManagedT<int>> BufferRef;
 
 class GPUEffect: public Effect {
 
 protected:
     
     OCLKernelWrapperRef mKernelWrapper;
-    msa::OpenCLBufferManagedT<int> mInputBuffer;
-    msa::OpenCLBufferManagedT<int> mOutputBuffer;
+    BufferRef mEmptyInputBuffer;
+    msa::OpenCLBufferManagedT<int> mBuffer;
     
     int mSizeX;
     int mSizeY;
@@ -37,8 +40,7 @@ public:
     virtual void inspectorContent();
     virtual void update();
 
-    virtual msa::OpenCLBufferManagedT<int>* getInputBuffer();
-    virtual msa::OpenCLBufferManagedT<int>* getOutputBuffer();
+    virtual msa::OpenCLBufferManagedT<int>* getBuffer();
     
 };
 
