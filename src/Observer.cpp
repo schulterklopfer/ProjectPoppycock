@@ -7,10 +7,24 @@
 //
 
 #include "Observer.h"
+#include "GPUEffect.h"
 
 int Observer::getTypeFlags() {
     return Observer::Type::OBSERVER|Observer::Type::ENTITY;
 }
+
+void Observer::update() {
+    
+    if( mInputs.size() > 0 ) {
+        if( mInputs[0]->getSource()->isOfType(Interactive::Type::GPU_EFFECT) ) {
+            GPUEffectRef eRef = TO_GPU_EFFECT(mInputs[0]->getSource());
+            (eRef->getBuffer())->readFromDevice();
+            ofLogVerbose(__FUNCTION__) << "Observer inputs[0] result: " << (*(eRef->getBuffer()))[0];
+        }
+    }
+
+}
+
 
 void Observer::draw( const ImVec2 offset, const float scale ) {
     

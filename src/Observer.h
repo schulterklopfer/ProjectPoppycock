@@ -23,5 +23,8 @@ public:
     virtual bool acceptsInputFrom(const boost::shared_ptr<Entity> &source );
     virtual bool providesOutputTo(const boost::shared_ptr<Entity> &source );
     virtual bool providesOutput();
+
+    virtual void update();
+
 };
 #endif /* Observer_h */
