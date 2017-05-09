@@ -65,6 +65,12 @@ void EntityManager::deleteInteractive( const InteractiveRef& interactive ) {
         targetInputs->erase(std::remove(targetInputs->begin(), targetInputs->end(), cRef), targetInputs->end());
         mConnectors.erase(std::remove(mConnectors.begin(), mConnectors.end(), cRef), mConnectors.end());
         
+        
+        if( cRef->getTarget()->isOfType(Interactive::Type::OBSERVER) ||
+            cRef->getTarget()->getMaxEdgeDistanceFromObserver() > -1 ) {
+            recalcMaxEdgeDistances();
+        }
+        
     }
     regenerateInteractivesList();
 }
@@ -93,6 +99,9 @@ void EntityManager::createConnector( EntityRef source, EntityRef target ) {
     target->addInput(cRef);
     mConnectors.push_back(cRef);
     regenerateInteractivesList();
+    if( target->isOfType(Interactive::Type::OBSERVER) || target->getMaxEdgeDistanceFromObserver() > -1 ) {
+        recalcMaxEdgeDistances();
+    }
 }
 
 bool EntityManager::connectorExists( EntityRef &source, EntityRef &target ) {
@@ -107,6 +116,10 @@ bool EntityManager::connectorExists( EntityRef &source, EntityRef &target ) {
 
 EntityList* const EntityManager::getEntities() {
     return &mEntities;
+}
+
+EntityList* const EntityManager::getEntitiesToUpdate() {
+    return &mEntitiesToUpdate;
 }
 
 ConnectorList* const EntityManager::getConnectors() {
@@ -141,6 +154,58 @@ void EntityManager::recalcBounds() {
         } else {
             mBounds.growToInclude(*(*iter)->getBounds());
         }
+    }
+}
+
+void EntityManager::recalcMaxEdgeDistances() {
+    // 1) find observers
+    mEntitiesToUpdate.clear();
+    
+    EntityList observers;
+    
+    for( EntityListIterator iter = mEntities.begin(); iter != mEntities.end(); ++iter ) {
+        if( (*iter)->isOfType(Interactive::Type::OBSERVER) ) {
+            observers.push_back(*iter);
+        } else {
+            // reset max edge distances;
+            (*iter)->setMaxEdgeDistanceFromObserver(-1,true);
+            (*iter)->stateFlags |= Interactive::State::IDLE;
+        }
+    }
+    // 2) walk back inputs of observers and set maxEdgeDistances
+    for( EntityListIterator iter = observers.begin(); iter != observers.end(); ++iter ) {
+        __updateMaxEdgeDistance__( (*iter), (*iter), 0 );
+    }
+    
+    // push entities with mMaxEdgeDistanceFromObserver>0 and observers with inputs onto
+    // mEntitiesToUpdate.
+    for( EntityListIterator iter = mEntities.begin(); iter != mEntities.end(); ++iter ) {
+        if( (*iter)->isOfType(Interactive::Type::OBSERVER) ) {
+            if( (*iter)->getInputs()->size()>0 )
+                mEntitiesToUpdate.push_back(*iter);
+        } else {
+            if( (*iter)->getMaxEdgeDistanceFromObserver()>-1 ) {
+                mEntitiesToUpdate.push_back(*iter);
+            }
+        }
+    }
+    
+    // sort by inverse mMaxEdgeDistanceFromObserver to generate update order
+    std::sort(mEntitiesToUpdate.begin(), mEntitiesToUpdate.end(),
+              [] (EntityRef const& a, EntityRef const& b) { return a->getMaxEdgeDistanceFromObserver() > b->getMaxEdgeDistanceFromObserver(); });
+    
+    
+}
+
+void EntityManager::__updateMaxEdgeDistance__( EntityRef &start, EntityRef &current, int distance) {
+    ConnectorList* inputs = current->getInputs();
+    for( ConnectorListIterator iter = inputs->begin(); iter != inputs->end(); ++iter ) {
+        EntityRef source = (*iter)->getSource();
+        // not there or circular?
+        if( source == NULL || source == start ) continue;
+        source->setMaxEdgeDistanceFromObserver(distance);
+        source->stateFlags &= ~Interactive::State::IDLE;
+        __updateMaxEdgeDistance__( start, source, distance+1 );
     }
 }
 

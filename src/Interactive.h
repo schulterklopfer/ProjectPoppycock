@@ -48,7 +48,8 @@ public:
         SELECT = (1 << 3),
         SOURCE = (1 << 4),
         TARGET = (1 << 5),
-        GHOST  = (1 << 6)
+        GHOST  = (1 << 6),
+        IDLE   = (1 << 7)
     } State;
 
     Interactive() : stateFlags(0) {};

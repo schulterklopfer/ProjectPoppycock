@@ -38,6 +38,9 @@ protected:
     ConnectorList mInputs;
     ConnectorList mOutputs;
     
+    // -1 when not connected to any observer
+    int mMaxEdgeDistanceFromObserver;
+    
     
 public:
 
@@ -68,6 +71,9 @@ public:
     virtual boost::shared_ptr<Entity> clone();
     virtual void recalcBounds();
     virtual void update();
+
+    void setMaxEdgeDistanceFromObserver( int d, bool force = false );
+    int getMaxEdgeDistanceFromObserver();
 
 };
 

@@ -56,6 +56,8 @@ void GPUEffect::inspectorContent() {
         ImGui::Text( "Parameter: %s", (*iter).name.c_str() );
     }
     
+    ImGui::Text("Max distance from observer: %d", mMaxEdgeDistanceFromObserver );
+
 }
 
 msa::OpenCLBufferManagedT<int>* GPUEffect::getInputBuffer() {

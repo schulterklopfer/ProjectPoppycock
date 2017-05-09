@@ -12,9 +12,11 @@ Entity::Entity( const ImVec2 position ) :
     Interactive(),
     mPosition(position),
     mSize(40),
-    mBoundsDirty(false)
+    mBoundsDirty(false),
+    mMaxEdgeDistanceFromObserver(-1)
 {
     recalcBounds();
+    stateFlags |= Interactive::State::IDLE;
 }
 
 ImVec2 Entity::getPosition() {
@@ -32,6 +34,16 @@ void Entity::setPosition( ImVec2 p) {
     mPosition.y = p.y;
     recalcBounds();
     recalcConnectionBounds();
+}
+
+void Entity::setMaxEdgeDistanceFromObserver( int d, bool force ) {
+    if( force || d>mMaxEdgeDistanceFromObserver ) {
+        mMaxEdgeDistanceFromObserver = d;
+    }
+}
+
+int Entity::getMaxEdgeDistanceFromObserver() {
+    return mMaxEdgeDistanceFromObserver;
 }
 
 void Entity::move( const float x, const float y ) {
@@ -54,7 +66,7 @@ void Entity::update() {
 }
 
 void Entity::draw( const ImVec2 offset, const float scale ) {
-    int color = 0xffffffff;
+    int color = ((stateFlags&State::IDLE) == State::IDLE)?0x33ffffff:0xffffffff;
     
     if( (stateFlags&State::OVER) == State::OVER ) {
         color = 0xff0000ff;

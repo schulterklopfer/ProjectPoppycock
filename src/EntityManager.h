@@ -28,8 +28,10 @@ private:
     
     void recalcBounds();
     void regenerateInteractivesList();
-    
+    void recalcMaxEdgeDistances();
+    void __updateMaxEdgeDistance__( EntityRef &start, EntityRef &current, int distance );
     EntityList mEntities;
+    EntityList mEntitiesToUpdate;
     ConnectorList mConnectors;
     InteractiveList mInteractives;
     ofRectangle mBounds;
@@ -43,6 +45,7 @@ public:
     bool isInSelection( const InteractiveRef& interactive );
     void deselectInteractive( const InteractiveRef& interactive );
     EntityList* const getEntities();
+    EntityList* const getEntitiesToUpdate();
     ConnectorList* const getConnectors();
     InteractiveList* const getInteractives();
     void drawBoundingBox( ImVec2 offset, float scale );
