@@ -19,6 +19,7 @@
 
 #define TO_ENTITY(i)        TO_(i, Interactive::Type::ENTITY, Entity)
 #define TO_EFFECT(i)        TO_(i, Interactive::Type::EFFECT, Effect)
+#define TO_GPU_EFFECT(i)    TO_(i, Interactive::Type::GPU_EFFECT, GPUEffect)
 #define TO_SHADER_EFFECT(i) TO_(i, Interactive::Type::SHADER_EFFECT, ShaderEffect)
 #define TO_AOE(i)           TO_(i, Interactive::Type::AOE, Effect::AOE)
 #define TO_OBSERVER(i)      TO_(i, Interactive::Type::OBSERVER, Observer)
