@@ -33,7 +33,7 @@ void ofApp::update(){
     Globals::update();
     
     // call update() in entities
-    EntityList* const entities = mEntityManager.getEntities();
+    EntityList* const entities = mEntityManager.getEntitiesToUpdate();
 
     for( EntityListIterator iter = entities->begin(); iter != entities->end(); ++iter ) {
         (*iter)->update();

@@ -39,7 +39,8 @@ public:
                       const float startOffset = 0.0,
                       const float endOffset = 0.0,
                       const int stateFlags = 0,
-                      const bool isFader = false );
+                      const bool isFader = false,
+                      const bool animate = false );
     
     boost::shared_ptr<Entity> getSource();
     boost::shared_ptr<Entity> getTarget();

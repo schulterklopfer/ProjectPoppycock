@@ -16,7 +16,8 @@ void Connector::draw(const ofPoint sourcePosition,
                      const float startOffset,
                      const float endOffset,
                      const int stateFlags,
-                     const bool isFader ) {
+                     const bool isFader,
+                     const bool animate ) {
 
     const int animationDurationMS = 500;
     const float moveDistance = 24*scale;
@@ -26,7 +27,7 @@ void Connector::draw(const ofPoint sourcePosition,
     const ofPoint deltaPositionNormalized = deltaPosition.getNormalized();
     const float deltaLength = deltaPosition.length() - (startOffset+endOffset)*scale;
     const ImVec2 socketPosition = (ImVec2)(sourcePosition + deltaPositionNormalized*startOffset*scale);
-    const float perc = ((float)(Globals::getElapsedTimeMillis()%animationDurationMS))/(float)animationDurationMS;
+    const float perc = animate?((float)(Globals::getElapsedTimeMillis()%animationDurationMS))/(float)animationDurationMS:0.5f;
     const ofPoint halfSizeVec = deltaPositionNormalized*lineSize*0.5*scale;
     const ofPoint moveDistVec = deltaPositionNormalized*moveDistance;
     const ofPoint moveDistVecPerc = deltaPositionNormalized*moveDistance*perc;
@@ -88,12 +89,19 @@ void Connector::draw(const ofPoint sourcePosition,
 }
 
 void Connector::draw( const ImVec2 offset, const float scale ) {
+    
+    const bool animate =
+        ( mSource->getMaxEdgeDistanceFromObserver() > -1 &&
+          mTarget->getMaxEdgeDistanceFromObserver() > -1 ) ||
+        mTarget->isOfType(Interactive::Type::OBSERVER);
+    
     Connector::draw((ofPoint)Entity::getDrawPosition(mSource->getPosition(),offset,scale),
                     (ofPoint)Entity::getDrawPosition(mTarget->getPosition(),offset,scale),
                     scale,
                     20.f, 20.f,
                     stateFlags,
-                    isFader() );
+                    isFader(),
+                    animate );
 }
 
 bool Connector::hitTest( const float x, const float y ) {
