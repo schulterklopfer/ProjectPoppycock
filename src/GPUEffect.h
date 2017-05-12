@@ -15,24 +15,29 @@
 #include "OCLKernelRegistry.h"
 #include "boost/shared_ptr.hpp"
 
-typedef boost::shared_ptr<msa::OpenCLBufferManagedT<int>> BufferRef;
+//typedef boost::shared_ptr<msa::OpenCLBufferManagedT<int>> BufferRef;
+typedef boost::shared_ptr<msa::OpenCLImage> ImageRef;
 
 class GPUEffect: public Effect {
 
 protected:
     
     OCLKernelWrapperRef mKernelWrapper;
-    BufferRef mEmptyInputBuffer;
+    ImageRef mEmptyInputImage;
+    
     msa::OpenCLBufferManagedT<int> mBuffer;
+    msa::OpenCLImage mImage;
+    
+    ofFbo mDebugDrawFrameBuffer;
+    ofEasyCam mCam;
+    
     
     int mSizeX;
     int mSizeY;
     int mSizeZ;
     
     int mTotalSize;
-    
-    size_t __sizes__[1];
-    
+        
 public:
     
     GPUEffect( const ImVec2 position );
@@ -40,7 +45,9 @@ public:
     virtual void inspectorContent();
     virtual void update();
 
-    virtual msa::OpenCLBufferManagedT<int>* getBuffer();
+    virtual msa::OpenCLImage* getOpenCLImage();
+    
+    void debugDraw();
     
 };
 
