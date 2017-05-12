@@ -13,7 +13,7 @@
 OFXSINGLETON_DEFINE_UNMANAGED(OCLKernelRegistry)
 
 OCLKernelRegistry::OCLKernelRegistry() {
-    mOpenCL.setup(CL_DEVICE_TYPE_GPU);
+    mOpenCL.setup(CL_DEVICE_TYPE_CPU);
 }
 
 void OCLKernelRegistry::setupFromDirectory( const string directory ) {
