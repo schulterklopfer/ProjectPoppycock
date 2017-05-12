@@ -14,7 +14,7 @@ int Observer::getTypeFlags() {
 }
 
 void Observer::update() {
-    
+    /*
     if( mInputs.size() > 0 ) {
         if( mInputs[0]->getSource()->isOfType(Interactive::Type::GPU_EFFECT) ) {
             GPUEffectRef eRef = TO_GPU_EFFECT(mInputs[0]->getSource());
@@ -22,6 +22,7 @@ void Observer::update() {
             ofLogVerbose(__FUNCTION__) << "Observer inputs[0] result: " << (*(eRef->getBuffer()))[0];
         }
     }
+     */
 
 }
 
