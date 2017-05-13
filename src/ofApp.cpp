@@ -20,7 +20,7 @@ void ofApp::setup()
     mEntityMenuCreate = -1;
     mEntityMenuIsOpen = false;
 
-    show_test_window = false;
+    show_test_window = true;
     
     //mGui.setTheme(new ThemeTest());
         
@@ -112,7 +112,7 @@ void ofApp::GUI_entityArea() {
         mEntityManager.hotInteractive = NULL;
 
         // check for keyboard things if entity menu is not open
-        if( !GUI_entityMenu() ) {
+        if( !GUI_entityMenu() && ImGui::IsWindowFocused() && ImGui::IsMouseHoveringWindow() ) {
             const bool backspacePressed = ImGui::IsKeyPressed( ImGui::GetKeyIndex(ImGuiKey_Backspace));
             if( backspacePressed ) {
                 ofLogVerbose( __FUNCTION__ ) << "entity area: backspace pressed inside entities window";
@@ -529,6 +529,7 @@ void ofApp::GUI_sidebar() {
     ImGui::SetNextWindowPos(ImVec2(ImVec2(ofGetWidth()-408,10)));
     
     if( ImGui::Begin("Inspector", NULL, ImVec2(0.f,0.f), -1.0f, window_flags) ) {
+
         if( mEntityManager.selectedInteractives.size() > 0 ) {
             for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
                 (*iter)->inspectorContent();

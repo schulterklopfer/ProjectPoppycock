@@ -58,5 +58,8 @@ typedef boost::shared_ptr<OCLKernelWrapper> OCLKernelWrapperRef;
 typedef std::vector<OCLKernelWrapperRef> OCLKernelWrapperList;
 typedef OCLKernelWrapperList::iterator OCLKernelWrapperListIterator;
 
+typedef vector<OCLKernelWrapper::Param> OCLKernelWrapperParamList;
+typedef OCLKernelWrapperParamList::iterator OCLKernelWrapperParamListIterator;
+
 
 #endif /* OCLKernelWrapper_h */
