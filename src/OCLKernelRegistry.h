@@ -21,12 +21,18 @@ private:
     msa::OpenCL	mOpenCL;
     OCLKernelWrapperList mKernels;
     
+    //msa::OpenCLKernelPtr mSlicerKernel;
+    msa::OpenCLProgramPtr mCommonKernels;
+    
 public:
     OCLKernelRegistry();
     
+    void setup();
     void setupFromDirectory( const string directory );
-    
+    void setupCommonKernels( const string file );
     OCLKernelWrapperList& getKernels();
+    
+    msa::OpenCLKernelPtr getSlicerKernel();
     
 };
 

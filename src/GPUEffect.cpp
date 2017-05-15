@@ -9,13 +9,14 @@
 #include "GPUEffect.h"
 #include "Globals.h"
 
-GPUEffect::GPUEffect( ImVec2 position ) : Effect(position), mSizeX(10), mSizeY(10), mSizeZ(10), mSpeed(1.0) {
+GPUEffect::GPUEffect( ImVec2 position ) : Effect(position), mSizeX(2), mSizeY(2), mSizeZ(2), mSpeed(1.0) {
     // for testing, use first kernel wrapper
     
     // TODO: make this configurable:
     mKernelWrapper = KernelRegistryInstance->getKernels().at(0);
     mKernelWrapperParams = mKernelWrapper->getParams(); // create a copy of params for this generator
 
+    
     setupImages();
     
     ofFbo::Settings fboSettings;
@@ -23,9 +24,62 @@ GPUEffect::GPUEffect( ImVec2 position ) : Effect(position), mSizeX(10), mSizeY(1
     fboSettings.height = 380;
     fboSettings.internalformat = GL_RGBA;
     fboSettings.textureTarget = GL_TEXTURE_2D;
+    fboSettings.useDepth = true;
     
     mDebugDrawFrameBuffer.allocate(fboSettings);
     
+    mDebugDrawFrameBuffer.begin();
+    ofEnablePointSprites();
+    glPointSize(4.0f);
+    glLineWidth(4.0f);
+    ofEnableDepthTest();
+    mDebugDrawFrameBuffer.end();
+    
+    mSlicerImage = ImageRef(new msa::OpenCLImage());
+    
+    // jash: no idea why, but i couldnt get sharing to work
+    // without setting pixels first. Texture allocation
+    // from pixels probably does some magic I dont
+    // understand yet
+    ofFloatPixels pixels;
+    pixels.allocate(128, 128,OF_PIXELS_RGBA);
+    mSlicerTex.allocate(pixels);
+    mSlicerImage->initFromTexture(mSlicerTex);
+ 
+    
+    plane.set(100,100);
+    plane.setResolution(PREVIEW_DIVISIONS+1,PREVIEW_DIVISIONS+1);
+    plane.mapTexCoordsFromTexture(mSlicerTex);
+    
+    mSlicerKernel = KernelRegistryInstance->getSlicerKernel();
+}
+
+GPUEffect::~GPUEffect() {
+    
+    if( mEmptyInputImage != NULL ) {
+        mEmptyInputImage.reset();
+        mEmptyInputImage = NULL;
+    }
+    
+    if( mImage != NULL ) {
+        mImage.reset();
+        mImage = NULL;
+    }
+    
+    if( mSlicerImage != NULL ) {
+        mSlicerImage.reset();
+        mSlicerImage = NULL;
+    }
+    
+    if( mSlicerKernel != NULL ) {
+        mSlicerKernel.reset();
+        mSlicerKernel = NULL;
+    }
+    
+    mSlicerTex.clear();
+    
+    mDebugDrawFrameBuffer.clear();
+
 }
 
 void GPUEffect::setupImages() {
@@ -48,7 +102,6 @@ void GPUEffect::setupImages() {
                                CL_MEM_READ_WRITE, // default
                                NULL, // default
                                CL_FALSE);  // default
-    
 }
 
 void GPUEffect::update() {
@@ -90,6 +143,7 @@ void GPUEffect::update() {
     
     mKernelWrapper->getKernel()->run3D( mSizeX, mSizeY, mSizeZ );
 
+    
 }
 
 int GPUEffect::getTypeFlags() {
@@ -196,53 +250,84 @@ ImageRef& GPUEffect::getImage() {
 
 void GPUEffect::debugDraw() {
     
-    if( mMaxEdgeDistanceFromObserver == -1 ) return;
-    
-    float pixels[4*mSizeX*mSizeY*mSizeZ];
-    
-    mImage->read(&pixels );
-    
-    mDebugDrawFrameBuffer.begin();
-    
-    ofBackground(0, 0, 0);
-    
+    if( mMaxEdgeDistanceFromObserver == -1 ||
+       (stateFlags & Interactive::State::SELECT) != Interactive::State::SELECT)
+        return;
 
-    const float maxSize = 150.f;
-
-    const float size = min( min(maxSize/(float)(mSizeX+1),maxSize/(float)(mSizeY+1)), maxSize/(float)(mSizeZ+1) );
+    const msa::OpenCLKernelPtr slicerKernel = mSlicerKernel;
     
-    float movementSpeed = .1;
-    float t = (ofGetElapsedTimef()) * movementSpeed;
-
-    
-    const ofVec3f offset = ofVec3f( mSizeX-1, mSizeY-1, mSizeZ-1 )*-size;
-    
-    float r,g,b;
-    int index;
-    
-    mCam.begin();
-    
-    for( int z=0; z<mSizeZ; z++ ) {
-        for( int y=0; y<mSizeY; y++ ) {
-            for( int x=0; x<mSizeX; x++ ) {
-                index = (mSizeX*mSizeY*z + mSizeX*y + x)*4;
-                r = pixels[index+0];
-                g = pixels[index+1];
-                b = pixels[index+2];
-                
-                ofPushMatrix();
-                
-                ofNoFill();
-                ofSetColor(r*0xff,g*0xff,b*0xff);
-                ofDrawBox(ofVec3f(x,y,z)*2.f*size + offset,size*0.5f);
-                ofPopMatrix();
-
-            }
+    if( slicerKernel != NULL ) {
+        slicerKernel->setArg(0,*(mSlicerImage.get()));
+        slicerKernel->setArg(1,*(mImage.get()));
+        
+        const float halfStep = 0.5f/(float)PREVIEW_DIVISIONS;
+        
+        mDebugDrawFrameBuffer.begin();
+        
+        //ofClear(1.0f,1.0f,1.0f);
+        ofBackground(0, 0, 0);
+        
+        mCam.begin();
+        
+        // draws a lot of double verts but its better than
+        // downloading data from the gfx card.
+        
+        for( int i=0; i<=PREVIEW_DIVISIONS; i++ ) {
+            // get center position in every division
+            //const float position = (float)i/(float)(PREVIEW_DIVISIONS) + halfStep;
+            const float position = (float)i/(float)(PREVIEW_DIVISIONS);
+            
+            // slice x,y on z
+            slicerKernel->setArg(2,0); // axis 0 -> z
+            slicerKernel->setArg(3,position);
+            slicerKernel->run2D(128, 128);
+            
+            ofPushMatrix();
+            __drawSlice( (1.0f-position) );
+            ofPopMatrix();
+            
+            // slice x,z on y
+            slicerKernel->setArg(2,1); // axis 1 -> y
+            slicerKernel->setArg(3,position);
+            slicerKernel->run2D(128, 128);
+            
+            ofPushMatrix();
+            ofRotateX(-90.0f);
+            __drawSlice( position );
+            ofPopMatrix();
+            
+            // slice y,z on x
+            slicerKernel->setArg(2,2); // axis 2 -> x
+            slicerKernel->setArg(3,position);
+            slicerKernel->run2D(128, 128);
+            
+            ofPushMatrix();
+            ofRotateY(90.0f);
+            __drawSlice( position );
+            ofPopMatrix();
+            
         }
+        
+        ofPushMatrix();
+        ofNoFill();
+        ofDrawBox(0.0f, 0.0f, 0.0f, 100.0f, 100.0f, 100.0f);
+        ofFill();
+        ofPopMatrix();
+        
+        mCam.end();
+        
+        
+        mDebugDrawFrameBuffer.end();
     }
     
-    mCam.end();
-    
-    mDebugDrawFrameBuffer.end();
+
+
+}
+
+void GPUEffect::__drawSlice( float position ) {
+    plane.setPosition( 0.0f, 0.0f, 100.0f * position - 50.f);
+    mSlicerTex.bind();
+    plane.drawVertices();
+    mSlicerTex.unbind();
 }
 

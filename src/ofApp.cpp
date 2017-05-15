@@ -23,8 +23,7 @@ void ofApp::setup()
     show_test_window = true;
     
     //mGui.setTheme(new ThemeTest());
-        
-    KernelRegistryInstance->setupFromDirectory("opencl/generators");
+    KernelRegistryInstance->setup();
 }
 
 //--------------------------------------------------------------

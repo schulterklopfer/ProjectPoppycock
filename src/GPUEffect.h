@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "Effect.h"
 #include "MSAOpenCL.h"
+#include "ImEasyCam.h"
 #include "OCLKernelRegistry.h"
 #include "boost/shared_ptr.hpp"
 
@@ -26,11 +27,17 @@
 #define GPU_EFFECT_MIN_SPEED 0.01
 #define GPU_EFFECT_MAX_SPEED 100.0
 
+#define PREVIEW_DIVISIONS 20
+
 //typedef boost::shared_ptr<msa::OpenCLBufferManagedT<int>> BufferRef;
 typedef boost::shared_ptr<msa::OpenCLImage> ImageRef;
 
 class GPUEffect: public Effect {
 
+private:
+    
+    void __drawSlice( float position );
+    
 protected:
     
     void setupImages();
@@ -40,9 +47,16 @@ protected:
     
     ImageRef mEmptyInputImage;
     ImageRef mImage;
-        
+    
+    ImageRef mSlicerImage;
+    ofTexture mSlicerTex;
+    
     ofFbo mDebugDrawFrameBuffer;
-    ofEasyCam mCam;
+    ImEasyCam mCam;
+    
+    msa::OpenCLKernelPtr mSlicerKernel;
+    
+    ofPlanePrimitive plane;
     
     
     int mSizeX;
@@ -53,6 +67,7 @@ protected:
 public:
     
     GPUEffect( const ImVec2 position );
+    ~GPUEffect();
     virtual int getTypeFlags();
     virtual void inspectorContent();
     virtual void update();

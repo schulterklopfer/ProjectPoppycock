@@ -1,5 +1,5 @@
 __kernel void generator(read_only image3d_t input, // float
-						write_only image3d_t output, // float
+                        write_only image3d_t output, // float
                         const float seconds,
                         const float speed ) {
 
@@ -15,15 +15,26 @@ __kernel void generator(read_only image3d_t input, // float
 
     float4 pixel = read_imagef (input, CLK_NORMALIZED_COORDS_TRUE|CLK_FILTER_NEAREST|CLK_ADDRESS_NONE, inputCoords );
 
-    pixel.r+=sin(seconds*speed+outputCoords.x);
-    pixel.g+=cos(seconds*speed*0.1+outputCoords.y);
-    pixel.b+=sin(seconds*speed*0.5+outputCoords.z);
-    pixel.a=0.00;
+    
+
+
+    pixel.r+=sin(seconds*speed*outputCoords.z+outputCoords.x);
+    pixel.g+=cos(seconds*speed*outputCoords.x*0.1+outputCoords.y);
+    pixel.b+=sin(seconds*speed*outputCoords.y*0.5+outputCoords.z);
+    pixel.a=1.00;
 
     pixel.r*=0.5;
     pixel.g*=0.5;
     pixel.b*=0.5;
 
+    /*
+
+    pixel.r=inputCoords.x;
+    pixel.g=inputCoords.y;
+    pixel.b=inputCoords.z;
+    pixel.a=1.00;
+
+    */
 
     //printf( "%d, %d, %d\n", outputCoords.x, outputCoords.y, outputCoords.z);
 

@@ -12,8 +12,20 @@
 
 OFXSINGLETON_DEFINE_UNMANAGED(OCLKernelRegistry)
 
-OCLKernelRegistry::OCLKernelRegistry() {
-    mOpenCL.setup(CL_DEVICE_TYPE_CPU);
+OCLKernelRegistry::OCLKernelRegistry() {}
+
+void OCLKernelRegistry::setup() {
+    mOpenCL.setupFromOpenGL(1); // TODO: find out correct device number
+    setupFromDirectory("opencl/generators");
+    setupCommonKernels("opencl/common.cl");
+
+}
+
+void OCLKernelRegistry::setupCommonKernels( const string file ) {
+    ofFile common = ofFile( ofToDataPath(file) );
+    if( common.isFile() ) {
+        mCommonKernels = mOpenCL.loadProgramFromFile(common.path(), false);
+    }
 }
 
 void OCLKernelRegistry::setupFromDirectory( const string directory ) {
@@ -79,4 +91,13 @@ void OCLKernelRegistry::setupFromDirectory( const string directory ) {
 
 OCLKernelWrapperList& OCLKernelRegistry::getKernels() {
     return mKernels;
+}
+
+msa::OpenCLKernelPtr OCLKernelRegistry::getSlicerKernel() {
+    //return mSlicerKernel;
+    ofFile common = ofFile( ofToDataPath("opencl/common.cl") );
+    if( mCommonKernels != NULL ) {
+        return mCommonKernels->loadKernel("slicer"); // slicer for volume rendering
+    }
+    return NULL;
 }
