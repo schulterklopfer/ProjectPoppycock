@@ -1,0 +1,9 @@
+{
+	"name": "3D Plasma",
+	"description": "Simple 3D plasma generator",
+	"version": "0.0.1",
+	"type": "3d",
+	"params": [
+		{ "name" : "resolution", "default" : 1.0, "min": 0.0001, "max": 1000.0 }
+	]
+}
