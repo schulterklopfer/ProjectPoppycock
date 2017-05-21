@@ -27,19 +27,29 @@
 #define GPU_EFFECT_MIN_SPEED 0.01
 #define GPU_EFFECT_MAX_SPEED 100.0
 
-#define PREVIEW_DIVISIONS 20
+#define PREVIEW_DIVISIONS 30
+#define PREVIEW_VERTEX_COUNT (PREVIEW_DIVISIONS*PREVIEW_DIVISIONS*PREVIEW_DIVISIONS) // 10*10*10
 
 //typedef boost::shared_ptr<msa::OpenCLBufferManagedT<int>> BufferRef;
 typedef boost::shared_ptr<msa::OpenCLImage> ImageRef;
 
 class GPUEffect: public Effect {
 
+    typedef struct{
+        float4 pos;
+        float4 col;
+    } PreviewVertex;
+    
 private:
-    
-    void __drawSlice( float position );
-    
+        
 protected:
-    
+        
+    static msa::OpenCLKernelPtr sApplyPreviewColorKernel;
+    static ofVboMesh sPreviewMesh;
+    static msa::OpenCLBufferManagedT<float3> sPreviewPositions;
+    static msa::OpenCLBufferManagedT<float4> sPreviewColors;
+    static ofShader sPreviewShader;
+
     void setupImages();
     
     OCLKernelWrapperRef mKernelWrapper;
@@ -48,16 +58,8 @@ protected:
     ImageRef mEmptyInputImage;
     ImageRef mImage;
     
-    ImageRef mSlicerImage;
-    ofTexture mSlicerTex;
-    
-    ofFbo mDebugDrawFrameBuffer;
+    ofFbo mPreviewFrameBuffer;
     ImEasyCam mCam;
-    
-    msa::OpenCLKernelPtr mSlicerKernel;
-    
-    ofPlanePrimitive plane;
-    
     
     int mSizeX;
     int mSizeY;
@@ -65,7 +67,8 @@ protected:
     float mSpeed;
             
 public:
-    
+    static void setupPreview();
+
     GPUEffect( const ImVec2 position );
     ~GPUEffect();
     virtual int getTypeFlags();
@@ -74,7 +77,7 @@ public:
 
     virtual ImageRef& getImage();
     
-    void debugDraw();
+    void drawPreview();
     
 };
 

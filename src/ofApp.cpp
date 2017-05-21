@@ -6,6 +6,7 @@
 void ofApp::setup()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
+    ofSetVerticalSync(false);
     ofSetEscapeQuitsApp(false);
     ofHideCursor();
     //required call
@@ -24,6 +25,7 @@ void ofApp::setup()
     
     //mGui.setTheme(new ThemeTest());
     KernelRegistryInstance->setup();
+    GPUEffect::setupPreview();
 }
 
 //--------------------------------------------------------------
@@ -139,7 +141,7 @@ void ofApp::GUI_entityArea() {
             (*iter)->draw( relativeOffset, mEntityAreaScale );
             if( (*iter)->isOfType(Interactive::Type::GPU_EFFECT) ) {
                 GPUEffectRef e = TO_GPU_EFFECT((*iter));
-                e->debugDraw();
+                e->drawPreview();
             }
         }
         
@@ -436,7 +438,7 @@ void ofApp::GUI_entityArea() {
                                                     (relMousePosition.y - rect.position.y)/mEntityAreaScale );
                 
                 // set new scale factor
-                mEntityAreaScale += io.MouseWheel*0.1;
+                mEntityAreaScale -= io.MouseWheel*0.1;
                 if( mEntityAreaScale < 0.1 ) {
                     mEntityAreaScale = 0.1;
                 } else if( mEntityAreaScale > 4.0 ) {

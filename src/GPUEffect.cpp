@@ -9,14 +9,20 @@
 #include "GPUEffect.h"
 #include "Globals.h"
 
-GPUEffect::GPUEffect( ImVec2 position ) : Effect(position), mSizeX(2), mSizeY(2), mSizeZ(2), mSpeed(1.0) {
+msa::OpenCLKernelPtr GPUEffect::sApplyPreviewColorKernel;
+ofVboMesh GPUEffect::sPreviewMesh;
+msa::OpenCLBufferManagedT<float3> GPUEffect::sPreviewPositions;
+msa::OpenCLBufferManagedT<float4> GPUEffect::sPreviewColors;
+ofShader GPUEffect::sPreviewShader;
+
+
+GPUEffect::GPUEffect( ImVec2 position ) : Effect(position), mSizeX(10), mSizeY(10), mSizeZ(10), mSpeed(1.0) {
     // for testing, use first kernel wrapper
     
     // TODO: make this configurable:
     mKernelWrapper = KernelRegistryInstance->getKernels().at(0);
     mKernelWrapperParams = mKernelWrapper->getParams(); // create a copy of params for this generator
 
-    
     setupImages();
     
     ofFbo::Settings fboSettings;
@@ -26,32 +32,11 @@ GPUEffect::GPUEffect( ImVec2 position ) : Effect(position), mSizeX(2), mSizeY(2)
     fboSettings.textureTarget = GL_TEXTURE_2D;
     fboSettings.useDepth = true;
     
-    mDebugDrawFrameBuffer.allocate(fboSettings);
+    mPreviewFrameBuffer.allocate(fboSettings);
     
-    mDebugDrawFrameBuffer.begin();
-    ofEnablePointSprites();
-    glPointSize(4.0f);
-    glLineWidth(4.0f);
+    mPreviewFrameBuffer.begin();
     ofEnableDepthTest();
-    mDebugDrawFrameBuffer.end();
-    
-    mSlicerImage = ImageRef(new msa::OpenCLImage());
-    
-    // jash: no idea why, but i couldnt get sharing to work
-    // without setting pixels first. Texture allocation
-    // from pixels probably does some magic I dont
-    // understand yet
-    ofFloatPixels pixels;
-    pixels.allocate(128, 128,OF_PIXELS_RGBA);
-    mSlicerTex.allocate(pixels);
-    mSlicerImage->initFromTexture(mSlicerTex);
- 
-    
-    plane.set(100,100);
-    plane.setResolution(PREVIEW_DIVISIONS+1,PREVIEW_DIVISIONS+1);
-    plane.mapTexCoordsFromTexture(mSlicerTex);
-    
-    mSlicerKernel = KernelRegistryInstance->getSlicerKernel();
+    mPreviewFrameBuffer.end();
 }
 
 GPUEffect::~GPUEffect() {
@@ -66,19 +51,7 @@ GPUEffect::~GPUEffect() {
         mImage = NULL;
     }
     
-    if( mSlicerImage != NULL ) {
-        mSlicerImage.reset();
-        mSlicerImage = NULL;
-    }
-    
-    if( mSlicerKernel != NULL ) {
-        mSlicerKernel.reset();
-        mSlicerKernel = NULL;
-    }
-    
-    mSlicerTex.clear();
-    
-    mDebugDrawFrameBuffer.clear();
+    mPreviewFrameBuffer.clear();
 
 }
 
@@ -143,7 +116,6 @@ void GPUEffect::update() {
     
     mKernelWrapper->getKernel()->run3D( mSizeX, mSizeY, mSizeZ );
 
-    
 }
 
 int GPUEffect::getTypeFlags() {
@@ -235,7 +207,7 @@ void GPUEffect::inspectorContent() {
     {
         
         ImGui::Columns(1);
-        ImGui::Image( (ImTextureID)(uintptr_t)mDebugDrawFrameBuffer.getTexture().getTextureData().textureID , ImVec2(375,375) );
+        ImGui::Image( (ImTextureID)(uintptr_t)mPreviewFrameBuffer.getTexture().getTextureData().textureID , ImVec2(375,375) );
         
         
     }
@@ -248,86 +220,89 @@ ImageRef& GPUEffect::getImage() {
     return mImage;
 }
 
-void GPUEffect::debugDraw() {
+void GPUEffect::setupPreview() {
+
+    GPUEffect::sPreviewMesh.clear();
+    GPUEffect::sPreviewMesh.enableColors();
+    GPUEffect::sPreviewMesh.disableNormals();
+    GPUEffect::sPreviewMesh.disableIndices();
+    GPUEffect::sPreviewMesh.ofMesh::disableTextures();
+    
+    GPUEffect::sPreviewMesh.setMode(OF_PRIMITIVE_POINTS);
+    
+    for( int z = 0; z<PREVIEW_DIVISIONS; z++ ) {
+        for( int y = 0; y<PREVIEW_DIVISIONS; y++ ) {
+            for( int x = 0; x<PREVIEW_DIVISIONS; x++ ) {
+                const int index = PREVIEW_DIVISIONS*PREVIEW_DIVISIONS*z +
+                PREVIEW_DIVISIONS*y +
+                x;
+                GPUEffect::sPreviewMesh.addVertex( ofVec3f((float)x/(float)(PREVIEW_DIVISIONS-1),
+                                            (float)y/(float)(PREVIEW_DIVISIONS-1),
+                                            (float)z/(float)(PREVIEW_DIVISIONS-1) ) );
+                
+                GPUEffect::sPreviewMesh.addColor( ofFloatColor((float)x/(float)(PREVIEW_DIVISIONS-1),
+                                                (float)y/(float)(PREVIEW_DIVISIONS-1),
+                                                (float)z/(float)(PREVIEW_DIVISIONS-1),
+                                                1.0) );
+            }
+        }
+    }
+    
+    GPUEffect::sPreviewPositions.initFromGLObject(GPUEffect::sPreviewMesh.getVbo().getVertexBuffer().getId(), PREVIEW_VERTEX_COUNT);
+    GPUEffect::sPreviewColors.initFromGLObject(GPUEffect::sPreviewMesh.getVbo().getColorBuffer().getId(), PREVIEW_VERTEX_COUNT);
+    
+
+    GPUEffect::sApplyPreviewColorKernel = KernelRegistryInstance->getApplyPreviewColorKernel();
+    
+    // set shared vbo as argument
+    GPUEffect::sApplyPreviewColorKernel->setArg(1, GPUEffect::sPreviewPositions);
+    GPUEffect::sApplyPreviewColorKernel->setArg(2, GPUEffect::sPreviewColors);
+
+    GPUEffect::sPreviewShader.load("shaders/effectPreviewVert.glsl", "shaders/effectPreviewFrag.glsl", "shaders/effectPreviewGeom.glsl");
+
+}
+
+void GPUEffect::drawPreview() {
     
     if( mMaxEdgeDistanceFromObserver == -1 ||
        (stateFlags & Interactive::State::SELECT) != Interactive::State::SELECT)
         return;
 
-    const msa::OpenCLKernelPtr slicerKernel = mSlicerKernel;
+    GPUEffect::sApplyPreviewColorKernel->setArg(0, *mImage.get() );
+    GPUEffect::sApplyPreviewColorKernel->run1D(PREVIEW_VERTEX_COUNT);
     
-    if( slicerKernel != NULL ) {
-        slicerKernel->setArg(0,*(mSlicerImage.get()));
-        slicerKernel->setArg(1,*(mImage.get()));
-        
-        const float halfStep = 0.5f/(float)PREVIEW_DIVISIONS;
-        
-        mDebugDrawFrameBuffer.begin();
-        
-        //ofClear(1.0f,1.0f,1.0f);
-        ofBackground(0, 0, 0);
-        
-        mCam.begin();
-        
-        // draws a lot of double verts but its better than
-        // downloading data from the gfx card.
-        
-        for( int i=0; i<=PREVIEW_DIVISIONS; i++ ) {
-            // get center position in every division
-            //const float position = (float)i/(float)(PREVIEW_DIVISIONS) + halfStep;
-            const float position = (float)i/(float)(PREVIEW_DIVISIONS);
-            
-            // slice x,y on z
-            slicerKernel->setArg(2,0); // axis 0 -> z
-            slicerKernel->setArg(3,position);
-            slicerKernel->run2D(128, 128);
-            
-            ofPushMatrix();
-            __drawSlice( (1.0f-position) );
-            ofPopMatrix();
-            
-            // slice x,z on y
-            slicerKernel->setArg(2,1); // axis 1 -> y
-            slicerKernel->setArg(3,position);
-            slicerKernel->run2D(128, 128);
-            
-            ofPushMatrix();
-            ofRotateX(-90.0f);
-            __drawSlice( position );
-            ofPopMatrix();
-            
-            // slice y,z on x
-            slicerKernel->setArg(2,2); // axis 2 -> x
-            slicerKernel->setArg(3,position);
-            slicerKernel->run2D(128, 128);
-            
-            ofPushMatrix();
-            ofRotateY(90.0f);
-            __drawSlice( position );
-            ofPopMatrix();
-            
-        }
-        
-        ofPushMatrix();
-        ofNoFill();
-        ofDrawBox(0.0f, 0.0f, 0.0f, 100.0f, 100.0f, 100.0f);
-        ofFill();
-        ofPopMatrix();
-        
-        mCam.end();
-        
-        
-        mDebugDrawFrameBuffer.end();
-    }
+    const float scale = 100.0f;
     
+    mPreviewFrameBuffer.begin();
+    
+    //ofClear(1.0f,1.0f,1.0f);
+    ofBackground(0, 0, 0);
+    //ofBackgroundGradient( ofColor( 255 ), ofColor( 128 ), OF_GRADIENT_CIRCULAR );
+    
+    
+    mCam.begin();
+    
+    GPUEffect::sPreviewShader.begin();
+    GPUEffect::sPreviewShader.setUniform1f("time", ofGetElapsedTimef()*0.125 );
+    GPUEffect::sPreviewShader.setUniform1f("boxSize", (1.0f/(float)PREVIEW_DIVISIONS)*0.25 );
 
-
-}
-
-void GPUEffect::__drawSlice( float position ) {
-    plane.setPosition( 0.0f, 0.0f, 100.0f * position - 50.f);
-    mSlicerTex.bind();
-    plane.drawVertices();
-    mSlicerTex.unbind();
+    ofPushMatrix();
+    ofScale(scale, scale, scale);
+    ofTranslate(-0.5f,-0.5f,-0.5f);
+    GPUEffect::sPreviewMesh.draw();
+    ofPopMatrix();
+    
+    GPUEffect::sPreviewShader.end();
+    
+    ofPushMatrix();
+    ofNoFill();
+    ofDrawBox(0.0f, 0.0f, 0.0f, scale, scale, scale);
+    ofFill();
+    ofPopMatrix();
+    
+    mCam.end();
+    
+    mPreviewFrameBuffer.end();
+    
 }
 

@@ -27,6 +27,7 @@
 		A0F2BFB15B92B4C6EB9527DE /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C966A8F6085AAA2FED6F411 /* Helpers.cpp */; };
 		BEDFEE7400C58EA4E412B757 /* ofxJSONElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2B099E6BD1199664C48B177 /* ofxJSONElement.cpp */; };
 		C218FA3F1EC0CF3600C852AC /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C218FA3E1EC0CF3600C852AC /* OpenCL.framework */; };
+		C2C69E1E1EC8A00000844FD4 /* ImEasyCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2C69E1C1EC8A00000844FD4 /* ImEasyCam.cpp */; };
 		CE472F551203E7726FC0749D /* OCLKernelRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB5A16CD61074C6FF7AC6323 /* OCLKernelRegistry.cpp */; };
 		DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7C7BDAD29F580A47FF56B52 /* BaseEngine.cpp */; };
 		E13B7A12948FD5C8674D8855 /* MSAOpenCLMemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FC62E0880D9372A38FC853 /* MSAOpenCLMemoryObject.cpp */; };
@@ -130,7 +131,17 @@
 		B7CA07CEEEA19D366EEF9593 /* MSAOpenCLProgram.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = MSAOpenCLProgram.h; path = ../../../addons/ofxMSAOpenCL/src/MSAOpenCLProgram.h; sourceTree = SOURCE_ROOT; };
 		BB5A16CD61074C6FF7AC6323 /* OCLKernelRegistry.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = OCLKernelRegistry.cpp; path = src/OCLKernelRegistry.cpp; sourceTree = SOURCE_ROOT; };
 		BBACB3C28590DF8ECC2F8CF4 /* Register.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Register.h; path = ../../../addons/ofxSingleton/src/ofxSingleton/Register.h; sourceTree = SOURCE_ROOT; };
+		C21446431ED20952002977EC /* main.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = main.cl; sourceTree = "<group>"; };
+		C21446441ED20952002977EC /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package.json; sourceTree = "<group>"; };
 		C218FA3E1EC0CF3600C852AC /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		C28767971ECB7DD200855EF2 /* common.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = common.cl; sourceTree = "<group>"; };
+		C287679D1ECB7DD200855EF2 /* OpenCL-1.0-refcard.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "OpenCL-1.0-refcard.pdf"; sourceTree = "<group>"; };
+		C287679E1ECB7DD200855EF2 /* opencl-1.1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "opencl-1.1.pdf"; sourceTree = "<group>"; };
+		C28767A11ECB7DD200855EF2 /* effectPreviewFrag.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = effectPreviewFrag.glsl; sourceTree = "<group>"; };
+		C28767A21ECB7DD200855EF2 /* effectPreviewGeom.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = effectPreviewGeom.glsl; sourceTree = "<group>"; };
+		C28767A31ECB7DD200855EF2 /* effectPreviewVert.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = effectPreviewVert.glsl; sourceTree = "<group>"; };
+		C2C69E1C1EC8A00000844FD4 /* ImEasyCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImEasyCam.cpp; sourceTree = "<group>"; };
+		C2C69E1D1EC8A00000844FD4 /* ImEasyCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImEasyCam.h; sourceTree = "<group>"; };
 		C3EEE8119CCEEA825B67C21F /* MSAOpenCLKernel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = MSAOpenCLKernel.cpp; path = ../../../addons/ofxMSAOpenCL/src/MSAOpenCLKernel.cpp; sourceTree = SOURCE_ROOT; };
 		CA90240F9C1056C21D5FFDBF /* EntityManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = EntityManager.h; path = src/EntityManager.h; sourceTree = SOURCE_ROOT; };
 		CB5C15EA0881D35A88C22937 /* EngineOpenGLES.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = EngineOpenGLES.h; path = ../../../addons/ofxImGui/src/EngineOpenGLES.h; sourceTree = SOURCE_ROOT; };
@@ -315,12 +326,68 @@
 			name = addons;
 			sourceTree = "<group>";
 		};
+		C21446421ED20952002977EC /* plasma */ = {
+			isa = PBXGroup;
+			children = (
+				C21446431ED20952002977EC /* main.cl */,
+				C21446441ED20952002977EC /* package.json */,
+			);
+			path = plasma;
+			sourceTree = "<group>";
+		};
 		C218FA3D1EC0CF3600C852AC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				C218FA3E1EC0CF3600C852AC /* OpenCL.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C28767941ECB7DD200855EF2 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				C28767961ECB7DD200855EF2 /* opencl */,
+				C287679D1ECB7DD200855EF2 /* OpenCL-1.0-refcard.pdf */,
+				C287679E1ECB7DD200855EF2 /* opencl-1.1.pdf */,
+				C28767A01ECB7DD200855EF2 /* shaders */,
+			);
+			name = data;
+			path = bin/data;
+			sourceTree = "<group>";
+		};
+		C28767961ECB7DD200855EF2 /* opencl */ = {
+			isa = PBXGroup;
+			children = (
+				C28767971ECB7DD200855EF2 /* common.cl */,
+				C28767981ECB7DD200855EF2 /* generators */,
+				C287679C1ECB7DD200855EF2 /* include */,
+			);
+			path = opencl;
+			sourceTree = "<group>";
+		};
+		C28767981ECB7DD200855EF2 /* generators */ = {
+			isa = PBXGroup;
+			children = (
+				C21446421ED20952002977EC /* plasma */,
+			);
+			path = generators;
+			sourceTree = "<group>";
+		};
+		C287679C1ECB7DD200855EF2 /* include */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		C28767A01ECB7DD200855EF2 /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				C28767A31ECB7DD200855EF2 /* effectPreviewVert.glsl */,
+				C28767A21ECB7DD200855EF2 /* effectPreviewGeom.glsl */,
+				C28767A11ECB7DD200855EF2 /* effectPreviewFrag.glsl */,
+			);
+			path = shaders;
 			sourceTree = "<group>";
 		};
 		C618591A26FF62625326E2DD /* libs */ = {
@@ -382,6 +449,7 @@
 			children = (
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
+				C28767941ECB7DD200855EF2 /* data */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
@@ -418,6 +486,8 @@
 				71EE3CA48AC85D09C7801568 /* OCLKernelRegistry.h */,
 				92CE57CA3B19D72DB9E76557 /* OCLKernelWrapper.cpp */,
 				5E1D7E4EC456C215E7D9FADF /* OCLKernelWrapper.h */,
+				C2C69E1C1EC8A00000844FD4 /* ImEasyCam.cpp */,
+				C2C69E1D1EC8A00000844FD4 /* ImEasyCam.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -549,6 +619,7 @@
 				00413C35AAE31B483D7538AB /* imgui_draw.cpp in Sources */,
 				BEDFEE7400C58EA4E412B757 /* ofxJSONElement.cpp in Sources */,
 				FB84AAF8D1B7A95266DB5C09 /* jsoncpp.cpp in Sources */,
+				C2C69E1E1EC8A00000844FD4 /* ImEasyCam.cpp in Sources */,
 				775DD568D4B9548749580BC9 /* MSAOpenCL.cpp in Sources */,
 				E93CBAF94F684B4F509512C2 /* MSAOpenCLBuffer.cpp in Sources */,
 				33B32C35C83434BBEA521BB6 /* MSAOpenCLImage.cpp in Sources */,

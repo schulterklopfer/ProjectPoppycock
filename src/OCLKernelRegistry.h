@@ -21,8 +21,7 @@ private:
     msa::OpenCL	mOpenCL;
     OCLKernelWrapperList mKernels;
     
-    //msa::OpenCLKernelPtr mSlicerKernel;
-    msa::OpenCLProgramPtr mCommonKernels;
+    msa::OpenCLKernelPtr mApplyPreviewColorKernel;
     
 public:
     OCLKernelRegistry();
@@ -32,7 +31,7 @@ public:
     void setupCommonKernels( const string file );
     OCLKernelWrapperList& getKernels();
     
-    msa::OpenCLKernelPtr getSlicerKernel();
+    msa::OpenCLKernelPtr& getApplyPreviewColorKernel();
     
 };
 
