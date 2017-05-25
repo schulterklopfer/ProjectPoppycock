@@ -26,8 +26,8 @@ GPUEffect::GPUEffect( ImVec2 position ) : Effect(position), mSizeX(10), mSizeY(1
     setupImages();
     
     ofFbo::Settings fboSettings;
-    fboSettings.width = 380;
-    fboSettings.height = 380;
+    fboSettings.width = 350;
+    fboSettings.height = 350;
     fboSettings.internalformat = GL_RGBA;
     fboSettings.textureTarget = GL_TEXTURE_2D;
     fboSettings.useDepth = true;
@@ -126,91 +126,97 @@ int GPUEffect::getTypeFlags() {
 void GPUEffect::inspectorContent() {
     
     ImGui::PushID(this);
-    int index=0;
-
-    if (ImGui::CollapsingHeader("Resolution"))
-    {
+    if( ImGui::CollapsingHeader("GPU Effect")) {
+        int index=0;
         
-        ImGui::Columns(2);
-        ImGui::Separator();
-        
-        const char* dimFieldNames[3] = { "x", "y", "z" };
-        int* dimPtrs[3] = { &mSizeX, &mSizeY, &mSizeZ };
-        const int dimMin[3] = { GPU_EFFECT_MIN_X, GPU_EFFECT_MIN_Y, GPU_EFFECT_MIN_Z };
-        const int dimMax[3] = { GPU_EFFECT_MAX_X, GPU_EFFECT_MAX_Y, GPU_EFFECT_MAX_Z };
-        
-        for( int i=0; i<3; i++ ) {
-            ImGui::PushID( index++ ); // Use field index as identifier.
+        if (ImGui::TreeNode("Resolution"))
+        {
             
-            ImGui::AlignFirstTextHeightToWidgets();
-            ImGui::Bullet();
-            ImGui::Selectable(dimFieldNames[i]);
-            ImGui::NextColumn();
-            ImGui::PushItemWidth(-1);
-            if( ImGui::DragInt( "##value", dimPtrs[i], 1, dimMin[i], dimMax[i]) ) {
-                ofLogVerbose(__FUNCTION__) << "dimension " << i << " changed";
-                setupImages();
+            ImGui::Columns(2);
+            ImGui::Separator();
+            
+            const char* dimFieldNames[3] = { "x", "y", "z" };
+            int* dimPtrs[3] = { &mSizeX, &mSizeY, &mSizeZ };
+            const int dimMin[3] = { GPU_EFFECT_MIN_X, GPU_EFFECT_MIN_Y, GPU_EFFECT_MIN_Z };
+            const int dimMax[3] = { GPU_EFFECT_MAX_X, GPU_EFFECT_MAX_Y, GPU_EFFECT_MAX_Z };
+            
+            for( int i=0; i<3; i++ ) {
+                ImGui::PushID( index++ ); // Use field index as identifier.
+                
+                ImGui::AlignFirstTextHeightToWidgets();
+                ImGui::Bullet();
+                ImGui::Selectable(dimFieldNames[i]);
+                ImGui::NextColumn();
+                ImGui::PushItemWidth(-1);
+                if( ImGui::DragInt( "##value", dimPtrs[i], 1, dimMin[i], dimMax[i]) ) {
+                    ofLogVerbose(__FUNCTION__) << "dimension " << i << " changed";
+                    setupImages();
+                }
+                ImGui::PopItemWidth();
+                ImGui::NextColumn();
+                
+                ImGui::PopID();
             }
-            ImGui::PopItemWidth();
-            ImGui::NextColumn();
             
-            ImGui::PopID();
+            
+            ImGui::Columns(1);
+            ImGui::TreePop();
+            
         }
 
-
-        ImGui::Columns(1);
-        ImGui::Separator();
-
-    }
-    ImGui::Separator();
-    if (ImGui::CollapsingHeader("Generator"))
-    {
-        
-        ImGui::Columns(2);
-        ImGui::Separator();
-        
-        ImGui::PushID( index++ ); // Use field index as identifier.
-        
-        ImGui::AlignFirstTextHeightToWidgets();
-        ImGui::Bullet();
-        ImGui::Selectable("Speed");
-        ImGui::NextColumn();
-        ImGui::PushItemWidth(-1);
-        ImGui::DragFloat("##value", &mSpeed, 0.01f, GPU_EFFECT_MIN_SPEED, GPU_EFFECT_MAX_SPEED);
-        ImGui::PopItemWidth();
-        ImGui::NextColumn();
-        
-        ImGui::PopID();
-
-        
-        for( OCLKernelWrapperParamListIterator iter = mKernelWrapperParams.begin(); iter != mKernelWrapperParams.end(); ++iter ) {
+        if (ImGui::TreeNode("Generator"))
+        {
+            
+            ImGui::Columns(2);
+            ImGui::Separator();
+            
             ImGui::PushID( index++ ); // Use field index as identifier.
             
             ImGui::AlignFirstTextHeightToWidgets();
             ImGui::Bullet();
-            ImGui::Selectable(iter->name.c_str());
+            ImGui::Selectable("Speed");
             ImGui::NextColumn();
             ImGui::PushItemWidth(-1);
-            ImGui::DragFloat("##value", &(iter->value), 0.1f, iter->minValue, iter->maxValue);
+            ImGui::DragFloat("##value", &mSpeed, 0.01f, GPU_EFFECT_MIN_SPEED, GPU_EFFECT_MAX_SPEED);
             ImGui::PopItemWidth();
             ImGui::NextColumn();
             
             ImGui::PopID();
+            
+            
+            for( OCLKernelWrapperParamListIterator iter = mKernelWrapperParams.begin(); iter != mKernelWrapperParams.end(); ++iter ) {
+                ImGui::PushID( index++ ); // Use field index as identifier.
+                
+                ImGui::AlignFirstTextHeightToWidgets();
+                ImGui::Bullet();
+                ImGui::Selectable(iter->name.c_str());
+                ImGui::NextColumn();
+                ImGui::PushItemWidth(-1);
+                ImGui::DragFloat("##value", &(iter->value), 0.1f, iter->minValue, iter->maxValue);
+                ImGui::PopItemWidth();
+                ImGui::NextColumn();
+                
+                ImGui::PopID();
+            }
+            
+            ImGui::Columns(1);
+            ImGui::TreePop();
+            
         }
-        
-        ImGui::Columns(1);
-        ImGui::Separator();
+        if (ImGui::TreeNode("Preview"))
+        {
+            const ImVec2 offset = ImGui::GetCursorScreenPos();
+            
+            // moves CursorScreenPos so we grabbed it before drawing the image
+            ImGui::Image( (ImTextureID)(uintptr_t)mPreviewFrameBuffer.getTexture().getTextureData().textureID , ImVec2(350,350) );
+            mCam.update( offset );
+            ImGui::TreePop();
+            
+        }
 
     }
-    ImGui::Separator();
-    if (ImGui::CollapsingHeader("Debug view"))
-    {
-        
-        ImGui::Columns(1);
-        ImGui::Image( (ImTextureID)(uintptr_t)mPreviewFrameBuffer.getTexture().getTextureData().textureID , ImVec2(375,375) );
-        
-        
-    }
+    
+    
     ImGui::PopID();
 
 

@@ -525,6 +525,9 @@ void ofApp::GUI_sidebar() {
     window_flags |= ImGuiWindowFlags_NoCollapse;
     window_flags |= ImGuiWindowFlags_NoSavedSettings;
     
+    if( !ImGui::GetIO().WantCaptureMouse ) {
+        window_flags |= ImGuiWindowFlags_NoScrollWithMouse;
+    }
     
     ImGui::SetNextWindowSize(ImVec2(398, ofGetHeight()-20));
     ImGui::SetNextWindowPos(ImVec2(ImVec2(ofGetWidth()-408,10)));

@@ -27,16 +27,11 @@ ImEasyCam::ImEasyCam(){
     sensitivityZ= .7f;
     
     bDistanceSet = false;
-    bMouseInputEnabled = true;
-    bDoRotate = false;
     bApplyInertia =false;
-    bDoTranslate = false;
     bDoScrollZoom = false;
     bInsideArcball = true;
-    bEnableMouseMiddleButton = true;
     bAutoDistance = true;
-    doTranslationKey = 'm';
-    bEventsSet = false;
+    bDoRotate = false;
     events = nullptr;
     rotationFactor = 0.0f;
     
@@ -45,35 +40,59 @@ ImEasyCam::ImEasyCam(){
 
 //----------------------------------------
 ImEasyCam::~ImEasyCam(){
-    disableMouseInput();
 }
 
 //----------------------------------------
-void ImEasyCam::update(ofEventArgs & args){
-    viewport = getViewport(this->viewport);
+void ImEasyCam::update( ImVec2 offset ){
+    
+    
+    const ofRectangle viewport = getViewport(this->viewport);
+    
     if(!bDistanceSet && bAutoDistance){
         setDistance(getImagePlaneDistance(viewport), true);
     }
-    if(bMouseInputEnabled){
+
+    if(ImGui::IsMouseHoveringBox(ImGui::GetItemBoxMin(), ImGui::GetItemBoxMax()) ) {
+        const ImGuiIO io = ImGui::GetIO();
+        ImGui::CaptureMouseFromApp(true);
         
         rotationFactor = sensitivityRot * 180 / min(viewport.width, viewport.height);
+
+        const ImVec2 relMouse = ImVec2( io.MousePos.x - offset.x, io.MousePos.y - offset.y );
+
         
-        if(events->getMousePressed()) prevMouse = ofVec2f(events->getMouseX(),events->getMouseY());
+        lastMouse = mouse;
+        mouse = (ofVec2f)relMouse;
         
-        if (bDoRotate) {
+        if( io.MouseDown[0] ) {
+            mousePressed(mouse,lastMouse);
+        }
+        
+        if( ImGui::IsMouseDragging() ) {
+            mouseDragged(mouse,lastMouse);
+        }
+        
+        if( io.MouseReleased[0] ) {
+            mouseReleased(mouse,lastMouse);
+        }
+        
+        if( io.MouseWheel != 0.0 ) {
+            mouseScrolled(io.MouseWheel);
+        }
+        
+        if( bDoRotate ) {
             updateRotation();
-        }else if (bDoTranslate || bDoScrollZoom) {
+        } else if ( bDoScrollZoom) {
             updateTranslation();
             bDoScrollZoom = false;
         }
+        ImGui::CaptureMouseFromApp(false);
+
     }
 }
 
 //----------------------------------------
 void ImEasyCam::begin(ofRectangle _viewport){
-    if(!bEventsSet){
-        setEvents(ofEvents());
-    }
     viewport = getViewport(_viewport);
     ofCamera::begin(viewport);
 }
@@ -96,9 +115,8 @@ void ImEasyCam::reset(){
     moveY = 0;
     moveZ = 0;
     
-    bApplyInertia = false;
-    bDoTranslate = false;
     bDoRotate = false;
+    bApplyInertia = false;
 }
 
 //----------------------------------------
@@ -158,90 +176,6 @@ float ImEasyCam::getDrag() const{
 }
 
 //----------------------------------------
-void ImEasyCam::setTranslationKey(char key){
-    doTranslationKey = key;
-}
-
-//----------------------------------------
-char ImEasyCam::getTranslationKey(){
-    return doTranslationKey;
-}
-
-//----------------------------------------
-void ImEasyCam::enableMouseInput(){
-    if(!bMouseInputEnabled && events){
-        ofAddListener(events->update, this, &ImEasyCam::update);
-        ofAddListener(events->mouseDragged , this, &ImEasyCam::mouseDragged);
-        ofAddListener(events->mousePressed, this, &ImEasyCam::mousePressed);
-        ofAddListener(events->mouseReleased, this, &ImEasyCam::mouseReleased);
-        ofAddListener(events->mouseScrolled, this, &ImEasyCam::mouseScrolled);
-    }
-    // if enableMouseInput was called within ofApp::setup()
-    // `events` will still carry a null pointer, and bad things
-    // will happen. Therefore we only update the flag.
-    bMouseInputEnabled = true;
-    // setEvents() is called upon first load, and will make sure
-    // to enable the mouse input once the camera is fully loaded.
-}
-
-//----------------------------------------
-void ImEasyCam::disableMouseInput(){
-    if(bMouseInputEnabled && events){
-        ofRemoveListener(events->update, this, &ImEasyCam::update);
-        ofRemoveListener(events->mouseDragged, this, &ImEasyCam::mouseDragged);
-        ofRemoveListener(events->mousePressed, this, &ImEasyCam::mousePressed);
-        ofRemoveListener(events->mouseReleased, this, &ImEasyCam::mouseReleased);
-        ofRemoveListener(events->mouseScrolled, this, &ImEasyCam::mouseScrolled);
-    }
-    // if disableMouseInput was called within ofApp::setup()
-    // `events` will still carry a null pointer, and bad things
-    // will happen. Therefore we only update the flag.
-    bMouseInputEnabled = false;
-    // setEvents() is called upon first load, and will make sure
-    // to enable the mouse input once the camera is fully loaded.
-}
-
-//----------------------------------------
-void ImEasyCam::setEvents(ofCoreEvents & _events){
-    // If en/disableMouseInput were called within ofApp::setup(),
-    // bMouseInputEnabled will tell us about whether the camera
-    // mouse input needs to be initialised as enabled or disabled.
-    // we will still set `events`, so that subsequent enabling
-    // and disabling can work.
-    
-    // we need a temporary copy of bMouseInputEnabled, since it will
-    // get changed by disableMouseInput as a side-effect.
-    bool wasMouseInputEnabled = bMouseInputEnabled;
-    disableMouseInput();
-    events = &_events;
-    if (wasMouseInputEnabled) {
-        // note: this will set bMouseInputEnabled to true as a side-effect.
-        enableMouseInput();
-    }
-    bEventsSet = true;
-}
-
-//----------------------------------------
-bool ImEasyCam::getMouseInputEnabled(){
-    return bMouseInputEnabled;
-}
-
-//----------------------------------------
-void ImEasyCam::enableMouseMiddleButton(){
-    bEnableMouseMiddleButton = true;
-}
-
-//----------------------------------------
-void ImEasyCam::disableMouseMiddleButton(){
-    bEnableMouseMiddleButton = false;
-}
-
-//----------------------------------------
-bool ImEasyCam::getMouseMiddleButtonEnabled(){
-    return bEnableMouseMiddleButton;
-}
-
-//----------------------------------------
 void ImEasyCam::updateTranslation(){
     if(bApplyInertia){
         moveX *= drag;
@@ -249,7 +183,6 @@ void ImEasyCam::updateTranslation(){
         moveZ *= drag;
         if(ABS(moveX) <= minDifference && ABS(moveY) <= minDifference && ABS(moveZ) <= minDifference){
             bApplyInertia = false;
-            bDoTranslate = false;
         }
         move((getXAxis() * moveX) + (getYAxis() * moveY) + (getZAxis() * moveZ));
     }else{
@@ -278,45 +211,40 @@ void ImEasyCam::updateRotation(){
     }
 }
 
-void ImEasyCam::mousePressed(ofMouseEventArgs & mouse){
-    ofRectangle viewport = getViewport(this->viewport);
-    if(viewport.inside(mouse.x, mouse.y)){
-        lastMouse = mouse;
-        prevMouse = mouse;
-        prevAxisX = getXAxis();
-        prevAxisY = getYAxis();
-        prevAxisZ = getZAxis();
-        prevPosition = ofCamera::getGlobalPosition();
-        prevOrientation = ofCamera::getGlobalOrientation();
-        
-        if((bEnableMouseMiddleButton && mouse.button == OF_MOUSE_BUTTON_MIDDLE) || events->getKeyPressed(doTranslationKey)  || mouse.button == OF_MOUSE_BUTTON_RIGHT){
-            bDoTranslate = true;
-            bDoRotate = false;
-        }else if(mouse.button == OF_MOUSE_BUTTON_LEFT){
-            bDoTranslate = false;
-            bDoRotate = true;
-            if(ofVec2f(mouse.x - viewport.x - (viewport.width/2), mouse.y - viewport.y - (viewport.height/2)).length() < min(viewport.width/2, viewport.height/2)){
-                bInsideArcball = true;
-            }else{
-                bInsideArcball = false;
-            }
-        }
-        bApplyInertia = false;
+void ImEasyCam::mousePressed(const ofVec2f mouse, const ofVec2f lastMouse){
+    const ofRectangle viewport = getViewport(this->viewport);
+
+    prevAxisX = getXAxis();
+    prevAxisY = getYAxis();
+    prevAxisZ = getZAxis();
+    prevPosition = ofCamera::getGlobalPosition();
+    prevOrientation = ofCamera::getGlobalOrientation();
+    
+
+    if(ofVec2f(mouse.x - viewport.x - (viewport.width/2), mouse.y - viewport.y - (viewport.height/2)).length() < min(viewport.width/2, viewport.height/2)){
+        bInsideArcball = true;
+    }else{
+        bInsideArcball = false;
     }
+    
+    bDoRotate = false;
+    bApplyInertia = false;
+    
 }
 
-void ImEasyCam::mouseReleased(ofMouseEventArgs & mouse){
-    unsigned long curTap = ofGetElapsedTimeMillis();
-    ofRectangle viewport = getViewport(this->viewport);
+void ImEasyCam::mouseReleased(const ofVec2f mouse, const ofVec2f lastMouse ){
+    
+    const unsigned long curTap = ofGetElapsedTimeMillis();
+    const ofRectangle viewport = getViewport(this->viewport);
     if(lastTap != 0 && curTap - lastTap < doubleclickTime){
         reset();
         return;
     }
     lastTap = curTap;
     bApplyInertia = true;
-    mouseVel = mouse  - prevMouse;
+    mouseVel = mouse  - lastMouse;
     
-    updateMouse(mouse);
+    updateMouse(mouse,lastMouse);
     ofVec2f center(viewport.width/2, viewport.height/2);
     int vFlip;
     if(isVFlipped()){
@@ -324,51 +252,44 @@ void ImEasyCam::mouseReleased(ofMouseEventArgs & mouse){
     }else{
         vFlip =  1;
     }
-    zRot = -vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(prevMouse - ofVec2f(viewport.x, viewport.y) - center);
-}
-
-void ImEasyCam::mouseDragged(ofMouseEventArgs & mouse){
-    mouseVel = mouse  - lastMouse;
+    zRot = -vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(lastMouse - ofVec2f(viewport.x, viewport.y) - center);
     
-    updateMouse(mouse);
 }
 
-void ImEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
-    ofRectangle viewport = getViewport(this->viewport);
+void ImEasyCam::mouseDragged(const ofVec2f mouse, const ofVec2f lastMouse){
+    mouseVel = mouse  - lastMouse;
+    bDoRotate = true;
+    updateMouse(mouse, lastMouse);
+
+}
+
+void ImEasyCam::mouseScrolled(const float mouse){
+    const ofRectangle viewport = getViewport(this->viewport);
     prevPosition = ofCamera::getGlobalPosition();
     prevAxisZ = getZAxis();
-    moveZ = mouse.scrollY * 30 * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;
+    moveZ = mouse * 30 * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;
     bDoScrollZoom = true;
 }
 
-void ImEasyCam::updateMouse(const ofMouseEventArgs & mouse){
-    ofRectangle viewport = getViewport(this->viewport);
+void ImEasyCam::updateMouse(const ofVec2f mouse, const ofVec2f lastMouse){
+    const ofRectangle viewport = getViewport(this->viewport);
     int vFlip;
     if(isVFlipped()){
         vFlip = -1;
     }else{
         vFlip =  1;
     }
-    if(bDoTranslate){
-        moveX = 0;
-        moveY = 0;
-        moveZ = 0;
-        if(mouse.button == OF_MOUSE_BUTTON_RIGHT){
-            moveZ = mouseVel.y * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;
-        }else{
-            moveX = -mouseVel.x * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.width;
-            moveY = vFlip * mouseVel.y * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.height;
-        }
+
+    xRot = 0;
+    yRot = 0;
+    zRot = 0;
+    if(bInsideArcball){
+        xRot = vFlip * -mouseVel.y * rotationFactor;
+        yRot = -mouseVel.x * rotationFactor;
     }else{
-        xRot = 0;
-        yRot = 0;
-        zRot = 0;
-        if(bInsideArcball){
-            xRot = vFlip * -mouseVel.y * rotationFactor;
-            yRot = -mouseVel.x * rotationFactor;
-        }else{
-            ofVec2f center(viewport.width/2, viewport.height/2);
-            zRot = -vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(lastMouse - ofVec2f(viewport.x, viewport.y) - center);
-        }
+        ofVec2f center(viewport.width/2, viewport.height/2);
+        zRot = -vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(lastMouse - ofVec2f(viewport.x, viewport.y) - center);
     }
+    
+
 }

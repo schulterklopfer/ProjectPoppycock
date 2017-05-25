@@ -11,6 +11,7 @@
 
 #include "ofCamera.h"
 #include "ofEvents.h"
+#include "ImGui.h"
 
 
 /// \brief A super simple camera for interacting with objects in 3D space.
@@ -86,65 +87,19 @@ public:
     /// \param bAutoDistance true to enable auto distance.
     void setAutoDistance(bool bAutoDistance);
     
-    void setEvents(ofCoreEvents & events);
-    
-    /// \brief Set the key used to switch between camera rotation and translation.
-    ///
-    /// Translation will only happen when the translation key is pressed.
-    ///
-    /// \param key The key code for the translation key.
-    /// \todo char is not the right data type for this. Should be int.
-    void setTranslationKey(char key);
-    
-    /// \brief Get the current translation key code.
-    /// \returns the current translation key code.
-    char getTranslationKey();
-    
-    /// \}
-    /// \name Mouse Input
-    /// \{
-    
-    /// \brief Enable mouse camera control.
-    void enableMouseInput();
-    
-    /// \brief Disable mouse camera control.
-    void disableMouseInput();
-    
-    /// \brief Determine if mouse camera control is enabled.
-    /// \todo Rename to isMouseInputEnabled().
-    /// \returns true iff mouse camera control is enabled.
-    bool getMouseInputEnabled();
-    
-    /// \brief Enable the mouse's middle button for camera control.
-    void enableMouseMiddleButton();
-    
-    /// \brief Disable the mouse's middle button for camera control.
-    void disableMouseMiddleButton();
-    
-    /// \brief Determine if the middle mouse button is enabled.
-    /// \todo Rename to isMouseMiddleButtonEnabled().
-    /// \returns true iff the mouse's middle button is enabled.
-    bool getMouseMiddleButtonEnabled();
-    
-    /// \}
-    
-    
+    void update( ImVec2 offset );
+
     
 private:
     void setDistance(float distance, bool save);
     
     ofNode target;
     
-    bool bEnableMouseMiddleButton;
     bool bApplyInertia;
-    bool bDoTranslate;
-    bool bDoRotate;
     bool bDoScrollZoom;
     bool bInsideArcball;
-    bool bMouseInputEnabled;
     bool bDistanceSet;
     bool bAutoDistance;
-    bool bEventsSet;
     float lastDistance;
     
     float drag;
@@ -163,21 +118,16 @@ private:
     
     float rotationFactor;
     
-    ofVec2f lastMouse, prevMouse;
     ofVec2f mouseVel;
     
     void updateRotation();
     void updateTranslation();
-    void update(ofEventArgs & args);
-    void mousePressed(ofMouseEventArgs & mouse);
-    void mouseReleased(ofMouseEventArgs & mouse);
-    void mouseDragged(ofMouseEventArgs & mouse);
-    void mouseScrolled(ofMouseEventArgs & mouse);
-    void updateMouse(const ofMouseEventArgs & mouse);
-    
-    /// \brief The key used to differentiate between translation and rotation.
-    char doTranslationKey;
-    
+    void mousePressed(const ofVec2f mouse, const ofVec2f lastMouse);
+    void mouseReleased(const ofVec2f mouse, const ofVec2f lastMouse);
+    void mouseDragged(const ofVec2f mouse, const ofVec2f lastMouse);
+    void mouseScrolled(const float mouse);
+    void updateMouse(const ofVec2f mouse, const ofVec2f lastMouse);
+        
     /// \brief The time of the last pointer down event.
     unsigned long lastTap;
     
@@ -201,6 +151,11 @@ private:
     
     ofRectangle viewport;
     
+    bool mouseDown;
+    bool bDoRotate;
+    ofVec2f mouse;
+    ofVec2f lastMouse;
+        
     ofCoreEvents * events;
 };
 
