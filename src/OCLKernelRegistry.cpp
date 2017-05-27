@@ -90,6 +90,70 @@ void OCLKernelRegistry::setupFromDirectory( const string directory ) {
     }
 }
 
+
+msa::OpenCLKernelPtr& OCLKernelRegistry::getBlendKernel(int inputs) {
+    
+    std::unordered_map<int, msa::OpenCLKernelPtr>::iterator result = mBlendKernels.find(inputs);
+    
+    if( result == mBlendKernels.end() ) {
+        // not found: create new and insert
+        
+        string code =
+        "__kernel void blend(__read_only int inputCount,\n";
+        
+        for( int i=0; i<inputs; i++ ) {
+            code += "                    __read_only image3d_t input"+std::to_string(i)+",\n";
+        }
+
+        for( int i=0; i<inputs; i++ ) {
+            code += "                    __read_only float blendAmount"+std::to_string(i)+",\n";
+        }
+        
+        code +=
+        "                    __write_only image3d_t output ) {\n"
+        "    const int4 outputCoords = (int4)( get_global_id(0), get_global_id(1), get_global_id(2), 0 );\n"
+        "    const int4 outputDim = get_image_dim (output);\n"
+        "    const float4 inputCoords = (float4)((float)outputCoords.x/(float)outputDim.x,\n"
+        "                                        (float)outputCoords.y/(float)outputDim.y,\n"
+        "                                        (float)outputCoords.z/(float)outputDim.z,\n"
+        "                                        0.0 );\n"
+        "    float4 outputPixel = (float4)(0.0,0.0,0.0,0.0);\n";
+        /*
+        "    float blendAmountSum = 0;\n";
+        
+        for( int i=0; i<inputs; i++ ) {
+            code +=
+            "    blendAmountSum+=blendAmount"+std::to_string(i)+";\n";
+        }
+        */
+        
+        for( int i=0; i<inputs; i++ ) {
+            const string inputIndex = std::to_string(i);
+            code +=
+            "    float4 inputPixel"+inputIndex+" = read_imagef (input"+inputIndex+", CLK_NORMALIZED_COORDS_TRUE|CLK_FILTER_NEAREST|CLK_ADDRESS_NONE, inputCoords );\n"
+            //"    const float f"+inputIndex+" = blendAmount"+inputIndex+" / blendAmountSum;\n"
+            "    const float f"+inputIndex+" = blendAmount"+inputIndex+";\n"
+            "    outputPixel += (float4)(inputPixel"+inputIndex+".r * f"+inputIndex+", inputPixel"+inputIndex+".g * f"+inputIndex+", inputPixel"+inputIndex+".b * f"+inputIndex+", inputPixel"+inputIndex+".a * f"+inputIndex+" );\n";
+        }
+        code +=
+        //"    outputPixel.r /= inputCount;\n"
+        //"    outputPixel.g /= inputCount;\n"
+        //"    outputPixel.b /= inputCount;\n"
+        //"    outputPixel.a /= inputCount;\n"
+        "    write_imagef( output, outputCoords, outputPixel );\n"
+        "}\n";
+        
+        ofLog() << code;
+        
+        msa::OpenCLProgramPtr p = mOpenCL.loadProgramFromSource(code);
+        msa::OpenCLKernelPtr k = p->loadKernel("blend");
+        mBlendKernels[inputs] = k;
+        return mBlendKernels[inputs];
+    } else {
+        return result->second;
+    }
+}
+
 OCLKernelWrapperList& OCLKernelRegistry::getKernels() {
     return mKernels;
 }

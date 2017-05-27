@@ -14,6 +14,7 @@
 #include "MSAOpenCL.h"
 #include "OCLKernelWrapper.h"
 
+#include <map>
 
 class OCLKernelRegistry : public ofxSingleton::UnmanagedSingleton<OCLKernelRegistry> {
 
@@ -22,6 +23,9 @@ private:
     OCLKernelWrapperList mKernels;
     
     msa::OpenCLKernelPtr mApplyPreviewColorKernel;
+    msa::OpenCLKernelPtr mBlendToObserverKernel;
+    
+    std::unordered_map<int, msa::OpenCLKernelPtr> mBlendKernels;
     
 public:
     OCLKernelRegistry();
@@ -32,6 +36,7 @@ public:
     OCLKernelWrapperList& getKernels();
     
     msa::OpenCLKernelPtr& getApplyPreviewColorKernel();
+    msa::OpenCLKernelPtr& getBlendKernel( int inputs );
     
 };
 
