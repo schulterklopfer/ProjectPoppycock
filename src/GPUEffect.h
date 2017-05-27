@@ -11,29 +11,19 @@
 
 #include <stdio.h>
 #include "Effect.h"
+#include "GPUEntity.h"
 #include "MSAOpenCL.h"
 #include "ImEasyCam.h"
 #include "OCLKernelRegistry.h"
 #include "boost/shared_ptr.hpp"
 
-#define GPU_EFFECT_MIN_X 1
-#define GPU_EFFECT_MIN_Y 1
-#define GPU_EFFECT_MIN_Z 1
-
-#define GPU_EFFECT_MAX_X 20
-#define GPU_EFFECT_MAX_Y 20
-#define GPU_EFFECT_MAX_Z 20
-
 #define GPU_EFFECT_MIN_SPEED 0.01
 #define GPU_EFFECT_MAX_SPEED 100.0
-
-#define PREVIEW_DIVISIONS 30
-#define PREVIEW_VERTEX_COUNT (PREVIEW_DIVISIONS*PREVIEW_DIVISIONS*PREVIEW_DIVISIONS) // 10*10*10
 
 //typedef boost::shared_ptr<msa::OpenCLBufferManagedT<int>> BufferRef;
 typedef boost::shared_ptr<msa::OpenCLImage> ImageRef;
 
-class GPUEffect: public Effect {
+class GPUEffect: public Effect, public GPUEntity {
 
     typedef struct{
         float4 pos;
@@ -43,42 +33,38 @@ class GPUEffect: public Effect {
 private:
         
 protected:
-        
-    static msa::OpenCLKernelPtr sApplyPreviewColorKernel;
+
+    virtual void setupImages();
+
     static ofVboMesh sPreviewMesh;
     static msa::OpenCLBufferManagedT<float3> sPreviewPositions;
     static msa::OpenCLBufferManagedT<float4> sPreviewColors;
     static ofShader sPreviewShader;
 
-    void setupImages();
     
     OCLKernelWrapperRef mKernelWrapper;
     OCLKernelWrapperParamList mKernelWrapperParams;
     
     ImageRef mEmptyInputImage;
-    ImageRef mImage;
     
-    ofFbo mPreviewFrameBuffer;
-    ImEasyCam mCam;
-    
-    int mSizeX;
-    int mSizeY;
-    int mSizeZ;
     float mSpeed;
             
 public:
-    static void setupPreview();
-
+    
+    static const int sPreviewDivisions = 30;
+    static const int sPreviewVertexCount = sPreviewDivisions*sPreviewDivisions*sPreviewDivisions;
+    
     GPUEffect( const ImVec2 position );
     ~GPUEffect();
+    static void setupPreview();
+    void drawPreview();
+
     virtual int getTypeFlags();
     virtual void inspectorContent();
     virtual void update();
+    virtual void draw( const ImVec2 offset, const float scale );
 
-    virtual ImageRef& getImage();
-    
-    void drawPreview();
-    
+
 };
 
 typedef boost::shared_ptr<GPUEffect> GPUEffectRef;

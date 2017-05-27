@@ -31,6 +31,7 @@ public:
         int getTypeFlags();
         bool hitTest( const float x, const float y );
         void move( const float x, const float y );
+        float getRadius();
     
     };
     
@@ -40,9 +41,13 @@ public:
     virtual int getTypeFlags();
 
     virtual bool isFinal();
+    virtual void recalcBlendValues();
+    
+    virtual void setPosition( const ImVec2 pos );
+    virtual void move( const float x, const float y );
     
     boost::shared_ptr<Effect::AOE> getAOE();
-    
+
     
 private:
     boost::shared_ptr<Effect::AOE> mAOE;

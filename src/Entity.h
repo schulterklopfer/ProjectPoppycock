@@ -44,6 +44,9 @@ protected:
     
 public:
 
+    static float Q_rsqrt( float number );
+
+    
     Entity( const ImVec2 position );
 
     static bool inCircle( const ofPoint center, const float radius, const float x, const float y );
@@ -55,8 +58,8 @@ public:
     virtual int getTypeFlags();
     ImVec2 getPosition();
     
-    void setPosition( const ImVec2 p);
-    void move( const float x, const float y );
+    virtual void setPosition( const ImVec2 p);
+    virtual void move( const float x, const float y );
     bool getBoundsDirty();
     void clearBoundsDirty();
     ConnectorList* getInputs();

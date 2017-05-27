@@ -7,6 +7,7 @@
 //
 
 #include "Effect.h"
+#include "Observer.h"
 
 int Effect::getTypeFlags() {
     return Interactive::Type::EFFECT|Interactive::Type::ENTITY;
@@ -18,6 +19,28 @@ void Effect::draw( const ImVec2 offset, const float scale ) {
     // draw area of effect
     if( isFinal() ) {
         mAOE->draw(offset, scale);
+    }
+}
+
+void Effect::move(const float x, const float y) {
+    Entity::move(x,y);
+    recalcBlendValues();
+}
+
+void Effect::setPosition(const ImVec2 pos) {
+    Entity::setPosition(pos);
+    recalcBlendValues();
+}
+
+void Effect::recalcBlendValues() {
+    
+    if( mMaxEdgeDistanceFromObserver == -1 ) return;
+    
+    for( ConnectorListIterator iter = mOutputs.begin(); iter != mOutputs.end(); ++iter ) {
+        boost::shared_ptr<Observer> oRef = TO_OBSERVER((*iter)->getTarget());
+        if( oRef != NULL ) {
+            oRef->recalcBlendValues();
+        }
     }
 }
 
@@ -78,9 +101,12 @@ void Effect::AOE::move( const float x, const float y ) {
     if( !mEffect->hitTest(toCheck.x, toCheck.y) ) {
         mHandlePosition.x += x; mHandlePosition.y += y;
         mRadius = mHandlePosition.length();
+        mEffect->recalcBlendValues();
     }
     
 }
 
-
+float Effect::AOE::getRadius() {
+    return mRadius;
+}
 

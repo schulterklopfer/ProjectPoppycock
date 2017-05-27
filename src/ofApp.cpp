@@ -139,10 +139,6 @@ void ofApp::GUI_entityArea() {
         // draw entities
         for( EntityListIterator iter = entities->begin(); iter != entities->end(); ++iter ) {
             (*iter)->draw( relativeOffset, mEntityAreaScale );
-            if( (*iter)->isOfType(Interactive::Type::GPU_EFFECT) ) {
-                GPUEffectRef e = TO_GPU_EFFECT((*iter));
-                e->drawPreview();
-            }
         }
         
         if (ImGui::IsWindowFocused() && ImGui::IsMouseHoveringWindow() ) {

@@ -39,7 +39,8 @@ public:
         OBSERVER   = (1 << 2),
         AOE        = (1 << 3),
         EFFECT     = (1 << 4),
-        GPU_EFFECT = (1 << 5),
+        GPU_ENTITY = (1 << 5),
+        GPU_EFFECT = (1 << 6),
     } Type;
     
     typedef enum State {

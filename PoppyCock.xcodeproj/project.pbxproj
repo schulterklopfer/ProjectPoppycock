@@ -27,6 +27,7 @@
 		A0F2BFB15B92B4C6EB9527DE /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C966A8F6085AAA2FED6F411 /* Helpers.cpp */; };
 		BEDFEE7400C58EA4E412B757 /* ofxJSONElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2B099E6BD1199664C48B177 /* ofxJSONElement.cpp */; };
 		C218FA3F1EC0CF3600C852AC /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C218FA3E1EC0CF3600C852AC /* OpenCL.framework */; };
+		C28AAB6C1ED76875002A1EB1 /* GPUEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C28AAB6A1ED76875002A1EB1 /* GPUEntity.cpp */; };
 		C2C69E1E1EC8A00000844FD4 /* ImEasyCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2C69E1C1EC8A00000844FD4 /* ImEasyCam.cpp */; };
 		CE472F551203E7726FC0749D /* OCLKernelRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB5A16CD61074C6FF7AC6323 /* OCLKernelRegistry.cpp */; };
 		DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7C7BDAD29F580A47FF56B52 /* BaseEngine.cpp */; };
@@ -140,6 +141,8 @@
 		C28767A11ECB7DD200855EF2 /* effectPreviewFrag.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = effectPreviewFrag.glsl; sourceTree = "<group>"; };
 		C28767A21ECB7DD200855EF2 /* effectPreviewGeom.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = effectPreviewGeom.glsl; sourceTree = "<group>"; };
 		C28767A31ECB7DD200855EF2 /* effectPreviewVert.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = effectPreviewVert.glsl; sourceTree = "<group>"; };
+		C28AAB6A1ED76875002A1EB1 /* GPUEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUEntity.cpp; sourceTree = "<group>"; };
+		C28AAB6B1ED76875002A1EB1 /* GPUEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUEntity.h; sourceTree = "<group>"; };
 		C2C69E1C1EC8A00000844FD4 /* ImEasyCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImEasyCam.cpp; sourceTree = "<group>"; };
 		C2C69E1D1EC8A00000844FD4 /* ImEasyCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImEasyCam.h; sourceTree = "<group>"; };
 		C3EEE8119CCEEA825B67C21F /* MSAOpenCLKernel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = MSAOpenCLKernel.cpp; path = ../../../addons/ofxMSAOpenCL/src/MSAOpenCLKernel.cpp; sourceTree = SOURCE_ROOT; };
@@ -471,6 +474,8 @@
 				1D9A138564A5FC9CE23B0404 /* Effect.h */,
 				E55D2ED034099F40BEBBBF47 /* Entity.cpp */,
 				590F46AC686BEA8681592A7B /* Entity.h */,
+				C28AAB6A1ED76875002A1EB1 /* GPUEntity.cpp */,
+				C28AAB6B1ED76875002A1EB1 /* GPUEntity.h */,
 				ADE6B1DDC39BFA1207932501 /* EntityManager.cpp */,
 				CA90240F9C1056C21D5FFDBF /* EntityManager.h */,
 				9D6E8A8AABF45023A89537B1 /* Globals.cpp */,
@@ -626,6 +631,7 @@
 				FC691B037B4B74A36E0DB176 /* MSAOpenCLKernel.cpp in Sources */,
 				E13B7A12948FD5C8674D8855 /* MSAOpenCLMemoryObject.cpp in Sources */,
 				7748F9F07C993F15F2868E78 /* MSAOpenCLProgram.cpp in Sources */,
+				C28AAB6C1ED76875002A1EB1 /* GPUEntity.cpp in Sources */,
 				05959DA89EBACF2C4F9C89C5 /* BaseStore.cpp in Sources */,
 				EBB8AE3B0BE439EC1CCD2179 /* Register.cpp in Sources */,
 			);
