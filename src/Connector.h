@@ -46,7 +46,10 @@ public:
         SCREEN = 22,
         SOFT_LIGHT = 23,
         SUBTRACT = 24,
-        VIVID_LIGHT = 25
+        VIVID_LIGHT = 25,
+        MASK_R = 26,
+        MASK_G = 27,
+        MASK_B = 28
     } BlendMode;
     
     Connector(const boost::shared_ptr<Entity> source,

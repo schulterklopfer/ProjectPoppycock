@@ -200,6 +200,17 @@ static float4 blendLinearBurn4(float4 base, float4 blend) {
 	return max(base+blend-float4(1.0f),float4(0.0f));
 }
 
+static float4 blendMaskR4( float4 base, float4 blend ) {
+    return (float4)( blend.r * base.r, blend.r * base.g, blend.r * base.b, 1.0f);
+}
+
+static float4 blendMaskG4( float4 base, float4 blend ) {
+    return (float4)( blend.g * base.r, blend.g * base.g, blend.g * base.b, 1.0f);
+}
+
+static float4 blendMaskB4( float4 base, float4 blend ) {
+    return (float4)( blend.b * base.r, blend.b * base.g, blend.b * base.b, 1.0f);
+}
 
 static float4 blendNormal4_with_opacity(float4 base, float4 blend, float opacity) {
 	return (blendNormal4(base, blend) * opacity + base * (1.0f - opacity));
@@ -325,6 +336,18 @@ static float4 blendLinearBurn4_with_opacity(float4 base, float4 blend, float opa
 	return (blendLinearBurn4(base, blend) * opacity + base * (1.0f - opacity));
 }
 
+static float4 blendMaskR4_with_opacity( float4 base, float4 blend, float opacity ) {
+    return (blendMaskR4(base, blend) * opacity + base * (1.0f - opacity));
+}
+
+static float4 blendMaskG4_with_opacity( float4 base, float4 blend, float opacity ) {
+    return (blendMaskG4(base, blend) * opacity + base * (1.0f - opacity));
+}
+
+static float4 blendMaskB4_with_opacity( float4 base, float4 blend, float opacity ) {
+    return (blendMaskB4(base, blend) * opacity + base * (1.0f - opacity));
+}
+
 static float4 blend4( int mode, float4 base, float4 blend ){
 	if( mode == 1 ){
 		return blendAdd4( base, blend );
@@ -400,7 +423,16 @@ static float4 blend4( int mode, float4 base, float4 blend ){
 	}else
 	if( mode == 25 ){
 		return blendVividLight4( base, blend );
-	}
+    }else
+    if( mode == 26 ){
+        return blendMaskR4( base, blend );
+    }else
+    if( mode == 27 ){
+        return blendMaskG4( base, blend );
+    }else
+    if( mode == 28 ){
+        return blendMaskB4( base, blend );
+    }
 }
 
 static float4 blend4_with_opacity( int mode, float4 base, float4 blend, float opacity ){
@@ -478,6 +510,15 @@ static float4 blend4_with_opacity( int mode, float4 base, float4 blend, float op
 	}else
 	if( mode == 25 ){
 		return blendVividLight4_with_opacity( base, blend, opacity );
-	}
+    }else
+    if( mode == 26 ){
+        return blendMaskR4_with_opacity( base, blend, opacity );
+    }else
+    if( mode == 27 ){
+        return blendMaskG4_with_opacity( base, blend, opacity );
+    }else
+    if( mode == 28 ){
+        return blendMaskB4_with_opacity( base, blend, opacity );
+    }
 }
 
