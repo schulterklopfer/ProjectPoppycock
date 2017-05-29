@@ -1,5 +1,10 @@
+
+#include "blendModes.h"
+
 __kernel void generator(read_only image3d_t input, // float
                         write_only image3d_t output, // float
+                        const int blendMode,
+                        const float blendOpacity,
                         const float time,
                         const float speed ) {
 
@@ -29,12 +34,8 @@ __kernel void generator(read_only image3d_t input, // float
                                         (float)outputCoords.z/(float)outputDim.z,
                                         0.0 );
     
-    float4 inputPixel = read_imagef (input, CLK_NORMALIZED_COORDS_TRUE|CLK_FILTER_NEAREST|CLK_ADDRESS_NONE, inputCoords );
-    
-    inputPixel.a = 1.0;
-    
-    outputPixel+=inputPixel;
-    outputPixel*=0.5f;
+    float4 inputPixel = read_imagef (input, CLK_NORMALIZED_COORDS_TRUE|CLK_FILTER_NEAREST|CLK_ADDRESS_NONE, inputCoords );    
+    outputPixel = blend4_with_opacity( blendMode, inputPixel, outputPixel, clamp( blendOpacity, 0.0f, 1.0f ) );
     
     write_imagef( output, outputCoords, outputPixel );
 

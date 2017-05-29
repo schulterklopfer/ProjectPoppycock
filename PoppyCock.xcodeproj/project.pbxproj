@@ -135,6 +135,7 @@
 		C21446431ED20952002977EC /* main.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = main.cl; sourceTree = "<group>"; };
 		C21446441ED20952002977EC /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package.json; sourceTree = "<group>"; };
 		C218FA3E1EC0CF3600C852AC /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		C24757F51EDC4E7100C37B54 /* blendModes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blendModes.h; sourceTree = "<group>"; };
 		C28767971ECB7DD200855EF2 /* common.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = common.cl; sourceTree = "<group>"; };
 		C287679D1ECB7DD200855EF2 /* OpenCL-1.0-refcard.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "OpenCL-1.0-refcard.pdf"; sourceTree = "<group>"; };
 		C287679E1ECB7DD200855EF2 /* opencl-1.1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "opencl-1.1.pdf"; sourceTree = "<group>"; };
@@ -379,6 +380,7 @@
 		C287679C1ECB7DD200855EF2 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				C24757F51EDC4E7100C37B54 /* blendModes.h */,
 			);
 			path = include;
 			sourceTree = "<group>";

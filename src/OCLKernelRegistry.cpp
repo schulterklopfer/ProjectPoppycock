@@ -75,7 +75,7 @@ void OCLKernelRegistry::setupFromDirectory( const string directory ) {
                             }
                         }
                         
-                        const msa::OpenCLProgramPtr programPtr = mOpenCL.loadProgramFromFile(code.path(), false);
+                        const msa::OpenCLProgramPtr programPtr = mOpenCL.loadProgramFromFile(code.path(), false, "-I \"../../../data/opencl/include\"");
                         const msa::OpenCLKernelPtr kernel = programPtr->loadKernel("generator");
                         
                         if( kernel->getCLKernel() != NULL && name != "" ) {

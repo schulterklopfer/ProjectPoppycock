@@ -153,8 +153,10 @@ void GPUEffect::update() {
     }
 
     mKernelWrapper->getKernel()->setArg(1, *mImage.get() );
-    mKernelWrapper->getKernel()->setArg(2, Globals::getElapsedTimef() );
-    mKernelWrapper->getKernel()->setArg(3, mSpeed );
+    mKernelWrapper->getKernel()->setArg(2, Connector::BlendMode::ADD );
+    mKernelWrapper->getKernel()->setArg(3, 0.5f );
+    mKernelWrapper->getKernel()->setArg(4, Globals::getElapsedTimef() );
+    mKernelWrapper->getKernel()->setArg(5, mSpeed );
     
     mKernelWrapper->getKernel()->run3D( mSizeX, mSizeY, mSizeZ );
 
