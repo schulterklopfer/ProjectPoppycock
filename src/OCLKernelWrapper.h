@@ -21,12 +21,34 @@ public:
         D3
     } KernelType;
     
+    union ParamValueHolder {
+        int int_;
+        float float_;
+        float float4_[4];
+        char *string_;
+    } value_;
+    
+    typedef enum ParamState {
+        HAS_DEFAULT = (1 << 0),
+        HAS_MIN     = (1 << 1),
+        HAS_MAX     = (1 << 2),
+    } ParamState;
+    
+    typedef enum ParamType {
+        FLOAT,
+        INT,
+        FLOAT4,
+        COLOR
+    } ParamType;
+    
     typedef struct Param {
         string name;
-        float value;
-        float defaultValue;
-        float minValue;
-        float maxValue;
+        ParamType type;
+        int8_t state;
+        ParamValueHolder value;
+        ParamValueHolder defaultValue;
+        ParamValueHolder minValue;
+        ParamValueHolder maxValue;
     } Param;
     
     OCLKernelWrapper( const msa::OpenCLKernelPtr kernel, const string name, const string description, const string version,

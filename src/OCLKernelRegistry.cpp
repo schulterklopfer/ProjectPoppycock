@@ -65,13 +65,88 @@ void OCLKernelRegistry::setupFromDirectory( const string directory ) {
                         std::vector<OCLKernelWrapper::Param> params;
                         
                         for( Json::Value::iterator iter = JSON["params"].begin(); iter != JSON["params"].end(); ++iter ) {
-                            const string name = (*iter)["name"].asString();
-                            const float defaultValue = (*iter)["default"].asFloat();
-                            const float minValue = (*iter)["min"].asFloat();
-                            const float maxValue = (*iter)["max"].asFloat();
-                            
-                            if( name != "" ) {
-                                params.push_back({ name, defaultValue, defaultValue, minValue, maxValue });
+                            if( !(*iter)["name"].empty() && !(*iter)["type"].empty() ) {
+                                
+                                OCLKernelWrapper::Param p;
+                                p.name = (*iter)["name"].asString();
+                                p.state = 0;
+                                bool pushParam = false;
+
+                                const string paramType = (*iter)["type"].asString();
+                                
+                                if( paramType == "int" ) {
+                                    p.type = OCLKernelWrapper::ParamType::INT;
+                                } else if( paramType == "float" ) {
+                                    p.type = OCLKernelWrapper::ParamType::FLOAT;
+                                } else if( paramType == "float4" ) {
+                                    p.type = OCLKernelWrapper::ParamType::FLOAT4;
+                                } else if( paramType == "color" ) {
+                                    p.type = OCLKernelWrapper::ParamType::COLOR;
+                                }
+                                
+                                if( p.type == OCLKernelWrapper::ParamType::FLOAT ) {
+                                    if( !(*iter)["default"].empty() && (*iter)["default"].isNumeric() ) {
+                                        p.defaultValue.float_ = (*iter)["default"].asFloat();
+                                        p.value.float_ = (*iter)["default"].asFloat();
+                                        p.state |= OCLKernelWrapper::ParamState::HAS_DEFAULT;
+                                    } else {
+                                        p.defaultValue.float_ = 0.0f;
+                                        p.value.float_ = 0.0f;
+                                    }
+                                    if( !(*iter)["min"].empty() && (*iter)["min"].isNumeric() ) {
+                                        p.minValue.float_ = (*iter)["min"].asFloat();
+                                        p.state |= OCLKernelWrapper::ParamState::HAS_MIN;
+                                    }
+                                    if( !(*iter)["max"].empty() && (*iter)["max"].isNumeric() ) {
+                                        p.maxValue.float_ = (*iter)["max"].asFloat();
+                                        p.state |= OCLKernelWrapper::ParamState::HAS_MAX;
+                                    }
+                                    pushParam = true;
+                                } else if( p.type == OCLKernelWrapper::ParamType::INT ) {
+                                    if( !(*iter)["default"].empty() && (*iter)["default"].isInt() ) {
+                                        p.defaultValue.int_ = !(*iter)["default"].asInt();
+                                        p.value.int_ = (*iter)["default"].asInt();
+                                        p.state |= OCLKernelWrapper::ParamState::HAS_DEFAULT;
+                                    } else {
+                                        p.defaultValue.int_ = 0.0f;
+                                        p.value.int_ = 0.0f;
+                                    }
+                                    if( !(*iter)["min"].empty() && (*iter)["min"].isInt() ) {
+                                        p.minValue.int_ = (*iter)["min"].asInt();
+                                        p.state |= OCLKernelWrapper::ParamState::HAS_MIN;
+                                    }
+                                    if( !(*iter)["max"].empty() && (*iter)["max"].isInt() ) {
+                                        p.maxValue.int_ = (*iter)["max"].asInt();
+                                        p.state |= OCLKernelWrapper::ParamState::HAS_MAX;
+                                    }
+                                    pushParam = true;
+                                } else if( p.type == OCLKernelWrapper::ParamType::COLOR || p.type == OCLKernelWrapper::ParamType::FLOAT4 ) {
+                                    if( !(*iter)["default"].empty() && (*iter)["default"].isArray() && (*iter)["default"].size() == 4 ) {
+                                        
+                                        for( int i=0; i<4; i++ ) {
+                                            if( (*iter)["default"][0].isNumeric() ) {
+                                                p.defaultValue.float4_[i] = (*iter)["default"][i].asFloat();
+                                                p.value.float4_[i] = (*iter)["default"][i].asFloat();
+
+                                            } else {
+                                                p.defaultValue.float4_[i] = 0.0f;
+                                                p.value.float4_[i] = 0.0f;
+                                            }
+                                        }
+                    
+                                    } else {
+                                        for( int i=0; i<4; i++ ) {
+                                            p.defaultValue.float4_[i] = 0.0f;
+                                            p.value.float4_[i] = 0.0f;
+                                        }
+                                    }
+                                    pushParam = true;
+                                }
+                                
+                                if( pushParam ) {
+                                    params.push_back(p);
+                                }
+
                             }
                         }
                         

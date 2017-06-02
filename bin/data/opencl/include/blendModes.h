@@ -349,175 +349,175 @@ static float4 blendMaskB4_with_opacity( float4 base, float4 blend, float opacity
 }
 
 static float4 blend4( int mode, float4 base, float4 blend ){
-	if( mode == 1 ){
+	if( mode == 0 ){
 		return blendAdd4( base, blend );
 	}else
-	if( mode == 2 ){
+	if( mode == 1 ){
 		return blendAverage4( base, blend );
 	}else
-	if( mode == 3 ){
+	if( mode == 2 ){
 		return blendColorBurn4( base, blend );
 	}else
-	if( mode == 4 ){
+	if( mode == 3 ){
 		return blendColorDodge4( base, blend );
 	}else
-	if( mode == 5 ){
+	if( mode == 4 ){
 		return blendDarken4( base, blend );
 	}else
-	if( mode == 6 ){
+	if( mode == 5 ){
 		return blendDifference4( base, blend );
 	}else
-	if( mode == 7 ){
+	if( mode == 6 ){
 		return blendExclusion4( base, blend );
 	}else
-	if( mode == 8 ){
+	if( mode == 7 ){
 		return blendGlow4( base, blend );
 	}else
-	if( mode == 9 ){
+	if( mode == 8 ){
 		return blendHardLight4( base, blend );
 	}else
-	if( mode == 10 ){
+	if( mode == 9 ){
 		return blendHardMix4( base, blend );
 	}else
-	if( mode == 11 ){
+	if( mode == 10 ){
 		return blendLighten4( base, blend );
 	}else
-	if( mode == 12 ){
+	if( mode == 11 ){
 		return blendLinearBurn4( base, blend );
 	}else
-	if( mode == 13 ){
+	if( mode == 12 ){
 		return blendLinearDodge4( base, blend );
 	}else
-	if( mode == 14 ){
+	if( mode == 13 ){
 		return blendLinearLight4( base, blend );
 	}else
-	if( mode == 15 ){
+	if( mode == 14 ){
 		return blendMultiply4( base, blend );
 	}else
-	if( mode == 16 ){
+	if( mode == 15 ){
 		return blendNegation4( base, blend );
 	}else
-	if( mode == 17 ){
+	if( mode == 16 ){
 		return blendNormal4( base, blend );
 	}else
-	if( mode == 18 ){
+	if( mode == 17 ){
 		return blendOverlay4( base, blend );
 	}else
-	if( mode == 19 ){
+	if( mode == 18 ){
 		return blendPhoenix4( base, blend );
 	}else
-	if( mode == 20 ){
+	if( mode == 19 ){
 		return blendPinLight4( base, blend );
 	}else
-	if( mode == 21 ){
+	if( mode == 20 ){
 		return blendReflect4( base, blend );
 	}else
-	if( mode == 22 ){
+	if( mode == 21 ){
 		return blendScreen4( base, blend );
 	}else
-	if( mode == 23 ){
+	if( mode == 22 ){
 		return blendSoftLight4( base, blend );
 	}else
-	if( mode == 24 ){
+	if( mode == 23 ){
 		return blendSubtract4( base, blend );
 	}else
-	if( mode == 25 ){
+	if( mode == 24 ){
 		return blendVividLight4( base, blend );
     }else
-    if( mode == 26 ){
+    if( mode == 25 ){
         return blendMaskR4( base, blend );
     }else
-    if( mode == 27 ){
+    if( mode == 26 ){
         return blendMaskG4( base, blend );
     }else
-    if( mode == 28 ){
+    if( mode == 27 ){
         return blendMaskB4( base, blend );
     }
 }
 
 static float4 blend4_with_opacity( int mode, float4 base, float4 blend, float opacity ){
-	if( mode == 1 ){
+	if( mode == 0 ){
 		return blendAdd4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 2 ){
+	if( mode == 1 ){
 		return blendAverage4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 3 ){
+	if( mode == 2 ){
 		return blendColorBurn4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 4 ){
+	if( mode == 3 ){
 		return blendColorDodge4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 5 ){
+	if( mode == 4 ){
 		return blendDarken4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 6 ){
+	if( mode == 5 ){
 		return blendDifference4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 7 ){
+	if( mode == 6 ){
 		return blendExclusion4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 8 ){
+	if( mode == 7 ){
 		return blendGlow4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 9 ){
+	if( mode == 8 ){
 		return blendHardLight4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 10 ){
+	if( mode == 9 ){
 		return blendHardMix4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 11 ){
+	if( mode == 10 ){
 		return blendLighten4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 12 ){
+	if( mode == 11 ){
 		return blendLinearBurn4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 13 ){
+	if( mode == 12 ){
 		return blendLinearDodge4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 14 ){
+	if( mode == 13 ){
 		return blendLinearLight4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 15 ){
+	if( mode == 14 ){
 		return blendMultiply4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 16 ){
+	if( mode == 15 ){
 		return blendNegation4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 17 ){
+	if( mode == 16 ){
 		return blendNormal4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 18 ){
+	if( mode == 17 ){
 		return blendOverlay4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 19 ){
+	if( mode == 18 ){
 		return blendPhoenix4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 20 ){
+	if( mode == 19 ){
 		return blendPinLight4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 21 ){
+	if( mode == 20 ){
 		return blendReflect4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 22 ){
+	if( mode == 21 ){
 		return blendScreen4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 23 ){
+	if( mode == 22 ){
 		return blendSoftLight4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 24 ){
+	if( mode == 23 ){
 		return blendSubtract4_with_opacity( base, blend, opacity );
 	}else
-	if( mode == 25 ){
+	if( mode == 24 ){
 		return blendVividLight4_with_opacity( base, blend, opacity );
     }else
-    if( mode == 26 ){
+    if( mode == 25 ){
         return blendMaskR4_with_opacity( base, blend, opacity );
     }else
-    if( mode == 27 ){
+    if( mode == 26 ){
         return blendMaskG4_with_opacity( base, blend, opacity );
     }else
-    if( mode == 28 ){
+    if( mode == 27 ){
         return blendMaskB4_with_opacity( base, blend, opacity );
     }
 }

@@ -79,6 +79,51 @@ bool EntityManager::isInSelection(const InteractiveRef &interactive) {
     return std::find( selectedInteractives.begin(), selectedInteractives.end(), interactive ) != selectedInteractives.end();
 }
 
+void EntityManager::selectInteractive(const InteractiveRef& interactive) {
+    
+    if( isInSelection( interactive ) ) return;
+    
+    selectedInteractives.push_back(interactive);
+    std::sort(selectedInteractives.begin(), selectedInteractives.end(), [] (InteractiveRef const& a, InteractiveRef const& b) {
+    
+        
+        /**
+         * if interactive is an entity, compare by max distance from observer
+         * if interactive is connection, compare by average of max distance between source and target
+         * this will ensure that the topmost effect is the one farthest away from the observer and all
+         * the connectors are sorted in between the entities they belong to.
+         **/
+        
+        const EntityRef eRefA = TO_ENTITY(a);
+        const EntityRef eRefB = TO_ENTITY(b);
+        const ConnectorRef cRefA = TO_CONNECTOR(a);
+        const ConnectorRef cRefB = TO_CONNECTOR(b);
+
+        float valA = 0.0f;
+        float valB = 0.0f;
+
+        if( eRefA != NULL ) {
+            // is entity
+            valA = eRefA->getMaxEdgeDistanceFromObserver();
+        } else if( cRefA ) {
+            // is connector
+            valA = ((float)(cRefA->getSource()->getMaxEdgeDistanceFromObserver() + cRefA->getTarget()->getMaxEdgeDistanceFromObserver()))*0.5f;
+        }
+        
+        if( eRefB != NULL ) {
+            // is entity
+            valB = eRefB->getMaxEdgeDistanceFromObserver();
+        } else if( cRefB ) {
+            // is connector
+            valB = ((float)(cRefB->getSource()->getMaxEdgeDistanceFromObserver() + cRefB->getTarget()->getMaxEdgeDistanceFromObserver()))*0.5f;
+        }
+        
+        if( valA > valB ) return true;
+        return false;
+        
+    });
+}
+
 void EntityManager::deselectInteractive(const InteractiveRef& interactive) {
     interactive->stateFlags &= ~Interactive::State::SELECT;
     for ( SelectionIterator iter = selectedInteractives.begin(); iter != selectedInteractives.end(); ) {

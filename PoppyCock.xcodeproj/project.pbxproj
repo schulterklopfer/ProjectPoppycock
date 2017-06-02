@@ -132,6 +132,8 @@
 		B7CA07CEEEA19D366EEF9593 /* MSAOpenCLProgram.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = MSAOpenCLProgram.h; path = ../../../addons/ofxMSAOpenCL/src/MSAOpenCLProgram.h; sourceTree = SOURCE_ROOT; };
 		BB5A16CD61074C6FF7AC6323 /* OCLKernelRegistry.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = OCLKernelRegistry.cpp; path = src/OCLKernelRegistry.cpp; sourceTree = SOURCE_ROOT; };
 		BBACB3C28590DF8ECC2F8CF4 /* Register.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Register.h; path = ../../../addons/ofxSingleton/src/ofxSingleton/Register.h; sourceTree = SOURCE_ROOT; };
+		C210DA171EDE112600C6E553 /* main.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = main.cl; sourceTree = "<group>"; };
+		C210DA181EDE112600C6E553 /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package.json; sourceTree = "<group>"; };
 		C21446431ED20952002977EC /* main.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = main.cl; sourceTree = "<group>"; };
 		C21446441ED20952002977EC /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package.json; sourceTree = "<group>"; };
 		C218FA3E1EC0CF3600C852AC /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
@@ -146,6 +148,7 @@
 		C28AAB6B1ED76875002A1EB1 /* GPUEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUEntity.h; sourceTree = "<group>"; };
 		C2C69E1C1EC8A00000844FD4 /* ImEasyCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImEasyCam.cpp; sourceTree = "<group>"; };
 		C2C69E1D1EC8A00000844FD4 /* ImEasyCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImEasyCam.h; sourceTree = "<group>"; };
+		C2FB34921EDF5B76003C6476 /* doc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doc.txt; sourceTree = "<group>"; };
 		C3EEE8119CCEEA825B67C21F /* MSAOpenCLKernel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = MSAOpenCLKernel.cpp; path = ../../../addons/ofxMSAOpenCL/src/MSAOpenCLKernel.cpp; sourceTree = SOURCE_ROOT; };
 		CA90240F9C1056C21D5FFDBF /* EntityManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = EntityManager.h; path = src/EntityManager.h; sourceTree = SOURCE_ROOT; };
 		CB5C15EA0881D35A88C22937 /* EngineOpenGLES.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = EngineOpenGLES.h; path = ../../../addons/ofxImGui/src/EngineOpenGLES.h; sourceTree = SOURCE_ROOT; };
@@ -330,6 +333,15 @@
 			name = addons;
 			sourceTree = "<group>";
 		};
+		C210DA161EDE112600C6E553 /* checkerboard */ = {
+			isa = PBXGroup;
+			children = (
+				C210DA171EDE112600C6E553 /* main.cl */,
+				C210DA181EDE112600C6E553 /* package.json */,
+			);
+			path = checkerboard;
+			sourceTree = "<group>";
+		};
 		C21446421ED20952002977EC /* plasma */ = {
 			isa = PBXGroup;
 			children = (
@@ -372,6 +384,8 @@
 		C28767981ECB7DD200855EF2 /* generators */ = {
 			isa = PBXGroup;
 			children = (
+				C2FB34921EDF5B76003C6476 /* doc.txt */,
+				C210DA161EDE112600C6E553 /* checkerboard */,
 				C21446421ED20952002977EC /* plasma */,
 			);
 			path = generators;

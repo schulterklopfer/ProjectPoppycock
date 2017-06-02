@@ -209,7 +209,7 @@ void ofApp::GUI_entityArea() {
                             }
                             if( !mEntityManager.isInSelection(eRef) ) {
                                 eRef->stateFlags |= Entity::State::SELECT;
-                                mEntityManager.selectedInteractives.insert(eRef);
+                                mEntityManager.selectInteractive(eRef);
                             }
 
                         }
@@ -396,7 +396,7 @@ void ofApp::GUI_entityArea() {
                                 continue;
                             if( (*iter)->getBounds()->intersects(rect) ) {
                                 (*iter)->stateFlags |= Entity::State::SELECT;
-                                mEntityManager.selectedInteractives.insert(*iter);
+                                mEntityManager.selectInteractive(*iter);
                             } else {
                                 mEntityManager.deselectInteractive(*iter);
                             }

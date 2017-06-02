@@ -19,7 +19,7 @@
 #include "Observer.h"
 #include "Connector.h"
 
-typedef std::set<InteractiveRef> Selection;
+typedef std::vector<InteractiveRef> Selection;
 typedef Selection::iterator SelectionIterator;
 
 
@@ -40,6 +40,7 @@ public:
     
     void createEntity( Entity::Type type, ofVec2f position );
     void createConnector( EntityRef source, EntityRef target );
+    void selectInteractive( const InteractiveRef& interactive );
     void deleteInteractive( const InteractiveRef& interactive );
     bool connectorExists( EntityRef &source, EntityRef &target );
     bool isInSelection( const InteractiveRef& interactive );

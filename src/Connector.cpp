@@ -10,6 +10,17 @@
 #include "Entity.h"
 #include "Globals.h"
 
+const char* Connector::sBlendModeLabels[sBlendModeCount] = {
+    "Add", "Average", "Color burn", "Color dodge", "Darken",
+    "Difference", "Exclusion", "Glow", "Hard light", "Hard mix",
+    "Lighten", "Linear burn", "Linear dodge", "Linear light", "Multiply",
+    "Negation", "Normal", "Overlay", "Phoenix", "Pin light",
+    "Reflect", "Screen", "Soft light", "Subtract", "Vivid light",
+    "Mask r", "Mask g", "Mask b"
+};
+
+
+
 void Connector::draw(const ofPoint sourcePosition,
                      const ofPoint targetPosition,
                      const float scale,
@@ -125,6 +136,72 @@ bool Connector::hitTest( const float x, const float y ) {
     
 }
 
+void Connector::inspectorContent() {
+    
+    
+        ImGui::PushID(this);
+    int index = 0;
+    
+    if( ImGui::CollapsingHeader("Connector")) {
+        if( mSource->isOfType(Interactive::Type::EFFECT) && mTarget->isOfType(Interactive::Type::EFFECT) ) {
+            
+            if (ImGui::TreeNode("Blending"))
+            {
+                
+                ImGui::Columns(2);
+                ImGui::Separator();
+                
+                // blend mode
+                ImGui::PushID( index++ ); // Use field index as identifier.
+                
+                ImGui::AlignFirstTextHeightToWidgets();
+                ImGui::Bullet();
+                ImGui::Selectable( "Blend mode" );
+                ImGui::NextColumn();
+                ImGui::PushItemWidth(-1);
+                
+                if( ImGui::Combo("##value", (int*)&mBlendMode, sBlendModeLabels, sBlendModeCount) ) {
+                    ofLogVerbose(__FUNCTION__) << "blendMode changed to "<<mBlendMode;
+                }
+                
+                
+                
+                ImGui::PopItemWidth();
+                ImGui::NextColumn();
+                
+                ImGui::PopID();
+                
+                // blend opacity
+                ImGui::PushID( index++ ); // Use field index as identifier.
+                
+                ImGui::AlignFirstTextHeightToWidgets();
+                ImGui::Bullet();
+                ImGui::Selectable("Blend opacity");
+                ImGui::NextColumn();
+                ImGui::PushItemWidth(-1);
+                if( ImGui::DragFloat( "##value", &mBlendOpacity, 0.01, 0.0f, 1.0f ) ) {
+                    ofLogVerbose(__FUNCTION__) << "blend opacity changed to " << mBlendOpacity;
+                }
+                ImGui::PopItemWidth();
+                ImGui::NextColumn();
+                
+                ImGui::PopID();
+                
+                
+                
+                ImGui::Columns(1);
+                ImGui::TreePop();
+                
+            }
+        }
+        
+    }
+    ImGui::PopID();
+
+
+}
+
+
 bool Connector::isFader() {
     return mTarget->isOfType(Interactive::Type::OBSERVER);
 }
@@ -141,6 +218,15 @@ EntityRef Connector::getSource() {
 EntityRef Connector::getTarget() {
     return mTarget;
 }
+
+int Connector::getBlendMode() {
+    return mBlendMode;
+}
+
+float Connector::getBlendOpacity() {
+    return mBlendOpacity;
+}
+
 
 void Connector::recalcBounds() {
     mBounds.set((ofPoint)mSource->getPosition(), (ofPoint)mTarget->getPosition());

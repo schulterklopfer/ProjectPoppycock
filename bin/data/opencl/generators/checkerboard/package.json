@@ -1,0 +1,11 @@
+{
+	"name": "3D Checkerboard",
+	"description": "Simple 3D checkerboard",
+	"version": "0.0.1",
+	"type": "3d",
+	"params": [
+		{ "name" : "Size", "default" : 4, "min": 1, "max": 20, "type": "int" },
+        { "name" : "Color 1", "default" : [1.0,1.0,1.0,1.0], "type": "color" },
+        { "name" : "Color 2", "default" : [1.0,1.0,1.0,1.0], "type": "color" }
+	]
+}

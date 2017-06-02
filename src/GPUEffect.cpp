@@ -135,10 +135,10 @@ void GPUEffect::update() {
                                                  CL_MEM_READ_WRITE, // default
                                                  NULL, // default
                                                  CL_FALSE);  // default
-            
-            
         }
         mKernelWrapper->getKernel()->setArg(0, *(mEmptyInputImage.get()) );
+        mKernelWrapper->getKernel()->setArg(2, Connector::BlendMode::NORMAL );
+        mKernelWrapper->getKernel()->setArg(3, 1.0f );
     } else {
         // destroy empty input image
         if( mEmptyInputImage != NULL ) {
@@ -149,14 +149,37 @@ void GPUEffect::update() {
         if( mInputs[0]->getSource()->isOfType(Interactive::Type::GPU_EFFECT) ) {
             GPUEffectRef eRef = TO_GPU_EFFECT(mInputs[0]->getSource());
             mKernelWrapper->getKernel()->setArg(0, *(eRef->getImage().get()) );
+            mKernelWrapper->getKernel()->setArg(2, mInputs[0]->getBlendMode() );
+            mKernelWrapper->getKernel()->setArg(3, mInputs[0]->getBlendOpacity() );
+
+
         }
     }
 
     mKernelWrapper->getKernel()->setArg(1, *mImage.get() );
-    mKernelWrapper->getKernel()->setArg(2, Connector::BlendMode::ADD );
-    mKernelWrapper->getKernel()->setArg(3, 0.5f );
     mKernelWrapper->getKernel()->setArg(4, Globals::getElapsedTimef() );
     mKernelWrapper->getKernel()->setArg(5, mSpeed );
+    
+    // add custom params here:
+    int index = 6;
+    for( OCLKernelWrapperParamListIterator iter = mKernelWrapperParams.begin(); iter != mKernelWrapperParams.end(); ++iter ) {
+        
+        const OCLKernelWrapper::ParamType paramType = iter->type;
+        switch( paramType ) {
+            case OCLKernelWrapper::FLOAT:
+                mKernelWrapper->getKernel()->setArg(index++, iter->value.float_ );
+                break;
+            case OCLKernelWrapper::INT:
+                mKernelWrapper->getKernel()->setArg(index++, iter->value.int_ );
+                break;
+            case OCLKernelWrapper::COLOR:
+            case OCLKernelWrapper::FLOAT4:
+                mKernelWrapper->getKernel()->setArg(index++, &(iter->value.float4_[0]), 4*sizeof(float) );
+                break;
+        }
+    }
+
+    
     
     mKernelWrapper->getKernel()->run3D( mSizeX, mSizeY, mSizeZ );
 
@@ -232,6 +255,9 @@ void GPUEffect::inspectorContent() {
             
             
             for( OCLKernelWrapperParamListIterator iter = mKernelWrapperParams.begin(); iter != mKernelWrapperParams.end(); ++iter ) {
+                
+                const OCLKernelWrapper::ParamType paramType = iter->type;
+                
                 ImGui::PushID( index++ ); // Use field index as identifier.
                 
                 ImGui::AlignFirstTextHeightToWidgets();
@@ -239,7 +265,24 @@ void GPUEffect::inspectorContent() {
                 ImGui::Selectable(iter->name.c_str());
                 ImGui::NextColumn();
                 ImGui::PushItemWidth(-1);
-                ImGui::DragFloat("##value", &(iter->value), 0.1f, iter->minValue, iter->maxValue);
+                
+                switch( paramType ) {
+                    case OCLKernelWrapper::FLOAT:
+                        ImGui::DragFloat("##value", &(iter->value.float_), 0.1f, iter->minValue.float_, iter->maxValue.float_);
+                        break;
+                    case OCLKernelWrapper::INT:
+                        ImGui::DragInt("##value", &(iter->value.int_), 1, iter->minValue.int_, iter->maxValue.int_);
+                        break;
+                    case OCLKernelWrapper::COLOR:
+                        ImGui::ColorEdit3("##value", &(iter->value.float4_[0]));
+                        break;
+                    case OCLKernelWrapper::FLOAT4:
+                        ImGui::DragFloat4("##value",  &(iter->value.float4_[0]));
+                        break;
+                    default:
+                        break;
+                }
+                
                 ImGui::PopItemWidth();
                 ImGui::NextColumn();
                 
