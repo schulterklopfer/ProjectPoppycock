@@ -9,6 +9,8 @@ __kernel void generator(read_only image3d_t input, // float
                         const float speed,
                         /* custom params: see package.json */
                         const int size,
+                        const float4 offset,
+                        const float4 moveDir,
                         const float4 color1,
                         const float4 color2 ) {
 
@@ -27,9 +29,14 @@ __kernel void generator(read_only image3d_t input, // float
     
     /* *************************** */
     /* generate pixel colors here: */
-    const float fScale = 4;
-    const float gray = ((int)(outputCoords.x/fScale) + (int)(outputCoords.y/fScale) + (int)(outputCoords.z/fScale) ) % 2 == 0 ? 0.2f : 0.8f;
-    float4 outputPixel = (float4)( gray, gray, gray, 1.0f );
+    const float4 move = (float4)( (float)(outputDim.x) * time * speed * moveDir.x,
+                                  (float)(outputDim.y) * time * speed * moveDir.y,
+                                  (float)(outputDim.z) * time * speed * moveDir.z, 0.0f );
+    const float4 outputPixel =
+        ((int)((outputCoords.x+offset.x+move.x)/(float)size) +
+         (int)((outputCoords.y+offset.y+move.y)/(float)size) +
+         (int)((outputCoords.z+offset.z+move.z)/(float)size) ) % 2 == 0 ? color1 : color2;
+    outputPixel.a = 1.0;
     /* *************************** */
     
     /* do not change */
