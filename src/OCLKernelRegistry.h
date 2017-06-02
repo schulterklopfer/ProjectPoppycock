@@ -21,6 +21,7 @@ class OCLKernelRegistry : public ofxSingleton::UnmanagedSingleton<OCLKernelRegis
 private:
     msa::OpenCL	mOpenCL;
     OCLKernelWrapperList mKernels;
+    std::vector<const char*> mKernelNames;
     
     msa::OpenCLKernelPtr mApplyPreviewColorKernel;
     msa::OpenCLKernelPtr mBlendToObserverKernel;
@@ -29,11 +30,12 @@ private:
     
 public:
     OCLKernelRegistry();
-    
+    ~OCLKernelRegistry();
     void setup();
     void setupFromDirectory( const string directory );
     void setupCommonKernels( const string file );
     OCLKernelWrapperList& getKernels();
+    std::vector<const char*>& getKernelNames();
     
     msa::OpenCLKernelPtr& getApplyPreviewColorKernel();
     msa::OpenCLKernelPtr& getBlendKernel( int inputs );

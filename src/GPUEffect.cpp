@@ -17,7 +17,8 @@ ofShader GPUEffect::sPreviewShader;
 GPUEffect::GPUEffect( ImVec2 position ) : Effect(position), GPUEntity(), mSpeed(1.0) {
     // for testing, use first kernel wrapper
     // TODO: make this configurable:
-    mKernelWrapper = KernelRegistryInstance->getKernels().at(0);
+    mKernelIndex = 0;
+    mKernelWrapper = KernelRegistryInstance->getKernels().at(mKernelIndex);
     mKernelWrapperParams = mKernelWrapper->getParams(); // create a copy of params for this generator
 }
 
@@ -239,6 +240,29 @@ void GPUEffect::inspectorContent() {
             
             ImGui::Columns(2);
             ImGui::Separator();
+            
+            
+            ImGui::PushID( index++ ); // Use field index as identifier.
+            
+            ImGui::AlignFirstTextHeightToWidgets();
+            ImGui::Bullet();
+            ImGui::Selectable("Type");
+            ImGui::NextColumn();
+            ImGui::PushItemWidth(-1);
+            
+            std::vector<const char*> kernelNames = KernelRegistryInstance->getKernelNames();
+            
+            if( ImGui::Combo("##value", &mKernelIndex, kernelNames.data(), kernelNames.size() ) ) {
+                ofLogVerbose(__FUNCTION__) << "kernel changed to "<<mKernelIndex;
+                mKernelWrapper = KernelRegistryInstance->getKernels().at(mKernelIndex);
+                mKernelWrapperParams = mKernelWrapper->getParams(); // create a copy of params for this generator
+            }
+            
+            ImGui::PopItemWidth();
+            ImGui::NextColumn();
+            
+            ImGui::PopID();
+            
             
             ImGui::PushID( index++ ); // Use field index as identifier.
             

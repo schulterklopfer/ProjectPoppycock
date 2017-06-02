@@ -31,7 +31,7 @@ class GPUEffect: public Effect, public GPUEntity {
     } PreviewVertex;
     
 private:
-        
+
 protected:
 
     virtual void setupImages();
@@ -48,6 +48,7 @@ protected:
     ImageRef mEmptyInputImage;
     
     float mSpeed;
+    int mKernelIndex;
             
 public:
     

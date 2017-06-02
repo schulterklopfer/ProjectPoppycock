@@ -14,6 +14,19 @@ OFXSINGLETON_DEFINE_UNMANAGED(OCLKernelRegistry)
 
 OCLKernelRegistry::OCLKernelRegistry() {}
 
+OCLKernelRegistry::~OCLKernelRegistry() {
+    for ( size_t i = 0 ; i < mKernelNames.size() ; i++ ) {
+        delete [] mKernelNames[i];
+    }
+}
+
+const char* __extractName(const OCLKernelWrapperRef & k) {
+    string n = k->getName().c_str();
+    char *pc = new char[n.size()+1];
+    std::strcpy(pc, n.c_str());
+    return pc;
+}
+
 void OCLKernelRegistry::setup() {
     mOpenCL.setupFromOpenGL(); // TODO: find out correct device number
     setupFromDirectory("opencl/generators");
@@ -162,6 +175,8 @@ void OCLKernelRegistry::setupFromDirectory( const string directory ) {
                 }
             }
         }
+        // copy names into mKernelNames:
+        std::transform(mKernels.begin(), mKernels.end(), std::back_inserter(mKernelNames), __extractName);
     }
 }
 
@@ -236,3 +251,8 @@ OCLKernelWrapperList& OCLKernelRegistry::getKernels() {
 msa::OpenCLKernelPtr& OCLKernelRegistry::getApplyPreviewColorKernel() {
     return mApplyPreviewColorKernel;
 }
+
+std::vector<const char*>& OCLKernelRegistry::getKernelNames() {
+    return mKernelNames;
+}
+
