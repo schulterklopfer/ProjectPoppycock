@@ -1,0 +1,14 @@
+{
+	"name": "3D Noise",
+	"description": "3D Noise generator test",
+	"version": "0.0.1",
+	"type": "3d",
+    "params": [
+        { "name" : "bias", "default" : [0.0,0.0,0.0,0.0], "type": "float4" },
+        { "name" : "scale", "default" : [1.0,1.0,1.0,1.0], "type": "float4" },
+        { "name" : "lacunarity", "default" : 2.5, "min": 0.0, "max": 10.0, "type": "float" },
+        { "name" : "increment", "default" : 0.0, "min": 0.0001, "max": 1000.0, "type": "float" },
+        { "name" : "octaves", "default" : 3.0, "min": 1.0, "max": 20.0, "type": "float" },
+        { "name" : "amplitude", "default" : 1.0, "min": 0.0, "max": 10.0, "type": "float" }
+    ]
+}

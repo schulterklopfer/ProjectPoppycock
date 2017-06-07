@@ -8,8 +8,13 @@ __kernel void generator(read_only image3d_t input, // float
                         const float blendOpacity,
                         const float time,
                         const float speed,
-                        /* custom params: see package.json */
-                        const float resolution ) {
+                        /* custom params */
+                        const float4 bias,
+                        const float4 scale,
+                        const float lacunarity,
+                        const float increment,
+                        const float octaves,
+                        const float amplitude ) {
     
     /* do not change */
     const int4 outputDim = get_image_dim (output);
@@ -24,14 +29,16 @@ __kernel void generator(read_only image3d_t input, // float
 
     /* *************************** */
     /* generate pixel colors here: */
-    float color = 0.0;
     
-    color += sin( outputCoords.x * cos( time * speed / 15.0 ) * 80.0 ) + cos( outputCoords.y * cos( time * speed / 15.0 ) * 10.0 );
-    color += sin( outputCoords.y * sin( time * speed / 10.0 ) * 40.0 ) + cos( outputCoords.z * sin( time * speed / 25.0 ) * 40.0 );
-    color += sin( outputCoords.z * sin( time * speed / 5.0 ) * 10.0 ) + sin( outputCoords.x * sin( time * speed / 35.0 ) * 80.0 );
-    color *= sin( time * speed / 10.0 ) * 0.5;
+    float4 position = (float4)(((float)outputCoords.x + bias.x*time*speed)/ (float)outputDim.x,
+                               ((float)outputCoords.y + bias.y*time*speed) / (float)outputDim.x,
+                               ((float)outputCoords.z + bias.z*time*speed) / (float)outputDim.x,
+                               1.0 );
     
-    float4 outputPixel = (float4)( color, color * 0.5, sin( color + time * speed / 3.0 ) * 0.75, 1.0f );
+    float value = multifractal3d(position, scale.x, lacunarity, increment, octaves);
+    
+    float4 outputPixel = (float4)(value, value, value, 1.0f) * amplitude;
+    outputPixel.w = 1.0f;
     /* *************************** */
     
     /* do not change */

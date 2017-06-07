@@ -2,6 +2,14 @@
 #include "blendModes.h"
 #include "noise.h"
 
+static float wave1( float x, float z, float time ) {
+    return sin( x * z * 5.f + time * 10.f);
+}
+
+static float wave2( float x, float z, float time ) {
+    return sin( x * z * 5.f + time );
+}
+
 __kernel void generator(read_only image3d_t input, // float
                         write_only image3d_t output, // float
                         const int blendMode,
@@ -9,7 +17,7 @@ __kernel void generator(read_only image3d_t input, // float
                         const float time,
                         const float speed,
                         /* custom params: see package.json */
-                        const float resolution ) {
+                        const float4 resolution ) {
     
     /* do not change */
     const int4 outputDim = get_image_dim (output);
@@ -24,14 +32,31 @@ __kernel void generator(read_only image3d_t input, // float
 
     /* *************************** */
     /* generate pixel colors here: */
-    float color = 0.0;
     
-    color += sin( outputCoords.x * cos( time * speed / 15.0 ) * 80.0 ) + cos( outputCoords.y * cos( time * speed / 15.0 ) * 10.0 );
-    color += sin( outputCoords.y * sin( time * speed / 10.0 ) * 40.0 ) + cos( outputCoords.z * sin( time * speed / 25.0 ) * 40.0 );
-    color += sin( outputCoords.z * sin( time * speed / 5.0 ) * 10.0 ) + sin( outputCoords.x * sin( time * speed / 35.0 ) * 80.0 );
-    color *= sin( time * speed / 10.0 ) * 0.5;
+    float4 ocn = (float4)(
+                          ((float)outputCoords.x)/(((float)outputDim.x)),
+                          ((float)outputCoords.y)/(((float)outputDim.y)),
+                          ((float)outputCoords.z)/(((float)outputDim.z)),1.0);
     
-    float4 outputPixel = (float4)( color, color * 0.5, sin( color + time * speed / 3.0 ) * 0.75, 1.0f );
+    float4 p = ocn/resolution;
+    
+    
+    float4 p1 = p * 2.f + (float4)(0.f,1.f,0.f,0.f);
+    float4 p2 = p * 2.f - (float4)(0.f,1.f,0.f,0.f);
+    
+    float w1 = wave1(p.x,p.z,time)*.25f;
+    float w2 = wave2(p.x,p.z,time)*.25f;
+    
+    float d = clamp( sin(time*.5f) * 2.f, 0.f, 1.f);
+    
+    float l1 = mix( w1,w1+w2,1.f-d) - p.y - .5f * d;
+    float l2 = mix( w2,w2+w1,1.f-d) - p.y + .5f * d;
+    float red = smoothstep(.02f,.0f, fabs(w1 - p.y - .5f * d));
+    float blu = smoothstep(.02f,.0f, fabs(w2 - p.y + .5f * d));
+    
+    float black = 1.f-smoothstep( 0.f, .02f, min(fabs(l1),fabs(l2)));
+    float4 outputPixel =  (float4)( red, 0.f, blu, 1.f ) + black;
+    
     /* *************************** */
     
     /* do not change */
@@ -39,3 +64,7 @@ __kernel void generator(read_only image3d_t input, // float
     /* end do not change */
 
 }
+
+
+
+

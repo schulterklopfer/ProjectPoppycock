@@ -138,6 +138,13 @@
 		C21446441ED20952002977EC /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package.json; sourceTree = "<group>"; };
 		C218FA3E1EC0CF3600C852AC /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		C24757F51EDC4E7100C37B54 /* blendModes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blendModes.h; sourceTree = "<group>"; };
+		C25F68511EE4552E00BC151E /* noise.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = noise.h; sourceTree = "<group>"; };
+		C25F68531EE4564B00BC151E /* main.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = main.cl; sourceTree = "<group>"; };
+		C25F68541EE4564B00BC151E /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package.json; sourceTree = "<group>"; };
+		C25F68571EE6E09000BC151E /* main.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = main.cl; sourceTree = "<group>"; };
+		C25F68581EE6E09000BC151E /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package.json; sourceTree = "<group>"; };
+		C25F685B1EE6F8C000BC151E /* main.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = main.cl; sourceTree = "<group>"; };
+		C25F685C1EE6F8C100BC151E /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = package.json; sourceTree = "<group>"; };
 		C28767971ECB7DD200855EF2 /* common.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = common.cl; sourceTree = "<group>"; };
 		C287679D1ECB7DD200855EF2 /* OpenCL-1.0-refcard.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "OpenCL-1.0-refcard.pdf"; sourceTree = "<group>"; };
 		C287679E1ECB7DD200855EF2 /* opencl-1.1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "opencl-1.1.pdf"; sourceTree = "<group>"; };
@@ -359,6 +366,33 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C25F68521EE4564B00BC151E /* noise */ = {
+			isa = PBXGroup;
+			children = (
+				C25F68531EE4564B00BC151E /* main.cl */,
+				C25F68541EE4564B00BC151E /* package.json */,
+			);
+			path = noise;
+			sourceTree = "<group>";
+		};
+		C25F68561EE6E09000BC151E /* circlegrid */ = {
+			isa = PBXGroup;
+			children = (
+				C25F68571EE6E09000BC151E /* main.cl */,
+				C25F68581EE6E09000BC151E /* package.json */,
+			);
+			path = circlegrid;
+			sourceTree = "<group>";
+		};
+		C25F685A1EE6F8C000BC151E /* waves */ = {
+			isa = PBXGroup;
+			children = (
+				C25F685B1EE6F8C000BC151E /* main.cl */,
+				C25F685C1EE6F8C100BC151E /* package.json */,
+			);
+			path = waves;
+			sourceTree = "<group>";
+		};
 		C28767941ECB7DD200855EF2 /* data */ = {
 			isa = PBXGroup;
 			children = (
@@ -384,6 +418,9 @@
 		C28767981ECB7DD200855EF2 /* generators */ = {
 			isa = PBXGroup;
 			children = (
+				C25F685A1EE6F8C000BC151E /* waves */,
+				C25F68561EE6E09000BC151E /* circlegrid */,
+				C25F68521EE4564B00BC151E /* noise */,
 				C2FB34921EDF5B76003C6476 /* doc.txt */,
 				C210DA161EDE112600C6E553 /* checkerboard */,
 				C21446421ED20952002977EC /* plasma */,
@@ -395,6 +432,7 @@
 			isa = PBXGroup;
 			children = (
 				C24757F51EDC4E7100C37B54 /* blendModes.h */,
+				C25F68511EE4552E00BC151E /* noise.h */,
 			);
 			path = include;
 			sourceTree = "<group>";

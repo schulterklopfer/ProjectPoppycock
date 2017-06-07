@@ -1,0 +1,9 @@
+{
+	"name": "Waves",
+	"description": "???",
+	"version": "0.0.1",
+	"type": "3d",
+	"params": [
+        { "name" : "resolution", "default" : [1.0,1.0,1.0,1.0], "type": "float4" }
+	]
+}
