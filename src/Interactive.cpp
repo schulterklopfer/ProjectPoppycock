@@ -9,6 +9,10 @@
 #include "Interactive.h"
 #include "ofxImGui.h"
 
+char* Interactive::getId() {
+    return &mId[0];
+}
+
 bool Interactive::hitTest( const float x, const float y ) {
     return false;
 }
@@ -30,3 +34,12 @@ void Interactive::recalcBounds() {}
 void Interactive::inspectorContent() {
     ImGui::Text("Inspector content");
 }
+
+void Interactive::serialize( Json::Value* outJSON ) {
+
+}
+
+void Interactive::deserialize( Json::Value* inJSON ) {
+    
+}
+

@@ -221,3 +221,15 @@ bool Observer::providesOutput() {
 bool Observer::acceptsInputFrom( const EntityRef &source ) {
     return this != source.get();
 }
+
+void Observer::serialize( Json::Value* outJSON ) {
+    (*outJSON)["id"] = mId;
+    (*outJSON)["type"] = "Observer";
+    (*outJSON)["position"]["x"] = mPosition.x;
+    (*outJSON)["position"]["y"] = mPosition.y;
+}
+
+void Observer::deserialize( Json::Value* inJSON ) {
+    
+}
+

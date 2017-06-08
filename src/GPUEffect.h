@@ -64,6 +64,8 @@ public:
     virtual void inspectorContent();
     virtual void update();
     virtual void draw( const ImVec2 offset, const float scale );
+    virtual void serialize( Json::Value* outJSON);
+    virtual void deserialize( Json::Value* inJSON );
 
 
 };

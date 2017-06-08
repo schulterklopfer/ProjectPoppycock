@@ -21,7 +21,7 @@ void ofApp::setup()
     mEntityMenuCreate = -1;
     mEntityMenuIsOpen = false;
 
-    show_test_window = true;
+    show_test_window = false;
     
     //mGui.setTheme(new ThemeTest());
     KernelRegistryInstance->setup();
@@ -88,6 +88,10 @@ void ofApp::GUI_entityArea() {
     
     if( ImGui::Begin("Patch", NULL, window_flags) ) {
 
+        if( ImGui::Button("Save") ) {
+            mEntityManager.save("test.json");
+        }
+        
         ImGui::BeginChild("draw area");
         
         if( ImGui::IsRootWindowOrAnyChildHovered() ) {

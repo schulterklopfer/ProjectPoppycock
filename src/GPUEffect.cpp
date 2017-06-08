@@ -333,3 +333,14 @@ void GPUEffect::inspectorContent() {
     ImGui::PopID();
 }
 
+void GPUEffect::serialize( Json::Value* outJSON ) {
+    (*outJSON)["id"] = mId;
+    (*outJSON)["type"] = "GPUEffect";
+    (*outJSON)["position"]["x"] = mPosition.x;
+    (*outJSON)["position"]["y"] = mPosition.y;
+}
+
+void GPUEffect::deserialize( Json::Value* inJSON ) {
+    
+}
+

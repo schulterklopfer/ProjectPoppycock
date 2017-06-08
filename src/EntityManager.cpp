@@ -275,3 +275,22 @@ void EntityManager::drawBoundingBox(  ImVec2 offset, float scale  ) {
 ofRectangle* EntityManager::getBounds() {
     return &mBounds;
 }
+
+// Serializable
+
+void EntityManager::serialize( Json::Value* outJSON ) {
+    (*outJSON)["meta"]["version"]="0.0.1";
+    int index = 0;
+    for( EntityListIterator iter = mEntities.begin(); iter != mEntities.end(); ++iter ) {
+        (*iter)->serialize( &(*outJSON)["entities"][index++] );
+    }
+    
+    index = 0;
+    for( ConnectorListIterator iter = mConnectors.begin(); iter != mConnectors.end(); ++iter ) {
+        (*iter)->serialize( &(*outJSON)["connectors"][index++] );
+    }
+}
+
+void EntityManager::deserialize( Json::Value* inJSON ) {
+
+}

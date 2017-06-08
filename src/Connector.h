@@ -80,6 +80,8 @@ public:
     virtual int getTypeFlags();
     virtual void recalcBounds();
     virtual void inspectorContent();
+    virtual void serialize( Json::Value* outJSON);
+    virtual void deserialize( Json::Value* inJSON );
 
     bool isFader();
     

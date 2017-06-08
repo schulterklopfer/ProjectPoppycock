@@ -231,3 +231,16 @@ float Connector::getBlendOpacity() {
 void Connector::recalcBounds() {
     mBounds.set((ofPoint)mSource->getPosition(), (ofPoint)mTarget->getPosition());
 }
+
+
+void Connector::serialize( Json::Value* outJSON ) {
+    (*outJSON)["id"] = mId;
+    (*outJSON)["type"] = "Connector";
+    (*outJSON)["source"] = mSource->getId();
+    (*outJSON)["target"] = mTarget->getId();
+}
+
+void Connector::deserialize( Json::Value* inJSON ) {
+    
+}
+

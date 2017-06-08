@@ -50,6 +50,9 @@ public:
     
     virtual void setPosition( const ImVec2 pos );
     virtual void move( const float x, const float y );
+    virtual void serialize( Json::Value* outJSON);
+    virtual void deserialize( Json::Value* inJSON );
+
     void recalcBlendValues();
 
 };

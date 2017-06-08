@@ -18,12 +18,13 @@
 #include "GPUEffect.h"
 #include "Observer.h"
 #include "Connector.h"
+#include "Serializable.h"
 
 typedef std::vector<InteractiveRef> Selection;
 typedef Selection::iterator SelectionIterator;
 
 
-class EntityManager {
+class EntityManager: public Serializable {
 private:
     
     void recalcBounds();
@@ -57,6 +58,11 @@ public:
     InteractiveRef activeInteractive;
     InteractiveRef draggingInteractive;
     Selection selectedInteractives;
+    
+    // serializable
+    
+    void serialize( Json::Value* outJSON);
+    void deserialize( Json::Value* inJSON );
         
 };
 
