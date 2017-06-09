@@ -10,6 +10,7 @@
 
 Entity::Entity( const ImVec2 position ) :
     Interactive(),
+    Serializable(),
     mPosition(position),
     mSize(40),
     mBoundsDirty(false),
@@ -247,5 +248,16 @@ float Entity::Q_rsqrt( float number )
     //	y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
     
     return y;
+}
+
+void Entity::serialize( Json::Value* outJSON) {
+    (*outJSON)["id"] = mId;
+    (*outJSON)["typeFlags"] = getTypeFlags();
+    (*outJSON)["position"]["x"] = mPosition.x;
+    (*outJSON)["position"]["y"] = mPosition.y;
+}
+
+void Entity::deserialize( Json::Value* inJSON ) {
+    
 }
 

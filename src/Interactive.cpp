@@ -40,12 +40,3 @@ void Interactive::recalcBounds() {}
 void Interactive::inspectorContent() {
     ImGui::Text("Inspector content");
 }
-
-void Interactive::serialize( Json::Value* outJSON ) {
-
-}
-
-void Interactive::deserialize( Json::Value* inJSON ) {
-    
-}
-

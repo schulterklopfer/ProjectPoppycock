@@ -334,10 +334,35 @@ void GPUEffect::inspectorContent() {
 }
 
 void GPUEffect::serialize( Json::Value* outJSON ) {
-    (*outJSON)["id"] = mId;
-    (*outJSON)["type"] = "GPUEffect";
-    (*outJSON)["position"]["x"] = mPosition.x;
-    (*outJSON)["position"]["y"] = mPosition.y;
+    Effect::serialize(outJSON);
+    GPUEntity::serialize(outJSON);
+    (*outJSON)["speed"] = mSpeed;
+    (*outJSON)["kernel"]["index"] = mKernelIndex;
+    
+    int paramIndex = 0;
+    for( OCLKernelWrapperParamListIterator iter = mKernelWrapperParams.begin(); iter != mKernelWrapperParams.end(); ++iter ) {
+        const OCLKernelWrapper::ParamType paramType = iter->type;
+        switch( paramType ) {
+            case OCLKernelWrapper::FLOAT:
+                (*outJSON)["kernel"]["params"][paramIndex++] = iter->value.float_;
+                break;
+            case OCLKernelWrapper::INT:
+                (*outJSON)["kernel"]["params"][paramIndex++] = iter->value.int_;
+                break;
+            case OCLKernelWrapper::COLOR:
+            case OCLKernelWrapper::FLOAT4:
+                (*outJSON)["kernel"]["params"][paramIndex][0] = iter->value.float4_[0];
+                (*outJSON)["kernel"]["params"][paramIndex][1] = iter->value.float4_[1];
+                (*outJSON)["kernel"]["params"][paramIndex][2] = iter->value.float4_[2];
+                (*outJSON)["kernel"]["params"][paramIndex][3] = iter->value.float4_[3];
+
+                paramIndex++;
+                break;
+            default:
+                (*outJSON)["kernel"]["params"][paramIndex++] = "BROKEN";
+                break;
+        }
+    }
 }
 
 void GPUEffect::deserialize( Json::Value* inJSON ) {

@@ -9,7 +9,7 @@
 #include "Observer.h"
 #include "GPUEffect.h"
 
-Observer::Observer( const ImVec2 position ) : Entity(position), mInputCount(0) {
+Observer::Observer( const ImVec2 position ) : Entity(position), GPUEntity(), mInputCount(0) {
     setupPreview();
 };
 
@@ -223,10 +223,8 @@ bool Observer::acceptsInputFrom( const EntityRef &source ) {
 }
 
 void Observer::serialize( Json::Value* outJSON ) {
-    (*outJSON)["id"] = mId;
-    (*outJSON)["type"] = "Observer";
-    (*outJSON)["position"]["x"] = mPosition.x;
-    (*outJSON)["position"]["y"] = mPosition.y;
+    Entity::serialize(outJSON);
+    GPUEntity::serialize(outJSON);
 }
 
 void Observer::deserialize( Json::Value* inJSON ) {

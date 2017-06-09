@@ -110,3 +110,13 @@ float Effect::AOE::getRadius() {
     return mRadius;
 }
 
+void Effect::serialize( Json::Value* outJSON) {
+    Entity::serialize(outJSON);
+    (*outJSON)["aoe"]["handlePosition"]["x"] = mAOE->mHandlePosition.x;
+    (*outJSON)["aoe"]["handlePosition"]["y"] = mAOE->mHandlePosition.y;
+}
+
+void Effect::deserialize( Json::Value* inJSON ) {
+
+}
+

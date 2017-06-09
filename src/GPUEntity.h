@@ -15,6 +15,7 @@
 #include "ImEasyCam.h"
 #include "OCLKernelRegistry.h"
 #include "boost/shared_ptr.hpp"
+#include "Serializable.h"
 
 #define GPU_ENTITY_MIN_X 1
 #define GPU_ENTITY_MIN_Y 1
@@ -27,7 +28,7 @@
 //typedef boost::shared_ptr<msa::OpenCLBufferManagedT<int>> BufferRef;
 typedef boost::shared_ptr<msa::OpenCLImage> ImageRef;
 
-class GPUEntity {
+class GPUEntity : public Serializable {
     
     typedef struct{
         float4 pos;
@@ -57,7 +58,8 @@ public:
     ~GPUEntity();
     
     virtual ImageRef& getImage();
-    
+    virtual void serialize( Json::Value* outJSON);
+    virtual void deserialize( Json::Value* inJSON );
     
 };
 

@@ -23,7 +23,7 @@ void Serializable::load(std::string fileName) {
 void Serializable::save(std::string fileName) {
     ofxJSONElement JSON;
     serialize( &JSON );
-    const bool savingSuccessful = JSON.save(fileName);
+    const bool savingSuccessful = JSON.save(fileName, true);
 }
 
 void Serializable::serialize( Json::Value* outJSON) {}

@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <vector>
 #include "ofRectangle.h"
-#include "Serializable.h"
 #include "boost/shared_ptr.hpp"
 
 #include "Poco/UUID.h"
@@ -67,8 +66,6 @@ public:
     virtual void recalcBounds();
     virtual ofRectangle* getBounds();
     virtual void inspectorContent();
-    virtual void serialize( Json::Value* outJSON);
-    virtual void deserialize( Json::Value* inJSON );
 
     char* getId();
     

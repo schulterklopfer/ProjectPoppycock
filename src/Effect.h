@@ -12,13 +12,14 @@
 #include <stdio.h>
 #include "Entity.h"
 #include "boost/shared_ptr.hpp"
+#include "Serializable.h"
 
 class Effect: public Entity {
 
 public:
 
     class AOE: public Interactive {
-        
+        friend Effect;
     private:
         Effect* mEffect;
         ofPoint mHandlePosition;
@@ -47,7 +48,8 @@ public:
     virtual void move( const float x, const float y );
     
     boost::shared_ptr<Effect::AOE> getAOE();
-
+    virtual void serialize( Json::Value* outJSON);
+    virtual void deserialize( Json::Value* inJSON );
     
 private:
     boost::shared_ptr<Effect::AOE> mAOE;

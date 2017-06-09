@@ -15,10 +15,11 @@
 
 #include "Interactive.h"
 #include "ofxImGui.h"
+#include "Serializable.h"
 
 class Entity;
 
-class Connector : public Interactive {
+class Connector : public Interactive, public Serializable {
 
     
 public:
@@ -57,7 +58,7 @@ public:
     static const char* sBlendModeLabels[sBlendModeCount];
     
     Connector(const boost::shared_ptr<Entity> source,
-              const boost::shared_ptr<Entity> target ) : Interactive(), mSource(source), mTarget(target), mBlendMode(BlendMode::ADD), mBlendOpacity(1.0f) {};
+              const boost::shared_ptr<Entity> target ) : Interactive(), Serializable(), mSource(source), mTarget(target), mBlendMode(BlendMode::ADD), mBlendOpacity(1.0f) {};
     
     void draw( const ImVec2 offset, const float scale );
     

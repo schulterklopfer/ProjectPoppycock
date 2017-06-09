@@ -235,9 +235,11 @@ void Connector::recalcBounds() {
 
 void Connector::serialize( Json::Value* outJSON ) {
     (*outJSON)["id"] = mId;
-    (*outJSON)["type"] = "Connector";
+    (*outJSON)["typeFlags"] = getTypeFlags();
     (*outJSON)["source"] = mSource->getId();
     (*outJSON)["target"] = mTarget->getId();
+    (*outJSON)["blendMode"] = mBlendMode;
+    (*outJSON)["blendOpacity"] = mBlendOpacity;
 }
 
 void Connector::deserialize( Json::Value* inJSON ) {

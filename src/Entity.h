@@ -17,8 +17,9 @@
 #include "ofRectangle.h"
 #include "Interactive.h"
 #include "Connector.h"
+#include "Serializable.h"
 
-class Entity : public Interactive {
+class Entity : public Interactive, public Serializable {
 
 private:
     
@@ -77,6 +78,9 @@ public:
 
     void setMaxEdgeDistanceFromObserver( int d, bool force = false );
     int getMaxEdgeDistanceFromObserver();
+
+    virtual void serialize( Json::Value* outJSON);
+    virtual void deserialize( Json::Value* inJSON );
 
 };
 

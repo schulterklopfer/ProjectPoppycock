@@ -11,7 +11,7 @@
 
 msa::OpenCLKernelPtr GPUEntity::sApplyPreviewColorKernel;
 
-GPUEntity::GPUEntity() : mSizeX(10), mSizeY(10), mSizeZ(10) {
+GPUEntity::GPUEntity() : Serializable(), mSizeX(10), mSizeY(10), mSizeZ(10) {
     // for testing, use first kernel wrapper
     
     // TODO: make this configurable:
@@ -66,3 +66,14 @@ void GPUEntity::setupImages() {
 ImageRef& GPUEntity::getImage() {
     return mImage;
 }
+
+void GPUEntity::serialize( Json::Value* outJSON ) {
+    (*outJSON)["size"]["x"] = mSizeX;
+    (*outJSON)["size"]["y"] = mSizeY;
+    (*outJSON)["size"]["z"] = mSizeZ;
+}
+
+void GPUEntity::deserialize( Json::Value* inJSON ) {
+    
+}
+
