@@ -15,6 +15,9 @@
 #include "Serializable.h"
 #include "boost/shared_ptr.hpp"
 
+#include "Poco/UUID.h"
+#include "Poco/UUIDGenerator.h"
+
 
 #define TO_(i,tFlag,T) (i==NULL?NULL:(i->isOfType(tFlag)?boost::static_pointer_cast<T>(i):NULL))
 
@@ -30,7 +33,7 @@ class Interactive {
 
 protected:
     ofRectangle mBounds;
-    char mId[16];
+    string mId;
     
 public:
 
@@ -56,10 +59,7 @@ public:
         IDLE   = (1 << 7)
     } State;
 
-    Interactive() : stateFlags(0) {
-        sprintf ( mId, "%llx", (int64_t)this );
-    };
-
+    Interactive();
     bool isOfType( Interactive::Type t );
     
     virtual bool hitTest( const float x, const float y );

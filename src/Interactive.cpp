@@ -9,6 +9,12 @@
 #include "Interactive.h"
 #include "ofxImGui.h"
 
+Interactive::Interactive() : stateFlags(0) {
+    Poco::UUIDGenerator gen;
+    Poco::UUID uuid = gen.createRandom();
+    mId = uuid.toString();
+};
+
 char* Interactive::getId() {
     return &mId[0];
 }
