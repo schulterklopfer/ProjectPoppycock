@@ -34,7 +34,7 @@ void ofApp::update(){
     Globals::update();
     
     // call update() in entities
-    EntityList* const entities = mEntityManager.getEntitiesToUpdate();
+    EntityList* const entities = EntityManagerInstance->getEntitiesToUpdate();
 
     for( EntityListIterator iter = entities->begin(); iter != entities->end(); ++iter ) {
         (*iter)->update();
@@ -84,12 +84,14 @@ void ofApp::GUI_entityArea() {
     
     ImGuiIO io = ImGui::GetIO();
     
+    auto entityManager = EntityManagerInstance;
+    
     const bool shortcutKeyDown = io.ShortcutsUseSuperKey?io.KeySuper:io.KeyCtrl;
     
     if( ImGui::Begin("Patch", NULL, window_flags) ) {
 
         if( ImGui::Button("Save") ) {
-            mEntityManager.save("test.json");
+            entityManager->save("test.json");
         }
         
         ImGui::BeginChild("draw area");
@@ -111,10 +113,10 @@ void ofApp::GUI_entityArea() {
         const ImVec2 relMousePosition = ImVec2( io.MousePos.x - cPos.x,
                                                io.MousePos.y - cPos.y );
 
-        EntityList* const entities = mEntityManager.getEntities();
-        ConnectorList* const connectors = mEntityManager.getConnectors();
+        EntityList* const entities = entityManager->getEntities();
+        ConnectorList* const connectors = entityManager->getConnectors();
 
-        mEntityManager.hotInteractive = NULL;
+        entityManager->hotInteractive = NULL;
 
         // check for keyboard things if entity menu is not open
         if( !GUI_entityMenu() && ImGui::IsWindowFocused() && ImGui::IsMouseHoveringWindow() ) {
@@ -122,11 +124,11 @@ void ofApp::GUI_entityArea() {
             if( backspacePressed ) {
                 ofLogVerbose( __FUNCTION__ ) << "entity area: backspace pressed inside entities window";
                 // delete selected interactive from EntityManager
-                if( mEntityManager.selectedInteractives.size() != 0 ) {
-                    for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
-                        mEntityManager.deleteInteractive(*iter);
+                if( entityManager->selectedInteractives.size() != 0 ) {
+                    for( SelectionIterator iter = entityManager->selectedInteractives.begin(); iter != entityManager->selectedInteractives.end(); ++iter ) {
+                        entityManager->deleteInteractive(*iter);
                     }
-                    mEntityManager.selectedInteractives.clear();
+                    entityManager->selectedInteractives.clear();
                 }
             }
             
@@ -154,13 +156,13 @@ void ofApp::GUI_entityArea() {
 
             // target mode is entered when entity is dragged and shit key is held down
             // this is used to draw connections from draggingEntity to hotEntity
-            const bool targetMode = (shortcutKeyDown && mEntityManager.draggingInteractive != NULL);
+            const bool targetMode = (shortcutKeyDown && entityManager->draggingInteractive != NULL);
             
             // check if we hover an entity in reverse so
             // top entities are selected first
-            if( targetMode || (mEntityManager.draggingInteractive == NULL && !ImGui::IsMouseDragging() ) ) {
-                //EntityList* list = mEntityManager.getEntities();
-                InteractiveList* const list = mEntityManager.getInteractives();
+            if( targetMode || (entityManager->draggingInteractive == NULL && !ImGui::IsMouseDragging() ) ) {
+                //EntityList* list = entityManager->getEntities();
+                InteractiveList* const list = entityManager->getInteractives();
                 for (unsigned i = list->size(); i-- > 0; ) {
                     // hover
                     InteractiveRef eRef = list->at(i);
@@ -172,18 +174,18 @@ void ofApp::GUI_entityArea() {
                         overAnyInteractive = true;
                         
                         // mark entity under mouse as hot
-                        if( mEntityManager.hotInteractive == NULL ) {
-                            mEntityManager.hotInteractive = eRef;
+                        if( entityManager->hotInteractive == NULL ) {
+                            entityManager->hotInteractive = eRef;
                             if( !io.MouseDown[0] ) {
                                 // classic mouse over is without pressed button
-                                mEntityManager.hotInteractive->stateFlags |= Entity::State::OVER;
+                                entityManager->hotInteractive->stateFlags |= Entity::State::OVER;
                             }
-                            if( targetMode && mEntityManager.hotInteractive != mEntityManager.draggingInteractive ) {
-                                if(mEntityManager.hotInteractive->isOfType(Interactive::Type::ENTITY) &&
-                                   mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
+                            if( targetMode && entityManager->hotInteractive != entityManager->draggingInteractive ) {
+                                if(entityManager->hotInteractive->isOfType(Interactive::Type::ENTITY) &&
+                                   entityManager->draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
                                     // only accepted as target when entity and acceptsInput
-                                    const EntityRef hotEntity = TO_ENTITY(mEntityManager.hotInteractive);
-                                    const EntityRef draggingEntity = TO_ENTITY(mEntityManager.draggingInteractive);
+                                    const EntityRef hotEntity = TO_ENTITY(entityManager->hotInteractive);
+                                    const EntityRef draggingEntity = TO_ENTITY(entityManager->draggingInteractive);
                                     if( hotEntity->acceptsInputFrom(draggingEntity) ) {
                                         hotEntity->stateFlags |= Entity::State::TARGET;
                                     }
@@ -192,28 +194,28 @@ void ofApp::GUI_entityArea() {
                         }
                         
                         // mark entity under mouse when left button is down as active
-                        if( io.MouseDown[0] && mEntityManager.hotInteractive == eRef && mEntityManager.draggingInteractive == NULL ) {
+                        if( io.MouseDown[0] && entityManager->hotInteractive == eRef && entityManager->draggingInteractive == NULL ) {
                             // only active when not dragging
-                            mEntityManager.activeInteractive = eRef;
-                            mEntityManager.activeInteractive->stateFlags |= Entity::State::DOWN;
+                            entityManager->activeInteractive = eRef;
+                            entityManager->activeInteractive->stateFlags |= Entity::State::DOWN;
                         }
                         // select entity under mouse when button was pressed and released over the same entity
                         // but only when not in target mode
-                        else if( io.MouseReleased[0] && mEntityManager.activeInteractive == eRef && !targetMode ) {
+                        else if( io.MouseReleased[0] && entityManager->activeInteractive == eRef && !targetMode ) {
                             
                             
                             //  multiselect
                             if( !(io.MultiSelectUsesSuperKey?io.KeySuper:io.KeyCtrl) ) {
-                                for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
+                                for( SelectionIterator iter = entityManager->selectedInteractives.begin(); iter != entityManager->selectedInteractives.end(); ++iter ) {
                                     if( (*iter) == eRef )
                                         continue;
                                     (*iter)->stateFlags &= ~Entity::State::SELECT;
                                 }
-                                mEntityManager.selectedInteractives.clear();
+                                entityManager->selectedInteractives.clear();
                             }
-                            if( !mEntityManager.isInSelection(eRef) ) {
+                            if( !entityManager->isInSelection(eRef) ) {
                                 eRef->stateFlags |= Entity::State::SELECT;
-                                mEntityManager.selectInteractive(eRef);
+                                entityManager->selectInteractive(eRef);
                             }
 
                         }
@@ -224,24 +226,24 @@ void ofApp::GUI_entityArea() {
 
             // reset drag mode when mouse is release or shortcut key is released
             if( io.MouseReleased[0] || mShortcutKeyDown != shortcutKeyDown ) {
-                if( mEntityManager.draggingInteractive != NULL ) {
-                    mEntityManager.draggingInteractive->stateFlags &= ~(Entity::State::DRAG|Entity::State::SOURCE);
+                if( entityManager->draggingInteractive != NULL ) {
+                    entityManager->draggingInteractive->stateFlags &= ~(Entity::State::DRAG|Entity::State::SOURCE);
                 }
-                if( mEntityManager.activeInteractive != NULL ) {
-                    mEntityManager.activeInteractive->stateFlags &= ~(Entity::State::DOWN);
+                if( entityManager->activeInteractive != NULL ) {
+                    entityManager->activeInteractive->stateFlags &= ~(Entity::State::DOWN);
                 }
-                if( mEntityManager.hotInteractive != NULL ) {
-                    mEntityManager.hotInteractive->stateFlags &= ~(Entity::State::TARGET);
+                if( entityManager->hotInteractive != NULL ) {
+                    entityManager->hotInteractive->stateFlags &= ~(Entity::State::TARGET);
 
                 }
                 
-                if( mEntityManager.draggingInteractive != NULL && mEntityManager.hotInteractive != NULL && shortcutKeyDown ) {
+                if( entityManager->draggingInteractive != NULL && entityManager->hotInteractive != NULL && shortcutKeyDown ) {
                     
                     // check if hot and dragging interactive are Entities
-                    if(mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) &&
-                       mEntityManager.hotInteractive->isOfType(Interactive::Type::ENTITY) ) {
-                        const EntityRef draggingEntity = TO_ENTITY(mEntityManager.draggingInteractive);
-                        const EntityRef hotEntity = TO_ENTITY(mEntityManager.hotInteractive);
+                    if(entityManager->draggingInteractive->isOfType(Interactive::Type::ENTITY) &&
+                       entityManager->hotInteractive->isOfType(Interactive::Type::ENTITY) ) {
+                        const EntityRef draggingEntity = TO_ENTITY(entityManager->draggingInteractive);
+                        const EntityRef hotEntity = TO_ENTITY(entityManager->hotInteractive);
                         
                         // we have a connection, add connection object to data structs
                         // connections have a direction. there can be multiple connections out
@@ -249,14 +251,14 @@ void ofApp::GUI_entityArea() {
                         // its ok
                         if( draggingEntity->providesOutputTo(hotEntity) && hotEntity->acceptsInputFrom(draggingEntity) ) {
                             ofLogVerbose(__FUNCTION__) << "connection from " << draggingEntity << " to " << hotEntity;
-                            mEntityManager.createConnector(draggingEntity, hotEntity);
+                            entityManager->createConnector(draggingEntity, hotEntity);
                         }
                     }
                     
                     
                 }
                 
-                mEntityManager.activeInteractive = mEntityManager.draggingInteractive = NULL;
+                entityManager->activeInteractive = entityManager->draggingInteractive = NULL;
                 
                 // reset selection rectangle when mouse is released
                 mMouseSelectionActive = !io.MouseReleased[0];
@@ -270,37 +272,37 @@ void ofApp::GUI_entityArea() {
                 //AOERef aoe = NULL;
                 
                 /*
-                if(mEntityManager.draggingInteractive != NULL ) {
-                   if( mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
-                       draggingEntity = TO_ENTITY(mEntityManager.draggingInteractive);
-                   } else if( mEntityManager.draggingInteractive->isOfType(Interactive::Type::AOE) ) {
-                       aoe = TO_AOE(mEntityManager.draggingInteractive);
+                if(entityManager->draggingInteractive != NULL ) {
+                   if( entityManager->draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
+                       draggingEntity = TO_ENTITY(entityManager->draggingInteractive);
+                   } else if( entityManager->draggingInteractive->isOfType(Interactive::Type::AOE) ) {
+                       aoe = TO_AOE(entityManager->draggingInteractive);
                    }
                 }
                 
-                if(mEntityManager.hotInteractive != NULL &&
-                   mEntityManager.hotInteractive->isOfType(Interactive::Type::ENTITY) ) {
-                    hotEntity = TO_ENTITY(mEntityManager.hotInteractive);
+                if(entityManager->hotInteractive != NULL &&
+                   entityManager->hotInteractive->isOfType(Interactive::Type::ENTITY) ) {
+                    hotEntity = TO_ENTITY(entityManager->hotInteractive);
                 }
                 
-                if(mEntityManager.activeInteractive != NULL &&
-                   mEntityManager.activeInteractive->isOfType(Interactive::Type::ENTITY) ) {
-                    activeEntity = TO_ENTITY(mEntityManager.activeInteractive);
+                if(entityManager->activeInteractive != NULL &&
+                   entityManager->activeInteractive->isOfType(Interactive::Type::ENTITY) ) {
+                    activeEntity = TO_ENTITY(entityManager->activeInteractive);
                 }
                  */
                 
-                if( mEntityManager.activeInteractive != NULL && mEntityManager.draggingInteractive == NULL ) {
+                if( entityManager->activeInteractive != NULL && entityManager->draggingInteractive == NULL ) {
                     // mark and set dragging object, if its not a connector
-                    if( !mEntityManager.activeInteractive->isOfType(Interactive::Type::CONNECTOR) ) {
+                    if( !entityManager->activeInteractive->isOfType(Interactive::Type::CONNECTOR) ) {
                         
-                        mEntityManager.draggingInteractive = mEntityManager.activeInteractive;
-                        mEntityManager.draggingInteractive->stateFlags |= Entity::State::DRAG;
+                        entityManager->draggingInteractive = entityManager->activeInteractive;
+                        entityManager->draggingInteractive->stateFlags |= Entity::State::DRAG;
 
-                        if( mEntityManager.activeInteractive->isOfType(Interactive::Type::ENTITY) ) {
-                            const EntityRef activeEntity = TO_ENTITY(mEntityManager.activeInteractive);
+                        if( entityManager->activeInteractive->isOfType(Interactive::Type::ENTITY) ) {
+                            const EntityRef activeEntity = TO_ENTITY(entityManager->activeInteractive);
                             if( shortcutKeyDown ) {
                                 if( activeEntity->providesOutput() ) {
-                                    mEntityManager.draggingInteractive->stateFlags |= Entity::State::SOURCE;
+                                    entityManager->draggingInteractive->stateFlags |= Entity::State::SOURCE;
                                 }
                             }
                         }
@@ -308,15 +310,15 @@ void ofApp::GUI_entityArea() {
                 }
 
                 
-                if( mEntityManager.draggingInteractive != NULL ) {
+                if( entityManager->draggingInteractive != NULL ) {
                     
                     // drag connection to another entity
-                    if( mEntityManager.draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
-                        const EntityRef draggingEntity = TO_ENTITY(mEntityManager.draggingInteractive);
+                    if( entityManager->draggingInteractive->isOfType(Interactive::Type::ENTITY) ) {
+                        const EntityRef draggingEntity = TO_ENTITY(entityManager->draggingInteractive);
 
                         if( shortcutKeyDown ) {
                             
-                            const EntityRef hotEntity = TO_ENTITY(mEntityManager.hotInteractive);
+                            const EntityRef hotEntity = TO_ENTITY(entityManager->hotInteractive);
                             
                             if( hotEntity != NULL &&
                                hotEntity->acceptsInputFrom(draggingEntity) &&
@@ -343,10 +345,10 @@ void ofApp::GUI_entityArea() {
                             }
                         } else {
 
-                            if( mEntityManager.isInSelection(draggingEntity) ) {
+                            if( entityManager->isInSelection(draggingEntity) ) {
                                 // drag entity around
                                 // move the whole selection
-                                for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
+                                for( SelectionIterator iter = entityManager->selectedInteractives.begin(); iter != entityManager->selectedInteractives.end(); ++iter ) {
                                     // only move entities, not connectors
                                     if( (*iter)->isOfType(Interactive::Type::CONNECTOR) )
                                         continue;
@@ -368,8 +370,8 @@ void ofApp::GUI_entityArea() {
                                                      );
                             }
                         }
-                    } else if( mEntityManager.draggingInteractive->isOfType(Interactive::Type::AOE) ) {
-                        const AOERef aoe = TO_AOE(mEntityManager.draggingInteractive);
+                    } else if( entityManager->draggingInteractive->isOfType(Interactive::Type::AOE) ) {
+                        const AOERef aoe = TO_AOE(entityManager->draggingInteractive);
                         aoe->move( io.MouseDelta.x/mEntityAreaScale, io.MouseDelta.y/mEntityAreaScale );
                     }
                 } else if( shortcutKeyDown ) {
@@ -391,7 +393,7 @@ void ofApp::GUI_entityArea() {
 
                         ImGui::GetWindowDrawList()->AddRectFilled((ImVec2)drawRect.getMin(), (ImVec2)drawRect.getMax(), 0x11ffffff);
 
-                        InteractiveList* const list = mEntityManager.getInteractives();
+                        InteractiveList* const list = entityManager->getInteractives();
                         
                         // TODO: selection based on shape, not on bounds
                         for( InteractiveListIterator iter = list->begin(); iter != list->end(); ++iter ) {
@@ -400,9 +402,9 @@ void ofApp::GUI_entityArea() {
                                 continue;
                             if( (*iter)->getBounds()->intersects(rect) ) {
                                 (*iter)->stateFlags |= Entity::State::SELECT;
-                                mEntityManager.selectInteractive(*iter);
+                                entityManager->selectInteractive(*iter);
                             } else {
-                                mEntityManager.deselectInteractive(*iter);
+                                entityManager->deselectInteractive(*iter);
                             }
                         }
                         
@@ -418,11 +420,11 @@ void ofApp::GUI_entityArea() {
                 
             }
             
-            if( io.MouseClicked[0]  && !overAnyInteractive && mEntityManager.selectedInteractives.size() != 0 ) {
-                for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
+            if( io.MouseClicked[0]  && !overAnyInteractive && entityManager->selectedInteractives.size() != 0 ) {
+                for( SelectionIterator iter = entityManager->selectedInteractives.begin(); iter != entityManager->selectedInteractives.end(); ++iter ) {
                     (*iter)->stateFlags &= ~Entity::State::SELECT;
                 }
-                mEntityManager.selectedInteractives.clear();
+                entityManager->selectedInteractives.clear();
             }
             
             // scale view with mouse wheel around mouse pointer
@@ -464,8 +466,8 @@ void ofApp::GUI_entityArea() {
 
         }
                 
-        mEntityManager.checkDirtyBounds();
-        //mEntityManager.drawBoundingBox(relativeOffset, mEntityAreaScale);
+        entityManager->checkDirtyBounds();
+        //entityManager->drawBoundingBox(relativeOffset, mEntityAreaScale);
         
         ImGui::EndChild();
         mShortcutKeyDown = shortcutKeyDown;
@@ -533,9 +535,10 @@ void ofApp::GUI_sidebar() {
     ImGui::SetNextWindowPos(ImVec2(ImVec2(ofGetWidth()-408,10)));
     
     if( ImGui::Begin("Inspector", NULL, ImVec2(0.f,0.f), -1.0f, window_flags) ) {
+        auto entityManager = EntityManagerInstance;
 
-        if( mEntityManager.selectedInteractives.size() > 0 ) {
-            for( SelectionIterator iter = mEntityManager.selectedInteractives.begin(); iter != mEntityManager.selectedInteractives.end(); ++iter ) {
+        if( entityManager->selectedInteractives.size() > 0 ) {
+            for( SelectionIterator iter = entityManager->selectedInteractives.begin(); iter != entityManager->selectedInteractives.end(); ++iter ) {
                 (*iter)->inspectorContent();
             }
         } else {
@@ -595,7 +598,7 @@ bool ofApp::GUI_entityMenu() {
                 
                 ofPoint position = ((ofPoint)ImGui::GetIO().MousePos - cPos - mEntityAreaViewRect.position)/mEntityAreaScale;
                 
-                mEntityManager.createEntity(entityToCreate, position);
+                EntityManagerInstance->createEntity(entityToCreate, position);
                 
                 mEntityMenuCreate = -1;
                 closeMenu=true;

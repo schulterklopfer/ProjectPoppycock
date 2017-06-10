@@ -8,6 +8,8 @@
 
 #include "EntityManager.h"
 
+OFXSINGLETON_DEFINE_UNMANAGED(EntityManager)
+
 void EntityManager::createEntity( Entity::Type type, ofVec2f position) {
     
     switch( type ) {

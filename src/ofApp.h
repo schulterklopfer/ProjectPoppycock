@@ -47,9 +47,7 @@ private:
     void GUI_sidebar();
     
     static bool __failsEntityMenuFilter (string s);
-    
-    EntityManager mEntityManager;
-    
+        
     bool mShortcutKeyDown;
     bool mMouseSelectionActive;
     ofPoint mMouseSelectionStartPoint;

@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "ofRectangle.h"
 #include "ofxImGui.h"
+#include "ofxSingleton.h"
 
 #include "Entity.h"
 #include "Effect.h"
@@ -24,7 +25,7 @@ typedef std::vector<InteractiveRef> Selection;
 typedef Selection::iterator SelectionIterator;
 
 
-class EntityManager: public Serializable {
+class EntityManager: public ofxSingleton::UnmanagedSingleton<EntityManager>, public Serializable {
 private:
     
     void recalcBounds();
@@ -65,6 +66,8 @@ public:
     void deserialize( Json::Value* inJSON );
         
 };
+
+#define EntityManagerInstance (EntityManager::getInstance())
 
 
 #endif /* EntityManager_h */
