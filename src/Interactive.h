@@ -67,7 +67,7 @@ public:
     virtual ofRectangle* getBounds();
     virtual void inspectorContent();
 
-    char* getId();
+    string getId();
     
     int stateFlags;
     

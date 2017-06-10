@@ -15,8 +15,8 @@ Interactive::Interactive() : stateFlags(0) {
     mId = uuid.toString();
 };
 
-char* Interactive::getId() {
-    return &mId[0];
+string Interactive::getId() {
+    return mId;
 }
 
 bool Interactive::hitTest( const float x, const float y ) {
