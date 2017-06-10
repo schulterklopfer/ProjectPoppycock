@@ -51,6 +51,7 @@ public:
     EntityList* const getEntitiesToUpdate();
     ConnectorList* const getConnectors();
     InteractiveList* const getInteractives();
+    const InteractiveRef getInteractive( const string id );
     void drawBoundingBox( ImVec2 offset, float scale );
     ofRectangle* getBounds();
     void checkDirtyBounds();

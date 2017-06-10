@@ -177,6 +177,15 @@ InteractiveList* const EntityManager::getInteractives() {
     return &mInteractives;
 }
 
+const InteractiveRef EntityManager::getInteractive( const string id ) {
+    for( InteractiveListIterator iter = mInteractives.begin(); iter != mInteractives.end(); ++iter ) {
+        if( (*iter)->getId() == id )
+            return (*iter);
+    }
+    return NULL;
+}
+
+
 void EntityManager::regenerateInteractivesList() {
     mInteractives.clear();
     for( ConnectorListIterator iter = mConnectors.begin(); iter != mConnectors.end(); ++iter ) {
